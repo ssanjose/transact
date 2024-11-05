@@ -1,0 +1,50 @@
+Requirements:
+  Simple Features:
+    Account:
+      ☐ Users can set up an Account e.g. Spending, Saving
+      ☐ Users can rename an Account
+      ☐ Users can delete an Account
+      ☐ Users can view all Accounts
+      ☐ Users can view a single Account
+      ☐ Users can view the balance of an Account
+      ☐ Users can create a Transaction for an Account
+      ☐ Users can view the total balance of all Accounts
+      ☐ Users can view the total balance of all Accounts by type, category, and frequency
+
+    Transaction:
+      ☐ Users can create a Transaction
+      ☐ Users can rename a Transaction
+      ☐ Users can edit a Transaction
+      ☐ Users can delete a Transaction
+      ☐ Users can view all Transactions
+      ☐ Users can view a single Transaction
+      ☐ Users can view all Transactions by Account
+      ☐ Users can designate a Transaction's frequency to be one-time, bi-weekly, monthly
+      ☐ Users can label a Transaction with a Category
+      ☐ Users can select a Transaction's type to be +/- (income or expense)
+
+    Category:
+      ☐ Users can create a Category
+      ☐ Users can rename a Category
+      ☐ Users can delete a Category
+      ☐ Users can view all Categories
+      ☐ Users can view the Transactions of a single Category
+
+  Complex Features:
+    Visualization:
+      ☐ Users can view a pie chart of their total balance by Account
+      ☐ Users can view a pie chart of their total balance by Transaction
+      ☐ Users can view a pie chart of their net balance by from income and expenses for entire month.
+
+    Data Storage:
+      ☐ Users can save their monthly data to a local file
+      ☐ Users can load their monthly data from a local file
+
+    Notifications:
+      ☐ Users need to be notified when a new progressive app update is available
+      ☐ Users need to visit the website to download the new update
+
+    
+
+
+    
