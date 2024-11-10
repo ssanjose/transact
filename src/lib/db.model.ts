@@ -1,4 +1,4 @@
-import Dexie from "dexie";
+import Dexie, { EntityTable } from "dexie";
 
 interface Account {
   id: number;
@@ -28,3 +28,20 @@ interface AppliedTransaction {
   transactionId: number; // foreign key
   accountId: number; // foreign key
 }
+
+const db = new Dexie("FinanceTrackerApp") as Dexie & {
+  accounts: EntityTable<Account, 'id'>;
+  transactions: EntityTable<Transaction, 'id'>;
+  categories: EntityTable<Category, 'id'>;
+  appliedTransactions: EntityTable<AppliedTransaction, 'id'>;
+};
+
+db.version(1).stores({
+  accounts: "++id, name, balance",
+  transactions: "++id, name, amount, date, type, frequency, categoryId",
+  categories: "++id, name",
+  appliedTransactions: "++id, date, amount, transactionId, accountId",
+});
+
+export type { Account, Transaction, Category, AppliedTransaction };
+export default db;
