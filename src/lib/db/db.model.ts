@@ -3,7 +3,7 @@ import Dexie, { EntityTable } from "dexie";
 interface Account {
   id?: number;
   name: string;
-  balance: 0.00;
+  balance?: number;
 }
 
 interface Transaction {
