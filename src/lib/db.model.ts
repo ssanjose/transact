@@ -1,13 +1,13 @@
 import Dexie, { EntityTable } from "dexie";
 
 interface Account {
-  id: number;
+  id?: number;
   name: string;
   balance: number;
 }
 
 interface Transaction {
-  id: number;
+  id?: number;
   name: string;
   amount: number; // decimal
   date: Date;
@@ -17,26 +17,26 @@ interface Transaction {
 }
 
 interface Category {
-  id: number;
+  id?: number;
   name: string;
 }
 
 interface AppliedTransaction {
-  id: number;
+  id?: number;
   date: Date;
   amount: number; // amount changed
   transactionId: number; // foreign key
   accountId: number; // foreign key
 }
 
-const db = new Dexie("FinanceTrackerApp") as Dexie & {
+const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
   accounts: EntityTable<Account, 'id'>;
   transactions: EntityTable<Transaction, 'id'>;
   categories: EntityTable<Category, 'id'>;
   appliedTransactions: EntityTable<AppliedTransaction, 'id'>;
 };
 
-db.version(1).stores({
+FinanceTrackerDatabase.version(1).stores({
   accounts: "++id, name, balance",
   transactions: "++id, name, amount, date, type, frequency, categoryId",
   categories: "++id, name",
@@ -44,4 +44,4 @@ db.version(1).stores({
 });
 
 export type { Account, Transaction, Category, AppliedTransaction };
-export default db;
+export default FinanceTrackerDatabase;
