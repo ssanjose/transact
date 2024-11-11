@@ -13,7 +13,7 @@ interface Transaction {
   date: Date;
   type: 0 | 1; // 0 = expense, 1 = income
   frequency: 0 | 1 | 2 | 3; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
-  categoryId: number; // foreign key
+  categoryId?: number; // foreign key
 }
 
 interface Category {
