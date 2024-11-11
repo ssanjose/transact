@@ -1,4 +1,5 @@
 import FinanceTrackerDatabase, { Account } from '@/lib/db/db.model';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 // Create a new account
 async function createAccount(account: Account): Promise<number> {
@@ -6,13 +7,13 @@ async function createAccount(account: Account): Promise<number> {
 }
 
 // Get an account by ID
-async function getAccount(id: number): Promise<Account | undefined> {
-  return await FinanceTrackerDatabase.accounts.get(id);
+function getAccount(id: number) {
+  return useLiveQuery(async () => await FinanceTrackerDatabase.accounts.get(id), [id]);
 }
 
-// Get all accounts
-async function getAllAccounts(): Promise<Account[]> {
-  return await FinanceTrackerDatabase.accounts.toArray();
+// Get all accounts using useLiveQuery
+function getAllAccounts() {
+  return useLiveQuery(async () => await FinanceTrackerDatabase.accounts.toArray(), []);
 }
 
 // Update an account by ID
