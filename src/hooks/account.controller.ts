@@ -1,24 +1,44 @@
 import FinanceTrackerDatabase, { Account } from '@/lib/db/db.model';
 import { useLiveQuery } from 'dexie-react-hooks';
 
-// Create a new account
+/**
+ * Creates a new account.
+ *
+ * @param {Account} account - The account object to create.
+ * @returns {Promise<number>} - A promise that resolves to the ID of the created account.
+ */
 function createAccount(account: Account): Promise<number> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, async () => {
     return await FinanceTrackerDatabase.accounts.add(account) as number;
   });
 }
 
-// Get an account by ID
+/**
+ * Gets an account by ID.
+ *
+ * @param {number} id - The ID of the account to retrieve.
+ * @returns {ReturnType<typeof useLiveQuery>} - The account object wrapped in a live query.
+ */
 function getAccount(id: number) {
   return useLiveQuery(async () => await FinanceTrackerDatabase.accounts.get(id), [id]);
 }
 
-// Get all accounts using useLiveQuery
+/**
+ * Gets all accounts using useLiveQuery.
+ *
+ * @returns {ReturnType<typeof useLiveQuery>} - An array of all account objects wrapped in a live query.
+ */
 function getAllAccounts() {
   return useLiveQuery(async () => await FinanceTrackerDatabase.accounts.toArray(), []);
 }
 
-// Update an account by ID
+/**
+ * Updates an account by ID.
+ *
+ * @param {number} id - The ID of the account to update.
+ * @param {Partial<Account>} updatedAccount - The updated account object.
+ * @returns {Promise<number>} - A promise that resolves to the number of updated records.
+ */
 function updateAccount(id: number, updatedAccount: Partial<Account>): Promise<number> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, async () => {
     return await FinanceTrackerDatabase.accounts.update(id, updatedAccount);
