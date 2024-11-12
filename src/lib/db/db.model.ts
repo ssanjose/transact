@@ -1,11 +1,17 @@
 import Dexie, { EntityTable } from "dexie";
 
+/**
+ * Represents an account in the finance tracker.
+ */
 interface Account {
   id?: number;
   name: string;
   balance?: number;
 }
 
+/**
+ * Represents a transaction in the finance tracker.
+ */
 interface Transaction {
   id?: number;
   name: string;
@@ -17,11 +23,17 @@ interface Transaction {
   categoryId?: number; // foreign key
 }
 
+/**
+ * Represents a category in the finance tracker.
+ */
 interface Category {
   id?: number;
   name: string;
 }
 
+/**
+ * Represents an applied transaction in the finance tracker.
+ */
 interface AppliedTransaction {
   id?: number;
   date: Date;
