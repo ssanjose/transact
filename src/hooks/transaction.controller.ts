@@ -1,4 +1,4 @@
-import FinanceTrackerDatabase, { AppliedTransaction, Transaction } from '@/lib/db/db.model';
+import FinanceTrackerDatabase, { Transaction, AppliedTransaction } from '@/lib/db/db.model';
 import { AppliedTransactionController } from './appliedTransaction.controller';
 
 /**
@@ -73,23 +73,64 @@ function generateAppliedTransactions(transaction: Transaction): AppliedTransacti
 }
 
 /**
- * Updates a transaction and its corresponding AppliedTransaction.
+ * Updates a transaction and its corresponding AppliedTransactions.
  *
  * @param {Transaction} transaction - The transaction object to update.
- * @returns {Promise<void>} - A promise that resolves when the transaction and AppliedTransaction are updated.
+ * @returns {Promise<void>} - A promise that resolves when the transaction and AppliedTransactions are updated.
  */
 function updateTransaction(transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, FinanceTrackerDatabase.appliedTransactions, async () => {
+    // Fetch the existing transaction
+    const existingTransaction = await FinanceTrackerDatabase.transactions.get(transaction.id);
+
+    // Update the transaction
     await FinanceTrackerDatabase.transactions.update(transaction.id, transaction);
-    await AppliedTransactionController.updateAppliedTransaction(transaction);
+
+    // If datetime or frequency has changed, update the AppliedTransactions
+    if (existingTransaction?.date !== transaction.date || existingTransaction?.frequency !== transaction.frequency) {
+      // Fetch existing AppliedTransactions
+      const existingAppliedTransactions = await FinanceTrackerDatabase.appliedTransactions.where({ transactionId: transaction.id }).toArray();
+
+      // Generate new AppliedTransactions
+      const newAppliedTransactions = generateAppliedTransactions(transaction);
+
+      // Delete AppliedTransactions that are not in the new list
+      for (const existingAppliedTransaction of existingAppliedTransactions) {
+        const match = newAppliedTransactions.find(newAppliedTransaction =>
+          newAppliedTransaction.date.toDateString() === existingAppliedTransaction.date.toDateString()
+        );
+        if (!match) {
+          await FinanceTrackerDatabase.appliedTransactions.delete(existingAppliedTransaction.id!);
+        }
+      }
+
+      // Add or update AppliedTransactions
+      for (const newAppliedTransaction of newAppliedTransactions) {
+        const match = existingAppliedTransactions.find(existingAppliedTransaction =>
+          existingAppliedTransaction.date.toDateString() === newAppliedTransaction.date.toDateString()
+        );
+        if (match) {
+          // Update the time part of the existing AppliedTransaction
+          await FinanceTrackerDatabase.appliedTransactions.update(match.id!, {
+            ...match,
+            date: newAppliedTransaction.date,
+          });
+        } else {
+          await AppliedTransactionController.createAppliedTransaction(newAppliedTransaction);
+        }
+      }
+    } else {
+      // Update existing AppliedTransactions
+      await AppliedTransactionController.updateAppliedTransaction(transaction);
+    }
   });
 }
 
 /**
- * Deletes a transaction and its corresponding AppliedTransaction.
+ * Deletes a transaction and its corresponding AppliedTransactions.
  *
  * @param {number} transactionId - The ID of the transaction to delete.
- * @returns {Promise<void>} - A promise that resolves when the transaction and AppliedTransaction are deleted.
+ * @returns {Promise<void>} - A promise that resolves when the transaction and AppliedTransactions are deleted.
  */
 function deleteTransaction(transactionId: number): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, FinanceTrackerDatabase.appliedTransactions, async () => {
