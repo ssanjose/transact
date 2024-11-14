@@ -1,16 +1,46 @@
 # Finance Tracker App
 
-The Expense Tracker App is an application designed to help users track their expenses, income, and overall financial status. It provides a convenient way to categorize and visualize financial data through graphs.
+The Finance Tracker App is an application designed to help users track their expenses, income, and overall financial status. It provides a convenient way to categorize and visualize financial data through graphs.
 
 With this app, users can record their expenses and income, assigning them to specific categories such as groceries, transportation, entertainment, or any other custom categories they define. By categorizing their transactions, users can gain insights into their spending habits and identify areas where they can potentially save money.
 
 In addition to tracking individual expenses and income, the app also calculates the net amount, which represents the difference between the total income and total expenses. This allows users to see their overall financial status at a glance.
 
-One of the key features of the Expense Tracker App is its ability to generate graphs and charts based on the recorded data. These visual representations provide a clear overview of the user's financial situation over time. Users can choose different types of graphs, such as bar charts or pie charts, to visualize their expenses and income in a way that is easy to understand.
+One of the key features of the Finance Tracker App is its ability to generate graphs and charts based on the recorded data. These visual representations provide a clear overview of the user's financial situation over time. Users can choose different types of graphs, such as bar charts or pie charts, to visualize their expenses and income in a way that is easy to understand.
 
-By using the Expense Tracker App, users can gain better control over their finances, make informed decisions about their spending, and work towards achieving their financial goals.
+By using the Finance Tracker App, users can gain better control over their finances, make informed decisions about their spending, and work towards achieving their financial goals.
 
-The Expense Tracker App lists your income and expenses and posts them as a graph and informatics.
+The Finance Tracker App lists your income and expenses and posts them as a graph and informatics.
+
+## Directory Structure for Important Files
+finance-tracker-app/
+├── docs/
+│   ├── design/
+│   │   └── software_design.md
+│   ├── architecture/
+│   │   └── system_architecture.md
+│   ├── conventions/
+│   │   └── coding_conventions.md
+│   └── style/
+│       └── style_guide.md
+├── ERD_and_Implementation/
+│   ├── Plan.erd
+│   ├── Requirements.todo
+│   └── Typing&Validation.todo
+├── src/
+│   ├── app/
+│   ├── hooks/
+│   ├── lib/
+│   └── ...
+├── README.md
+└── ...
+
+## Documentation
+
+- [Software Design](./docs/design/software_design.md)
+- [System Architecture](./docs/architecture/system_architecture.md)
+- [Coding Conventions](./docs/conventions/coding_conventions.md)
+- [Style Guide](./docs/style/style_guide.md)
 
 ## Core Process
 ### Account, Input, Output
@@ -24,8 +54,6 @@ Takes in amounts labeled as either income, savings, or expense, along with its f
 **Compile** income, savings, and expense. Turn income, saving, and expense account into a csv and reset 'Income' and 'Expense' accounts. 'Saving' accounts will remain for the next iteration.
 
 Charts income and usage, either arranged by name or category.
-
-Displays net income/loss. Ask if net income can be saved or used in the future? Yes - save to an available saving type account, No - let it sit on Account.
 
 ## Getting Started
 First, run the development server:
@@ -49,11 +77,8 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
-
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
