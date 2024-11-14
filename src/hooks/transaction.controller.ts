@@ -82,43 +82,50 @@ function updateTransaction(transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, FinanceTrackerDatabase.appliedTransactions, async () => {
     // Fetch the existing transaction
     const existingTransaction = await FinanceTrackerDatabase.transactions.get(transaction.id);
+    if (!existingTransaction) {
+      throw new Error(`Transaction with ID ${transaction.id} not found`);
+    }
 
     // Update the transaction
     await FinanceTrackerDatabase.transactions.update(transaction.id, transaction);
 
     // If datetime or frequency has changed, update the AppliedTransactions
-    if (existingTransaction?.date !== transaction.date || existingTransaction?.frequency !== transaction.frequency) {
+    if (existingTransaction.date !== transaction.date || existingTransaction.frequency !== transaction.frequency) {
       // Fetch existing AppliedTransactions
       const existingAppliedTransactions = await FinanceTrackerDatabase.appliedTransactions.where({ transactionId: transaction.id }).toArray();
 
       // Generate new AppliedTransactions
       const newAppliedTransactions = generateAppliedTransactions(transaction);
 
-      // Delete AppliedTransactions that are not in the new list
-      for (const existingAppliedTransaction of existingAppliedTransactions) {
-        const match = newAppliedTransactions.find(newAppliedTransaction =>
-          newAppliedTransaction.date.toDateString() === existingAppliedTransaction.date.toDateString()
-        );
-        if (!match) {
-          await FinanceTrackerDatabase.appliedTransactions.delete(existingAppliedTransaction.id!);
+      // Create a Map for faster lookup
+      const existingAppliedTransactionsMap = new Map(existingAppliedTransactions.map(at => [at.date.toDateString(), at]));
+
+      // Prepare batch operations
+      const deleteOperations = [];
+      const updateOperations = [];
+      const createOperations = [];
+
+      for (const newAppliedTransaction of newAppliedTransactions) {
+        const match = existingAppliedTransactionsMap.get(newAppliedTransaction.date.toDateString());
+        if (match) {
+          // Update the time part of the existing AppliedTransaction
+          updateOperations.push(FinanceTrackerDatabase.appliedTransactions.update(match.id!, {
+            ...match,
+            date: newAppliedTransaction.date,
+          }));
+          existingAppliedTransactionsMap.delete(newAppliedTransaction.date.toDateString());
+        } else {
+          createOperations.push(AppliedTransactionController.createAppliedTransaction(newAppliedTransaction));
         }
       }
 
-      // Add or update AppliedTransactions
-      for (const newAppliedTransaction of newAppliedTransactions) {
-        const match = existingAppliedTransactions.find(existingAppliedTransaction =>
-          existingAppliedTransaction.date.toDateString() === newAppliedTransaction.date.toDateString()
-        );
-        if (match) {
-          // Update the time part of the existing AppliedTransaction
-          await FinanceTrackerDatabase.appliedTransactions.update(match.id!, {
-            ...match,
-            date: newAppliedTransaction.date,
-          });
-        } else {
-          await AppliedTransactionController.createAppliedTransaction(newAppliedTransaction);
-        }
+      // Delete remaining unmatched existing AppliedTransactions
+      for (const remainingTransaction of existingAppliedTransactionsMap.values()) {
+        deleteOperations.push(FinanceTrackerDatabase.appliedTransactions.delete(remainingTransaction.id!));
       }
+
+      // Execute batch operations in parallel
+      await Promise.all([...deleteOperations, ...updateOperations, ...createOperations]);
     } else {
       // Update existing AppliedTransactions
       await AppliedTransactionController.updateAppliedTransaction(transaction);
