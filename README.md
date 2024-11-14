@@ -13,6 +13,7 @@ By using the Finance Tracker App, users can gain better control over their finan
 The Finance Tracker App lists your income and expenses and posts them as a graph and informatics.
 
 ## Directory Structure for Important Files
+```
 finance-tracker-app/
 ├── docs/
 │   ├── design/
@@ -34,6 +35,7 @@ finance-tracker-app/
 │   └── ...
 ├── README.md
 └── ...
+```
 
 ## Documentation
 
