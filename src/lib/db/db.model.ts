@@ -1,5 +1,8 @@
 import Dexie, { EntityTable } from "dexie";
 
+type Frequency = 0 | 1 | 2 | 3; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
+type TransactionType = 0 | 1; // 0 = expense, 1 = income
+
 /**
  * Represents an account in the finance tracker.
  */
@@ -17,8 +20,8 @@ interface Transaction {
   name: string;
   amount: number; // decimal
   date: Date;
-  type: 0 | 1; // 0 = expense, 1 = income
-  frequency: 0 | 1 | 2 | 3; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
+  type: TransactionType; // 0 = expense, 1 = income
+  frequency: Frequency; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
   accountId: number; // foreign key
   categoryId?: number; // foreign key
 }
@@ -38,8 +41,9 @@ interface AppliedTransaction {
   id?: number;
   date: Date;
   amount: number; // amount changed
-  type: 0 | 1; // 0 = expense, 1 = income
+  type: TransactionType; // 0 = expense, 1 = income
   transactionId: number; // foreign key
+  isManuallyUpdated: boolean; // New flag to indicate manual updates
 }
 
 const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
@@ -53,7 +57,7 @@ FinanceTrackerDatabase.version(1).stores({
   accounts: "++id, name, balance",
   transactions: "++id, name, amount, date, type, frequency, accountId, categoryId",
   categories: "++id, name",
-  appliedTransactions: "++id, date, amount, type, transactionId",
+  appliedTransactions: "++id, date, amount, type, transactionId, isManuallyUpdated",
 });
 
 export type { Account, Transaction, Category, AppliedTransaction };
