@@ -1,6 +1,8 @@
 import FinanceTrackerDatabase, { Transaction, AppliedTransaction } from '@/lib/db/db.model';
 import { AppliedTransactionController } from './appliedTransaction.controller';
 
+type PromptCallback = (outOfBoundAppliedTransactions: AppliedTransaction[]) => Promise<'preserve' | 'delete'>;
+
 /**
  * Creates a transaction and its corresponding AppliedTransactions based on frequency and datetime.
  *
@@ -78,7 +80,7 @@ function generateAppliedTransactions(transaction: Transaction): AppliedTransacti
  * @param {Transaction} transaction - The transaction object to update.
  * @returns {Promise<void>} - A promise that resolves when the transaction and AppliedTransactions are updated.
  */
-function updateTransaction(transaction: Transaction): Promise<void> {
+function updateTransaction(transaction: Transaction, promptCallback: PromptCallback): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, FinanceTrackerDatabase.appliedTransactions, async () => {
     // Fetch the existing transaction
     const existingTransaction = await FinanceTrackerDatabase.transactions.get(transaction.id);
@@ -86,10 +88,7 @@ function updateTransaction(transaction: Transaction): Promise<void> {
       throw new Error(`Transaction with ID ${transaction.id} not found`);
     }
 
-    // Update the transaction
-    await FinanceTrackerDatabase.transactions.update(transaction.id, transaction);
-
-    // If datetime or frequency has changed, update the AppliedTransactions
+    // If datetime or frequency has changed, identify out-of-bound AppliedTransactions
     if (existingTransaction.date !== transaction.date || existingTransaction.frequency !== transaction.frequency) {
       // Fetch existing AppliedTransactions
       const existingAppliedTransactions = await FinanceTrackerDatabase.appliedTransactions.where({ transactionId: transaction.id }).toArray();
@@ -97,40 +96,72 @@ function updateTransaction(transaction: Transaction): Promise<void> {
       // Generate new AppliedTransactions
       const newAppliedTransactions = generateAppliedTransactions(transaction);
 
-      // Create a Map for faster lookup
-      const existingAppliedTransactionsMap = new Map(existingAppliedTransactions.map(at => [at.date.toDateString(), at]));
+      // Identify out-of-bound AppliedTransactions
+      const outOfBoundAppliedTransactions = identifyOutOfBoundAppliedTransactions(existingAppliedTransactions, newAppliedTransactions);
 
-      // Prepare batch operations
-      const deleteOperations = [];
-      const updateOperations = [];
-      const createOperations = [];
+      // If there are out-of-bound AppliedTransactions, prompt the user
+      if (outOfBoundAppliedTransactions.length > 0) {
+        const userDecision = await promptCallback(outOfBoundAppliedTransactions);
 
-      for (const newAppliedTransaction of newAppliedTransactions) {
-        const match = existingAppliedTransactionsMap.get(newAppliedTransaction.date.toDateString());
-        if (match) {
-          // Update the time part of the existing AppliedTransaction
-          updateOperations.push(FinanceTrackerDatabase.appliedTransactions.update(match.id!, {
-            ...match,
-            date: newAppliedTransaction.date,
-          }));
-          existingAppliedTransactionsMap.delete(newAppliedTransaction.date.toDateString());
-        } else {
-          createOperations.push(AppliedTransactionController.createAppliedTransaction(newAppliedTransaction));
+        if (userDecision === 'preserve') {
+          await handlePreserveDecision(outOfBoundAppliedTransactions, transaction);
+        } else if (userDecision === 'delete') {
+          await deleteOutOfBoundAppliedTransactions(outOfBoundAppliedTransactions);
         }
       }
 
-      // Delete remaining unmatched existing AppliedTransactions
-      for (const remainingTransaction of existingAppliedTransactionsMap.values()) {
-        deleteOperations.push(FinanceTrackerDatabase.appliedTransactions.delete(remainingTransaction.id!));
-      }
-
-      // Execute batch operations in parallel
-      await Promise.all([...deleteOperations, ...updateOperations, ...createOperations]);
+      // Proceed with updating the transaction and its AppliedTransactions
+      await updateTransactionAndAppliedTransactions(transaction, existingAppliedTransactions, newAppliedTransactions);
     } else {
+      // Update the transaction
+      await FinanceTrackerDatabase.transactions.update(transaction.id, transaction);
       // Update existing AppliedTransactions
       await AppliedTransactionController.updateAppliedTransaction(transaction);
     }
   });
+}
+
+/**
+ * Updates the transaction and its corresponding AppliedTransactions.
+ *
+ * @param {Transaction} transaction - The updated transaction object.
+ * @param {AppliedTransaction[]} existingAppliedTransactions - The existing AppliedTransactions.
+ * @param {AppliedTransaction[]} newAppliedTransactions - The new AppliedTransactions.
+ * @returns {Promise<void>} - A promise that resolves when the transaction and AppliedTransactions are updated.
+ */
+async function updateTransactionAndAppliedTransactions(transaction: Transaction, existingAppliedTransactions: AppliedTransaction[], newAppliedTransactions: AppliedTransaction[]): Promise<void> {
+  // Create a Map for faster lookup
+  const existingAppliedTransactionsMap = new Map(existingAppliedTransactions.map(at => [at.date.toDateString(), at]));
+
+  // Prepare batch operations
+  const deleteOperations = [];
+  const updateOperations = [];
+  const createOperations = [];
+
+  for (const newAppliedTransaction of newAppliedTransactions) {
+    const match = existingAppliedTransactionsMap.get(newAppliedTransaction.date.toDateString());
+    if (match) {
+      // Only update if there are changes and the AppliedTransaction is not manually updated
+      if (!match.isManuallyUpdated && (match.date.getTime() !== newAppliedTransaction.date.getTime() || match.amount !== newAppliedTransaction.amount)) {
+        updateOperations.push(FinanceTrackerDatabase.appliedTransactions.update(match.id!, {
+          ...match,
+          date: newAppliedTransaction.date,
+          amount: newAppliedTransaction.amount,
+        }));
+      }
+      existingAppliedTransactionsMap.delete(newAppliedTransaction.date.toDateString());
+    } else {
+      createOperations.push(AppliedTransactionController.createAppliedTransaction(newAppliedTransaction));
+    }
+  }
+
+  // Delete remaining unmatched existing AppliedTransactions
+  for (const remainingTransaction of existingAppliedTransactionsMap.values()) {
+    deleteOperations.push(FinanceTrackerDatabase.appliedTransactions.delete(remainingTransaction.id!));
+  }
+
+  // Execute batch operations in parallel
+  await Promise.all([...deleteOperations, ...updateOperations, ...createOperations]);
 }
 
 /**
@@ -154,6 +185,70 @@ function deleteTransaction(transactionId: number): Promise<void> {
  */
 function getTransactionsByAccount(accountId: number): Promise<Transaction[]> {
   return FinanceTrackerDatabase.transactions.where({ accountId }).toArray();
+}
+
+/**
+ * Handles the 'preserve' decision by creating new one-time transactions for out-of-bound AppliedTransactions.
+ *
+ * @param {AppliedTransaction[]} outOfBoundAppliedTransactions - The array of out-of-bound AppliedTransactions.
+ * @param {Transaction} existingTransaction - The existing transaction object.
+ * @returns {Promise<void>} - A promise that resolves when the operations are complete.
+ */
+async function handlePreserveDecision(outOfBoundAppliedTransactions: AppliedTransaction[], existingTransaction: Transaction): Promise<void> {
+  for (const outOfBoundAppliedTransaction of outOfBoundAppliedTransactions) {
+    const newTransaction: Transaction = {
+      ...existingTransaction,
+      id: undefined,
+      frequency: 0, // One-time frequency
+      date: outOfBoundAppliedTransaction.date,
+    };
+    const newTransactionId = await FinanceTrackerDatabase.transactions.add(newTransaction);
+    if (newTransactionId !== undefined) {
+      outOfBoundAppliedTransaction.transactionId = newTransactionId;
+    } else {
+      throw new Error('Failed to create new transaction');
+    }
+    await FinanceTrackerDatabase.appliedTransactions.update(outOfBoundAppliedTransaction.id!, outOfBoundAppliedTransaction);
+  }
+}
+
+/**
+ * Deletes out-of-bound AppliedTransactions.
+ *
+ * @param {AppliedTransaction[]} appliedTransactions - The array of out-of-bound AppliedTransactions to delete.
+ * @returns {Promise<void>} - A promise that resolves when the AppliedTransactions are deleted.
+ */
+async function deleteOutOfBoundAppliedTransactions(appliedTransactions: AppliedTransaction[]): Promise<void> {
+  for (const appliedTransaction of appliedTransactions) {
+    await FinanceTrackerDatabase.appliedTransactions.delete(appliedTransaction.id!);
+  }
+}
+
+/**
+ * Identifies out-of-bound AppliedTransactions based on existing and new AppliedTransactions.
+ *
+ * @param {AppliedTransaction[]} existingAppliedTransactions - The existing AppliedTransactions.
+ * @param {AppliedTransaction[]} newAppliedTransactions - The new AppliedTransactions.
+ * @returns {AppliedTransaction[]} - An array of out-of-bound AppliedTransactions.
+ */
+function identifyOutOfBoundAppliedTransactions(existingAppliedTransactions: AppliedTransaction[], newAppliedTransactions: AppliedTransaction[]): AppliedTransaction[] {
+  const existingAppliedTransactionsMap = new Map(existingAppliedTransactions.map(at => [at.date.toDateString(), at]));
+  const outOfBoundAppliedTransactions: AppliedTransaction[] = [];
+
+  for (const newAppliedTransaction of newAppliedTransactions) {
+    const match = existingAppliedTransactionsMap.get(newAppliedTransaction.date.toDateString());
+    if (match) {
+      existingAppliedTransactionsMap.delete(newAppliedTransaction.date.toDateString());
+    }
+  }
+
+  for (const remainingTransaction of existingAppliedTransactionsMap.values()) {
+    if (remainingTransaction.isManuallyUpdated) {
+      outOfBoundAppliedTransactions.push(remainingTransaction);
+    }
+  }
+
+  return outOfBoundAppliedTransactions;
 }
 
 export const TransactionController = {
