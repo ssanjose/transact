@@ -1,94 +1,75 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import { useState } from "react";
+import { AccountController } from "../hooks/account.controller";
 
 export default function Home() {
+  const accounts = AccountController.getAllAccounts();
+  const [accountName, setAccountName] = useState("");
+  const [accountBalance, setAccountBalance] = useState("0.00");
+  const [showForm, setShowForm] = useState(false);
+
+  const handleCreateAccount = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const newAccount = {
+      name: accountName,
+      balance: (Math.round(parseFloat(accountBalance) * 100) / 100),
+    };
+    await AccountController.createAccount(newAccount);
+    setAccountName("");
+    setAccountBalance("0.00");
+    setShowForm(false); // Hide the form after creating an account
+  };
+
+  const toggleFormVisibility = () => {
+    setShowForm(!showForm);
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
+    <main>
+      <div>
+        <h1>Finance Tracker</h1>
         <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
+          Welcome to the Finance Tracker app! This app will help you keep track of your finances.
         </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+      </div>
+
+      <ul>
+        {accounts === undefined ? (
+          <li>Loading...</li>
+        ) : accounts.length === 0 ? (
+          <li>No Account Created</li>
+        ) : (
+          accounts.map((account) => (
+            <li key={account.id}>
+              {account.name}: ${account.balance !== undefined ? account.balance.toFixed(2) : 0.0}
+            </li>
+          ))
+        )}
+      </ul>
+
+      <div>
+        <button onClick={toggleFormVisibility}>
+          {showForm ? "Cancel" : "Open an Account"}
+        </button>
+        {showForm && (
+          <form onSubmit={handleCreateAccount}>
+            <input
+              type="text"
+              placeholder="Account Name"
+              value={accountName}
+              onChange={(e) => setAccountName(e.target.value)}
+              required
             />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+            <input
+              type="number"
+              placeholder="Account Balance"
+              value={accountBalance}
+              onChange={(e) => setAccountBalance(e.target.value)}
+            />
+            <button type="submit">Create Account</button>
+          </form>
+        )}
       </div>
     </main>
   );
