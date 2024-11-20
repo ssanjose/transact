@@ -28,5 +28,7 @@ Component Directory: Organize components in a components directory. Group relate
 
 ## Accessibility:
 - **ARIA Attributes**: Use ARIA attributes to improve accessibility.
-- **Semantic HTML**: Use semantic HTML elements (e.g.,`<button>`, `<form>`, `<main>`).
+- **Semantic HTML**: Use semantic HTML elements (e.g., `<button>`, `<form>`, `<main>`).
 
+## Prototyping:
+- **Tool**: Decided to use Balsamiq for wireframes.
