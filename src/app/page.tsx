@@ -1,76 +1,61 @@
 'use client';
 
-import { useState } from "react";
-import { AccountController } from "../hooks/account.controller";
+// pages/index.tsx
+import React, { useState } from 'react';
+import AccountForm from '@/components/account/AccountForm';
+import { AccountController } from '@/hooks/account.controller';
+import { formatCurrency } from '../lib/format/formatCurrency';
 
-export default function Home() {
-  const accounts = AccountController.getAllAccounts();
-  const [accountName, setAccountName] = useState("");
-  const [accountBalance, setAccountBalance] = useState("0.00");
+const Home = () => {
   const [showForm, setShowForm] = useState(false);
 
-  const handleCreateAccount = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const newAccount = {
-      name: accountName,
-      balance: (Math.round(parseFloat(accountBalance) * 100) / 100),
-    };
-    await AccountController.createAccount(newAccount);
-    setAccountName("");
-    setAccountBalance("0.00");
-    setShowForm(false); // Hide the form after creating an account
-  };
+  // Use the getAllAccounts function which already uses useLiveQuery
+  const accounts = AccountController.getAllAccounts();
 
   const toggleFormVisibility = () => {
     setShowForm(!showForm);
+  };
+
+  const handleCreateAccount = async () => {
+    setShowForm(false);
   };
 
   return (
     <main>
       <div>
         <h1>Finance Tracker</h1>
-        <p>
-          Welcome to the Finance Tracker app! This app will help you keep track of your finances.
-        </p>
+        <p>Welcome to the Finance Tracker app! This app will help you keep track of your finances.</p>
       </div>
 
-      <ul>
-        {accounts === undefined ? (
-          <li>Loading...</li>
-        ) : accounts.length === 0 ? (
-          <li>No Account Created</li>
-        ) : (
-          accounts.map((account) => (
-            <li key={account.id}>
-              {account.name}: ${account.balance !== undefined ? account.balance.toFixed(2) : 0.0}
-            </li>
-          ))
-        )}
-      </ul>
-
       <div>
-        <button onClick={toggleFormVisibility}>
-          {showForm ? "Cancel" : "Open an Account"}
-        </button>
-        {showForm && (
-          <form onSubmit={handleCreateAccount}>
-            <input
-              type="text"
-              placeholder="Account Name"
-              value={accountName}
-              onChange={(e) => setAccountName(e.target.value)}
-              required
-            />
-            <input
-              type="number"
-              placeholder="Account Balance"
-              value={accountBalance}
-              onChange={(e) => setAccountBalance(e.target.value)}
-            />
-            <button type="submit">Create Account</button>
-          </form>
-        )}
+        <div>
+          <h1> Accounts ({accounts?.length}) </h1>
+        </div>
+        <div>
+          <ul>
+            {accounts?.length === 0 ? (
+              <li>No accounts available</li>
+            ) : (
+              accounts?.map((account) => (
+                <li key={account.id}>
+                  {account.name}: {formatCurrency(account.balance ?? 0.00)}</li>
+              ))
+            )}
+          </ul>
+        </div>
+        <div>
+          Total: {formatCurrency(accounts?.reduce((acc, account) => acc + (account.balance ?? 0), 0) ?? 0)}
+        </div>
+        <div>
+          <button onClick={toggleFormVisibility}>
+            {showForm ? 'Hide Form' : 'Open account'}
+          </button>
+
+          {showForm && <AccountForm onCreate={handleCreateAccount} />}
+        </div>
       </div>
     </main>
   );
-}
+};
+
+export default Home;
