@@ -4,7 +4,7 @@
 This document describes the system architecture of the Finance Tracker App.
 
 ## Components
-- Frontend: React with Next.js
+- Frontend: React with Next.js, shadcn/ui
 - Backend: Dexie.js for IndexedDB
 - Database: IndexedDB
 
