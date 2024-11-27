@@ -1,3 +1,4 @@
 {
-  "inlineChat.mode": "preview"
+  "inlineChat.mode": "preview",
+  "editor.guides.bracketPairs": true
 }
