@@ -17,19 +17,27 @@ function createAccount(account: Account): Promise<number> {
  * Gets an account by ID.
  *
  * @param {number} id - The ID of the account to retrieve.
- * @returns {ReturnType<typeof useLiveQuery>} - The account object wrapped in a live query.
+ * @returns {Promise<Account | undefined>} - A promise that resolves to the account object or undefined if not found.
  */
 function getAccount(id: number) {
-  return useLiveQuery(async () => await FinanceTrackerDatabase.accounts.get(id), [id]);
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.accounts, async () => {
+    return await FinanceTrackerDatabase.accounts.get(id);
+  });
 }
 
 /**
- * Gets all accounts using useLiveQuery.
+ * Gets all accounts.
  *
- * @returns {ReturnType<typeof useLiveQuery>} - An array of all account objects wrapped in a live query.
+ * @returns {Promise<Account[]>} - A promise that resolves to an array of all account objects.
  */
 function getAllAccounts() {
-  return useLiveQuery(async () => await FinanceTrackerDatabase.accounts.toArray(), []);
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.accounts, async () => {
+    let accounts = await FinanceTrackerDatabase.accounts.toArray();
+    if (!accounts) {
+      accounts = [];
+    }
+    return accounts;
+  });
 }
 
 /**
