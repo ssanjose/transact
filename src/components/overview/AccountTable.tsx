@@ -40,14 +40,22 @@ const AccountTable = () => {
             <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00)}</TableCell>
           </TableRow>
         ))}
+        {accounts.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={2} className="text-center">No accounts found</TableCell>
+          </TableRow>
+        )}
       </TableBody>
       <TableFooter>
-        <TableRow>
-          <TableCell>
-            Total:
-          </TableCell>
-          <TableCell className="text-right"> {formatCurrency(accounts?.reduce((acc, account) => acc + (account.balance ?? 0), 0) ?? 0)} </TableCell>
-        </TableRow>
+        {accounts.length === 0 ?
+          null :
+          <TableRow>
+            <TableCell>
+              Total:
+            </TableCell>
+            <TableCell className="text-right"> {formatCurrency(accounts?.reduce((acc, account) => acc + (account.balance ?? 0), 0) ?? 0)} </TableCell>
+          </TableRow>
+        }
       </TableFooter>
     </Table>
   )
