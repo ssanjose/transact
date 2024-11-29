@@ -26,7 +26,7 @@ const AccountList = () => {
   return (
     <Accordion type="single" collapsible className="flex flex-col w-full gap-2" defaultValue="item-1">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Accounts</AccordionTrigger>
+        <AccordionTrigger className="border-b">Accounts</AccordionTrigger>
         <AccordionContent>
           <AccountTable />
         </AccordionContent>

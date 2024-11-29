@@ -13,6 +13,9 @@ import { Account } from '../../lib/db/db.model';
 import { Skeleton } from '../ui/skeleton';
 import { formatCurrency } from '../../lib/format/formatCurrency';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { buttonVariants } from '../ui/button';
+import Link from 'next/link';
+import { SquarePen } from 'lucide-react';
 
 const AccountTable = () => {
   const accounts = useLiveQuery(() => AccountController.getAllAccounts());
@@ -35,9 +38,18 @@ const AccountTable = () => {
     <Table>
       <TableBody>
         {accounts?.map((account: Account) => (
-          <TableRow key={account.id}>
+          <TableRow
+            key={account.id}
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => window.location.href = `/transaction/${account.id}`}
+          >
             <TableCell>{account.name}</TableCell>
             <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00)}</TableCell>
+            <TableCell className="w-1/6 text-right">
+              <Link className={buttonVariants({ variant: "link" })} href={`/transaction/${account.id}`} onClick={(e) => e.stopPropagation()}>
+                <SquarePen />
+              </Link>
+            </TableCell>
           </TableRow>
         ))}
         {accounts.length === 0 && (
@@ -54,6 +66,7 @@ const AccountTable = () => {
               Total:
             </TableCell>
             <TableCell className="text-right"> {formatCurrency(accounts?.reduce((acc, account) => acc + (account.balance ?? 0), 0) ?? 0)} </TableCell>
+            <TableCell />
           </TableRow>
         }
       </TableFooter>
