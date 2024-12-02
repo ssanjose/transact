@@ -11,32 +11,33 @@ import AccountForm from '@/components/account/AccountForm';
 import { Button } from '../ui/button';
 import { CirclePlus } from 'lucide-react';
 import AccountTable from './AccountTable';
+import { DrawerDialog } from '../shared/ResponsiveDrawerDialog';
 
 const AccountList = () => {
-  const [showForm, setShowForm] = useState(false);
-
-  const toggleFormVisibility = () => {
-    setShowForm(!showForm);
-  };
-
-  const handleCreateAccount = async () => {
-    setShowForm(false);
-  };
 
   return (
-    <Accordion type="single" collapsible className="flex flex-col w-full gap-2" defaultValue="item-1">
-      <AccordionItem value="item-1">
+    <Accordion type="single" collapsible className="flex flex-col w-full gap-2 max-w-xl border rounded p-4" defaultValue="item-1">
+      <AccordionItem value="item-1" className="border-none">
         <AccordionTrigger className="border-b">Accounts</AccordionTrigger>
         <AccordionContent>
           <AccountTable />
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2" className="w-fit border-none">
-        <Button variant="link" size="icon" className="p-none w-min" onClick={toggleFormVisibility}>
-          <span>{showForm ? 'Hide Form' : 'Open account'}</span>
-          <CirclePlus />
-        </Button>
-        {showForm && <AccountForm onCreate={handleCreateAccount} />}
+
+        <DrawerDialog
+          mobileContent={<AccountForm className="px-4" />}
+          triggerButton={
+            <Button variant="link" size="icon" className="p-none w-min">
+              <span>Open account</span>
+              <CirclePlus />
+            </Button>
+          }
+          title="Account"
+          description="Create a new account"
+        >
+          <AccountForm />
+        </DrawerDialog>
       </AccordionItem>
     </Accordion>
   )

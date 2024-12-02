@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { AccountController } from '@/hooks/account.controller';
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
-const AccountForm = ({ onCreate }: { onCreate: () => void }) => {
+const AccountForm = ({ className }: React.ComponentProps<"form">) => {
   const [accountName, setAccountName] = useState('');
   const [accountBalance, setAccountBalance] = useState('0.00');
 
@@ -14,11 +16,10 @@ const AccountForm = ({ onCreate }: { onCreate: () => void }) => {
     await AccountController.createAccount(newAccount);
     setAccountName('');
     setAccountBalance('0.00');
-    onCreate();
   };
 
   return (
-    <form onSubmit={handleCreateAccount}>
+    <form className={cn("grid items-start gap-4", className)} onSubmit={handleCreateAccount}>
       <input
         type="text"
         value={accountName}
@@ -31,7 +32,7 @@ const AccountForm = ({ onCreate }: { onCreate: () => void }) => {
         onChange={(e) => setAccountBalance(e.target.value)}
         placeholder="Account Balance"
       />
-      <button type="submit">Create Account</button>
+      <Button type="submit">Create Account</Button>
     </form>
   );
 };
