@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -19,19 +19,8 @@ import { SquarePen } from 'lucide-react';
 
 const AccountTable = () => {
   const accounts = useLiveQuery(() => AccountController.getAllAccounts());
-
   if (!accounts || accounts === undefined) {
-    return (
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">
-              <Skeleton className="h-4 w-auto" />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    )
+    return <AccountTableSkeleton />
   }
 
   return (
@@ -52,14 +41,14 @@ const AccountTable = () => {
             </TableCell>
           </TableRow>
         ))}
-        {accounts.length === 0 && (
+        {accounts?.length === 0 && (
           <TableRow>
             <TableCell colSpan={2} className="text-center">No accounts found</TableCell>
           </TableRow>
         )}
       </TableBody>
       <TableFooter>
-        {accounts.length === 0 ?
+        {accounts?.length === 0 ?
           null :
           <TableRow>
             <TableCell>
@@ -72,6 +61,20 @@ const AccountTable = () => {
       </TableFooter>
     </Table>
   )
+}
+
+export const AccountTableSkeleton = () => {
+  return (
+    <Table>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">
+            <Skeleton className="h-4 w-auto" />
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
 }
 
 export default AccountTable;
