@@ -45,6 +45,7 @@ function createAppliedTransactionObject(transaction: Transaction, date: Date): A
     amount: transaction.amount,
     date: date,
     type: transaction.type,
+    isManuallyUpdated: false,
   };
 }
 
