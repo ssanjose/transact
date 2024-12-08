@@ -26,6 +26,23 @@ function createAndApplyTransaction(transaction: Transaction): Promise<void> {
 }
 
 /**
+ * Gets a transaction by ID.
+ *
+ * @param {number} id - The ID of the transaction to retrieve.
+ * @returns {Promise<Transaction | undefined>} - A promise that resolves to the transaction object or undefined if not found.
+ */
+function getTransactionById(id: number) {
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
+    return await FinanceTrackerDatabase.transactions.get(id);
+  })
+    .catch((error) => {
+      console.error('Failed to get transaction by ID:', error);
+      throw error;
+    });
+}
+
+
+/**
  * Generates AppliedTransactions based on the transaction's frequency and datetime.
  *
  * @param {Transaction} transaction - The transaction object.
@@ -253,6 +270,7 @@ function identifyOutOfBoundAppliedTransactions(existingAppliedTransactions: Appl
 
 export const TransactionController = {
   createAndApplyTransaction,
+  getTransactionById,
   updateTransaction,
   deleteTransaction,
   getTransactionsByAccount,
