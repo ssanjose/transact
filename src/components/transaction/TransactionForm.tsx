@@ -63,7 +63,7 @@ const TransactionForm = ({ className, accountId }: TransactionFormProps) => {
           <option value="3">Monthly</option>
         </select>
       </div>
-      <Button type="submit">Create Account</Button>
+      <Button type="submit">Create Transaction</Button>
     </form>
   );
 };

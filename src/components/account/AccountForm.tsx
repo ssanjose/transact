@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AccountController } from '@/hooks/account.controller';
 import { cn } from '@/lib/utils';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 
 const AccountForm = ({ className }: React.ComponentProps<"form">) => {
   const [accountName, setAccountName] = useState('');
