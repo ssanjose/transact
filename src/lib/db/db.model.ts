@@ -1,7 +1,15 @@
 import Dexie, { EntityTable } from "dexie";
 
-export type Frequency = 0 | 1 | 2 | 3; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
-export type TransactionType = 0 | 1; // 0 = expense, 1 = income
+export enum Frequency {
+  OneTime,
+  Daily,
+  Weekly,
+  Monthly,
+} // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
+export enum TransactionType {
+  Expense,
+  Income,
+} // 0 = expense, 1 = income
 
 /**
  * Represents an account in the finance tracker.
