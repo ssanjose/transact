@@ -20,12 +20,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import { DialogProps } from "@radix-ui/react-dialog";
 
-interface BaseProps {
-  children: React.ReactNode;
-}
-
-interface ChildProps extends BaseProps {
+interface ChildProps {
+  children?: React.ReactNode;
   className?: string;
   asChild?: true;
 }
@@ -42,7 +40,7 @@ const useDialogDrawerContext = () => {
   return context
 }
 
-const DialogDrawer = ({ children, ...props }: BaseProps) => {
+const DialogDrawer = ({ children, ...props }: DialogProps) => {
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const DialogDrawer = isDesktop ? Dialog : Drawer;
 

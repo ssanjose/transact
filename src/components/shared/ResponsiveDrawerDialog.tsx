@@ -20,7 +20,8 @@ interface DrawerDialogProps {
   footer?: React.ReactNode;
   title?: string;
   description?: string;
-  className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 /**
@@ -44,7 +45,8 @@ export const DrawerDialog = ({
   footer,
   title = "Title",
   description = "Description",
-  className,
+  open,
+  onOpenChange,
 }: DrawerDialogProps) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -64,7 +66,7 @@ export const DrawerDialog = ({
   );
 
   return (
-    <DialogDrawer>
+    <DialogDrawer open={open} onOpenChange={onOpenChange}>
       <DialogDrawerTrigger asChild>
         {triggerButton || defaultTriggerButton}
       </DialogDrawerTrigger>
