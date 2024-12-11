@@ -2,39 +2,74 @@ import React, { useState } from 'react';
 import { AccountController } from '@/hooks/account.controller';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { accountSchema } from '@/lib/validation/formSchemas';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
-const AccountForm = ({ className }: React.ComponentProps<"form">) => {
-  const [accountName, setAccountName] = useState('');
-  const [accountBalance, setAccountBalance] = useState('0.00');
+const AccountForm = ({ className, onSave }: { className?: string, onSave: () => void }) => {
+  const form = useForm<z.infer<typeof accountSchema>>({
+    resolver: zodResolver(accountSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      balance: 0.00,
+    },
+  });
 
-  const handleCreateAccount = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = async (values: z.infer<typeof accountSchema>) => {
     const newAccount = {
-      name: accountName,
-      balance: (Math.round(parseFloat(accountBalance) * 100) / 100),
+      name: values.name,
+      balance: (Math.round(values.balance * 100) / 100),
     };
     await AccountController.createAccount(newAccount);
-    setAccountName('');
-    setAccountBalance('0.00');
-  };
+
+    form.reset();
+    onSave();
+  }
 
   return (
-    <form className={cn("grid items-start gap-4", className)} onSubmit={handleCreateAccount}>
-      <input
-        type="text"
-        value={accountName}
-        onChange={(e) => setAccountName(e.target.value)}
-        placeholder="Account Name"
-      />
-      <input
-        type="text"
-        value={accountBalance}
-        onChange={(e) => setAccountBalance(e.target.value)}
-        placeholder="Account Balance"
-      />
-      <Button type="submit">Create Account</Button>
-    </form>
-  );
+    <Form {...form}>
+      <form className={cn("grid items-start gap-4", className)} onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>
+                  Account Name
+                </FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Chequing" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+        <FormField
+          control={form.control}
+          name="balance"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>
+                  Account Balance
+                </FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} placeholder="0.00" {...form.register("balance")} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }} />
+        <Button type="submit">Create Account</Button>
+      </form>
+    </Form>
+  )
 };
 
-export default AccountForm;
+export { AccountForm };
