@@ -43,7 +43,7 @@ const AccountForm = ({ className, onSave }: { className?: string, onSave: () => 
                   Account Name
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Chequing" />
+                  <Input type="text" {...field} placeholder="Chequing" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

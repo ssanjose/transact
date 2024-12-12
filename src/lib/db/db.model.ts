@@ -1,15 +1,20 @@
 import Dexie, { EntityTable } from "dexie";
 
 export enum Frequency {
-  OneTime,
-  Daily,
-  Weekly,
-  Monthly,
+  OneTime = 0,
+  Daily = 1,
+  Weekly = 2,
+  Monthly = 3,
 } // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
+
+export const FrequencyOptions = Object.values(Frequency).filter((value) => typeof value === "string");
+
 export enum TransactionType {
-  Expense,
-  Income,
+  Expense = 0,
+  Income = 1,
 } // 0 = expense, 1 = income
+
+export const TransactionTypeOptions = Object.values(TransactionType);
 
 /**
  * Represents an account in the finance tracker.
