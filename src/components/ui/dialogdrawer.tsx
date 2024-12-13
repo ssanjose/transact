@@ -80,7 +80,7 @@ const DialogDrawerContent = ({ children, className, ...props }: ChildProps) => {
   const DialogDrawerContent = isDesktop ? DialogContent : DrawerContent;
 
   return (
-    <DialogDrawerContent className={className} {...props}>
+    <DialogDrawerContent onKeyDown={(e) => e.stopPropagation()} className={className} {...props}>
       {children}
     </DialogDrawerContent>
   )

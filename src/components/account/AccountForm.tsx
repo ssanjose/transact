@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AccountController } from '@/hooks/account.controller';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -8,14 +8,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { accountSchema } from '@/lib/validation/formSchemas';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Account } from '@/lib/db/db.model';
 
-const AccountForm = ({ className, onSave }: { className?: string, onSave: () => void }) => {
+const AccountForm = ({ className, onSave, existingAccount }: { className?: string, onSave: () => void, existingAccount?: Account }) => {
   const form = useForm<z.infer<typeof accountSchema>>({
     resolver: zodResolver(accountSchema),
     mode: "onChange",
     defaultValues: {
-      name: "",
-      balance: 0.00,
+      id: existingAccount?.id || undefined,
+      name: existingAccount?.name || "",
+      balance: existingAccount?.balance || 0.00,
     },
   });
 
@@ -24,7 +26,9 @@ const AccountForm = ({ className, onSave }: { className?: string, onSave: () => 
       name: values.name,
       balance: (Math.round(values.balance * 100) / 100),
     };
-    await AccountController.createAccount(newAccount);
+
+    if (existingAccount && existingAccount.id !== undefined) await AccountController.updateAccount(existingAccount.id, newAccount);
+    else await AccountController.createAccount(newAccount);
 
     form.reset();
     onSave();
@@ -53,6 +57,7 @@ const AccountForm = ({ className, onSave }: { className?: string, onSave: () => 
         <FormField
           control={form.control}
           name="balance"
+          disabled={existingAccount ? true : false}
           render={({ field }) => {
             return (
               <FormItem>
@@ -66,7 +71,7 @@ const AccountForm = ({ className, onSave }: { className?: string, onSave: () => 
               </FormItem>
             );
           }} />
-        <Button type="submit">Create Account</Button>
+        <Button type="submit">{existingAccount ? "Edit " : "Create an "}Account</Button>
       </form>
     </Form>
   )
