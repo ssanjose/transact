@@ -22,13 +22,14 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
   });
 
   const onSubmit = async (values: z.infer<typeof accountSchema>) => {
-    const newAccount = {
+    const account = {
       name: values.name,
       balance: (Math.round(values.balance * 100) / 100),
     };
 
-    if (existingAccount && existingAccount.id !== undefined) await AccountController.updateAccount(existingAccount.id, newAccount);
-    else await AccountController.createAccount(newAccount);
+    if (existingAccount && existingAccount.id !== undefined)
+      await AccountController.updateAccount(existingAccount.id, account);
+    else await AccountController.createAccount(account);
 
     form.reset();
     onSave();
@@ -57,7 +58,6 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
         <FormField
           control={form.control}
           name="balance"
-          disabled={existingAccount ? true : false}
           render={({ field }) => {
             return (
               <FormItem>
@@ -65,7 +65,7 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
                   Account Balance
                 </FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} placeholder="0.00" {...form.register("balance")} />
+                  <Input type="number" {...field} disabled={!!existingAccount} placeholder="0.00" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -70,9 +70,6 @@ function deleteAccount(id: number): Promise<void> {
     await FinanceTrackerDatabase.transactions.bulkDelete(transactions.map(transaction => transaction.id));
     await FinanceTrackerDatabase.accounts.delete(id);
   })
-    .catch(error => {
-      console.error(error);
-    });
 }
 
 export const AccountController = {
