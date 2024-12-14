@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { AccountController } from '@/hooks/account.controller';
 import { cn } from '@/lib/utils';
@@ -9,8 +11,10 @@ import { accountSchema } from '@/lib/validation/formSchemas';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Account } from '@/lib/db/db.model';
+import { useRouter } from 'next/navigation';
 
 const AccountForm = ({ className, onSave, existingAccount }: { className?: string, onSave: () => void, existingAccount?: Account }) => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof accountSchema>>({
     resolver: zodResolver(accountSchema),
     mode: "onChange",
@@ -29,7 +33,10 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
 
     if (existingAccount && existingAccount.id !== undefined)
       await AccountController.updateAccount(existingAccount.id, account);
-    else await AccountController.createAccount(account);
+    else {
+      let newAccId = await AccountController.createAccount(account);
+      router.push(`/transaction/${newAccId}`);
+    }
 
     form.reset();
     onSave();

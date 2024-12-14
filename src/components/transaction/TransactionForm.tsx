@@ -15,14 +15,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
-import { Switch } from '../ui/switch';
-import { Select, SelectContent, SelectTrigger, SelectValue } from '../ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SelectItem } from '@radix-ui/react-select';
 
 interface TransactionFormProps {
   className?: string;
-  onSave: () => void;
   accountId: number;
+  onSave: () => void;
 }
 
 const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps) => {
@@ -66,6 +66,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
               <FormControl>
                 <Input {...field} type="text" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           } />
         <FormField
@@ -77,6 +78,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
               <FormControl>
                 <Input {...field} type="number" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           } />
         <FormField

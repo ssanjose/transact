@@ -1,21 +1,18 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { Button } from '../ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
-import { AccountForm } from './AccountForm';
+import { AccountForm } from '@/components/account/AccountForm';
 import { Account } from '@/lib/db/db.model';
-import AccountDeleteDialog from './AccountDeleteDialog';
+import AccountDeleteDialog from '@/components/account/AccountDeleteDialog';
+import { useDialog } from '@/hooks/use-dialog';
 
 const AccountMenu = ({ account }: { account?: Account }) => {
-  const [accountForm, setAccountForm] = React.useState(false);
-
-  const handleAccount = () => {
-    setAccountForm(!accountForm);
-  }
+  const editAccountDialog = useDialog();
+  const createAccountDialog = useDialog();
 
   // Menu items.
   const existingAccountMenu = [
@@ -23,7 +20,7 @@ const AccountMenu = ({ account }: { account?: Account }) => {
       title: "Edit an Account",
       content:
         <DrawerDialog
-          mobileContent={< AccountForm onSave={handleAccount} existingAccount={account} />}
+          mobileContent={<AccountForm onSave={editAccountDialog.dismiss} existingAccount={account} />}
           triggerButton={
             <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" >
               <span>Edit an Account</span>
@@ -31,10 +28,9 @@ const AccountMenu = ({ account }: { account?: Account }) => {
           }
           title="Edit an Account"
           description=""
-          open={accountForm}
-          onOpenChange={setAccountForm}
+          dialog={editAccountDialog}
         >
-          <AccountForm onSave={handleAccount} existingAccount={account} />
+          <AccountForm onSave={editAccountDialog.dismiss} existingAccount={account} />
         </DrawerDialog>
       ,
     },
@@ -50,24 +46,23 @@ const AccountMenu = ({ account }: { account?: Account }) => {
       title: "Create Account",
       content:
         <DrawerDialog
-          mobileContent={< AccountForm onSave={handleAccount} />}
+          mobileContent={<AccountForm onSave={createAccountDialog.dismiss} />}
           triggerButton={
             <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" >
-              <span>Create Account</span>
+              <span>Create an Account</span>
             </Button>
           }
           title="Create an Account"
           description=""
-          open={accountForm}
-          onOpenChange={setAccountForm}
+          dialog={createAccountDialog}
         >
-          <AccountForm onSave={handleAccount} />
+          <AccountForm onSave={createAccountDialog.dismiss} />
         </DrawerDialog>
     },
   ]
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost"><EllipsisVerticalIcon className="h-9 w-9" /></Button>
       </DropdownMenuTrigger>
