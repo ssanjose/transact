@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
+import CalendarWithTime from '@/components/transaction/CalendarWithTime';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SelectItem } from '@radix-ui/react-select';
@@ -31,23 +31,23 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
     mode: "onChange",
     defaultValues: {
       name: "",
-      amount: 0.00,
+      amount: 0,
       date: new Date(),
       accountId: accountId,
       type: TransactionType.Expense,
       frequency: Frequency.OneTime,
-    }
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof transactionSchema>) => {
-    const newTransaction: Transaction = {
+    const newTransaction: Transaction = transactionSchema.parse({
       name: values.name,
       amount: (Math.round(values.amount * 100) / 100),
       date: values.date,
       accountId: values.accountId,
       type: values.type,
       frequency: GetFrequency(values.frequency),
-    };
+    });
     await TransactionController.createAndApplyTransaction(newTransaction);
 
     form.reset();
@@ -76,7 +76,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
             <FormItem className="w-full">
               <FormLabel>Amount:</FormLabel>
               <FormControl>
-                <Input {...field} type="number" />
+                <Input {...field} value={field.value} type="number" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,10 +93,10 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
+                        "w-full sm:w-fit pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground")}>
                       {field.value ? (
-                        format(field.value, "PPP")
+                        format(field.value, "PPP p")
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -104,9 +104,8 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
+                <PopoverContent className="p-0 w-fit" align="start">
+                  <CalendarWithTime
                     selected={field.value}
                     onSelect={field.onChange}
                     initialFocus
