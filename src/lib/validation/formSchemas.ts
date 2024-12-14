@@ -5,7 +5,7 @@ import { Frequency, TransactionType } from '@/lib/db/db.model';
 
 const accountSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(3, {
+  name: z.string().trim().min(3, {
     message: 'Name must be at least 3 characters long',
   }),
   balance: z.preprocess((x) => x ? Number(x) : undefined, z.number({
@@ -19,7 +19,7 @@ const accountSchema = z.object({
 
 const transactionSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(3, {
+  name: z.string().trim().min(3, {
     message: 'Name must be at least 3 characters long',
   }),
   amount: z.preprocess((x) => x ? Number(x) : undefined, z.number({
@@ -42,7 +42,7 @@ const transactionSchema = z.object({
 
 const categorySchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(3, {
+  name: z.string().trim().min(3, {
     message: 'Name must be at least 3 characters long',
   }),
 });
