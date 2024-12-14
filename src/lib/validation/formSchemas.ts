@@ -8,7 +8,7 @@ const accountSchema = z.object({
   name: z.string().trim().min(3, {
     message: 'Name must be at least 3 characters long',
   }),
-  balance: z.preprocess((x) => x ? Number(x) : undefined, z.number({
+  balance: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
     message: 'Balance must be a number',
   }).min(0, {
     message: 'Balance must be at least 0',
@@ -22,7 +22,7 @@ const transactionSchema = z.object({
   name: z.string().trim().min(3, {
     message: 'Name must be at least 3 characters long',
   }),
-  amount: z.preprocess((x) => x ? Number(x) : undefined, z.number({
+  amount: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
     message: 'Balance must be a number',
   }).min(0, {
     message: 'Balance must be at least 0',
@@ -50,7 +50,7 @@ const categorySchema = z.object({
 const appliedTransactionSchema = z.object({
   id: z.number().optional(),
   date: z.date(),
-  amount: z.preprocess((x) => x ? Number(x) : undefined, z.number({
+  amount: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
     message: 'Balance must be a number',
   }).min(0, {
     message: 'Balance must be at least 0',
