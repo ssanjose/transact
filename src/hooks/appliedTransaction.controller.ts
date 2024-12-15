@@ -49,8 +49,40 @@ function createAppliedTransactionObject(transaction: Transaction, date: Date): A
   };
 }
 
+/**
+ * Finds the upcoming transactions for the given account ID and limit.
+ *
+ * @param {number} accountId - The account ID.
+ * @param {number} limit - The maximum number of transactions to return.
+ * @returns {Promise<AppliedTransaction[]>} - A promise that resolves to an array of AppliedTransactions.
+ */
+function findUpcomingTransactions(accountId?: number, limit?: number): Promise<AppliedTransaction[]> {
+  const today = new Date();
+  const twoDaysFromNow = new Date();
+  twoDaysFromNow.setDate(today.getDate() + 2);
+
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.appliedTransactions, async () => {
+    let transactions: AppliedTransaction[];
+    if (accountId)
+      transactions = await FinanceTrackerDatabase.appliedTransactions
+        .where({ accountId: accountId })
+        .and((transaction) => transaction.date >= today && transaction.date <= twoDaysFromNow)
+        .sortBy('date');
+    else
+      transactions = await FinanceTrackerDatabase.appliedTransactions
+        .where('date')
+        .between(today, twoDaysFromNow)
+        .sortBy('date');
+
+    transactions = transactions.slice(0, limit);
+
+    return transactions;
+  });
+}
+
 export const AppliedTransactionController = {
   createAppliedTransaction,
   updateAppliedTransaction,
   createAppliedTransactionObject,
+  findUpcomingTransactions,
 };
