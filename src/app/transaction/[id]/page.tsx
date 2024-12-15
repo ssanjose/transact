@@ -21,7 +21,7 @@ const Page = () => {
   return (
     <div className="min-h-screen p-0 gap-16 sm:p-10 sm:pt-2 font-[family-name:var(--font-geist-sans)]">
       <div className="flex relative top-0">
-        <div className="md:w-3/4 w-full p-0 pt-2 sm:p-4 sm:pt-4">
+        <div className="md:w-3/4 w-full p-2 pt-2 sm:p-4 sm:pt-4">
           <div className="flex flex-start justify-between min-w-sm mb-2 px-2 sm:p-0 sm:pb-2 border-b">
             <div className="w-full flex justify-between items-center">
               <h1 className="scroll-m-20 mb-2 text-2xl font-semibold tracking-tight first:mt-0 mr-2">
