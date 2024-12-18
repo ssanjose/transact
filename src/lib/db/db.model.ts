@@ -37,6 +37,7 @@ interface Transaction {
   frequency: Frequency; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
   accountId: number; // foreign key
   categoryId?: number; // foreign key
+  transactionId?: number; // foreign key to parent transaction
 }
 
 /**
@@ -47,31 +48,17 @@ interface Category {
   name: string;
 }
 
-/**
- * Represents an applied transaction in the finance tracker.
- */
-interface AppliedTransaction {
-  id?: number;
-  date: Date;
-  amount: number; // amount changed
-  type: TransactionType; // 0 = expense, 1 = income
-  transactionId: number; // foreign key
-  isManuallyUpdated: boolean; // New flag to indicate manual updates
-}
-
 const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
   accounts: EntityTable<Account, 'id'>;
   transactions: EntityTable<Transaction, 'id'>;
   categories: EntityTable<Category, 'id'>;
-  appliedTransactions: EntityTable<AppliedTransaction, 'id'>;
 };
 
 FinanceTrackerDatabase.version(1).stores({
   accounts: "++id, name, balance",
-  transactions: "++id, name, amount, date, type, frequency, accountId, categoryId",
+  transactions: "++id, name, amount, date, type, frequency, accountId, categoryId, transactionId",
   categories: "++id, name",
-  appliedTransactions: "++id, date, amount, type, transactionId, isManuallyUpdated",
 });
 
-export type { Account, Transaction, Category, AppliedTransaction };
+export type { Account, Transaction, Category };
 export default FinanceTrackerDatabase;

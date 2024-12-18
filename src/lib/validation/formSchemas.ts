@@ -38,6 +38,7 @@ const transactionSchema = z.object({
   }),
   accountId: z.number(),
   categoryId: z.number().optional(),
+  transactionId: z.number().optional(),
 });
 
 const categorySchema = z.object({
@@ -47,21 +48,4 @@ const categorySchema = z.object({
   }),
 });
 
-const appliedTransactionSchema = z.object({
-  id: z.number().optional(),
-  date: z.date(),
-  amount: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
-    message: 'Balance must be a number',
-  }).min(0, {
-    message: 'Balance must be at least 0',
-  }).multipleOf(0.01, {
-    message: 'Balance must only have 2 decimal places',
-  })),
-  type: z.nativeEnum(TransactionType, {
-    message: 'Type must be either "expense" or "income"',
-  }),
-  transactionId: z.number(),
-  isManuallyUpdated: z.boolean().default(false),
-});
-
-export { accountSchema, transactionSchema, categorySchema, appliedTransactionSchema };
+export { accountSchema, transactionSchema, categorySchema };
