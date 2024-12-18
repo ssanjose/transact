@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { AppliedTransaction } from '@/lib/db/db.model';
 import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table';
-import { AppliedTransactionController } from '@/hooks/appliedTransaction.controller';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { formatCurrency } from '@/lib/format/formatCurrency';
+import { TransactionController } from '@/hooks/transaction.controller';
+import { Transaction } from '@/lib/db/db.model';
 
 interface UpcomingTransactionsProps {
   className?: string;
@@ -26,17 +27,17 @@ interface UpcomingTransactionsProps {
  * <UpcomingTransactions />
  */
 const UpcomingTransactions = ({ className, accountId, limit = 3 }: UpcomingTransactionsProps) => {
-  const transactions = useLiveQuery(() => AppliedTransactionController.findUpcomingTransactions(accountId, limit));
+  const transactions = useLiveQuery(() => TransactionController.findUpcomingTransactions(accountId, limit));
 
   return (
     <Table className={className}>
       <TableCaption className="mt-0 mb-4 text-accent-foreground text-semibold text-lg">Upcoming Transactions</TableCaption>
       <TableBody>
-        {transactions?.map((transaction: AppliedTransaction, index) => (
+        {transactions?.map((transaction: Transaction, index) => (
           <TableRow className={`even:bg-white odd:bg-cyan-50 h-[60px] hover:bg-emerald-100 border-0`} key={index}>
+            <TableCell>{transaction.name}</TableCell>
             <TableCell>{transaction.date.toLocaleString().replace(/:\d{2}\s/, ' ')}</TableCell>
-            <TableCell>{transaction.amount}</TableCell>
-            <TableCell>{transaction.type}</TableCell>
+            <TableCell className="text-right">{transaction.type === 1 ? null : '-'}{formatCurrency(transaction.amount)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

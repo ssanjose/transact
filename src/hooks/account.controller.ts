@@ -54,21 +54,24 @@ function updateAccount(id: number, updatedAccount: Partial<Account>): Promise<nu
 }
 
 /**
- * Deletes an account by ID, including all related transactions and applied transactions.
+ * Deletes an account by ID, including all related transactions and child transactions.
  *
  * @param {number} id - The ID of the account to delete.
  * @returns {Promise<void>} - A promise that resolves when the account and related records are deleted.
  */
 function deleteAccount(id: number): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, FinanceTrackerDatabase.appliedTransactions, async () => {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
+    // Fetch all transactions related to the account
     const transactions = await FinanceTrackerDatabase.transactions.where({ accountId: id }).toArray();
 
-    for (const transaction of transactions) {
-      await FinanceTrackerDatabase.appliedTransactions.where({ transactionId: transaction.id }).delete();
-    }
+    // Delete child transactions first
+    for (const transaction of transactions)
+      await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).delete();
 
-    await FinanceTrackerDatabase.transactions.bulkDelete(transactions.map(transaction => transaction.id));
-    await FinanceTrackerDatabase.accounts.delete(id);
+    await Promise.all([
+      FinanceTrackerDatabase.transactions.bulkDelete(transactions.map(transaction => transaction.id)),
+      FinanceTrackerDatabase.accounts.delete(id),
+    ]);
   })
 }
 
