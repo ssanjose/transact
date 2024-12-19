@@ -1,5 +1,5 @@
-import FinanceTrackerDatabase, { Account } from '@/lib/db/db.model';
-import { useLiveQuery } from 'dexie-react-hooks';
+import { Account } from '@/lib/db/db.model';
+import FinanceTrackerDatabase from '@/lib/db/db.init';
 
 /**
  * Creates a new account.
@@ -61,17 +61,7 @@ function updateAccount(id: number, updatedAccount: Partial<Account>): Promise<nu
  */
 function deleteAccount(id: number): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
-    // Fetch all transactions related to the account
-    const transactions = await FinanceTrackerDatabase.transactions.where({ accountId: id }).toArray();
-
-    // Delete child transactions first
-    for (const transaction of transactions)
-      await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).delete();
-
-    await Promise.all([
-      FinanceTrackerDatabase.transactions.bulkDelete(transactions.map(transaction => transaction.id)),
-      FinanceTrackerDatabase.accounts.delete(id),
-    ]);
+    await FinanceTrackerDatabase.accounts.delete(id);
   })
 }
 

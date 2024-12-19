@@ -1,5 +1,3 @@
-import Dexie, { EntityTable } from "dexie";
-
 export enum Frequency {
   OneTime = 0,
   Daily = 1,
@@ -48,17 +46,4 @@ interface Category {
   name: string;
 }
 
-const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
-  accounts: EntityTable<Account, 'id'>;
-  transactions: EntityTable<Transaction, 'id'>;
-  categories: EntityTable<Category, 'id'>;
-};
-
-FinanceTrackerDatabase.version(1).stores({
-  accounts: "++id, name, balance",
-  transactions: "++id, name, amount, date, type, frequency, accountId, categoryId, transactionId",
-  categories: "++id, name",
-});
-
 export type { Account, Transaction, Category };
-export default FinanceTrackerDatabase;

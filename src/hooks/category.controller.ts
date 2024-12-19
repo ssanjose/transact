@@ -1,5 +1,6 @@
-import FinanceTrackerDatabase, { Category } from '@/lib/db/db.model';
+import { Category } from '@/lib/db/db.model';
 import { useLiveQuery } from 'dexie-react-hooks';
+import FinanceTrackerDatabase from '@/lib/db/db.init';
 
 /**
  * Creates a new category.
