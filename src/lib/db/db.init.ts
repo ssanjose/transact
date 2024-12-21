@@ -1,6 +1,5 @@
 import Dexie, { EntityTable } from "dexie";
 import { Account, Transaction, Category } from "@/lib/db/db.model";
-import { generateChildTransactions } from "../../hooks/transaction.controller";
 
 const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
   accounts: EntityTable<Account, 'id'>;
@@ -14,18 +13,10 @@ FinanceTrackerDatabase.version(1).stores({
   categories: "++id, name",
 });
 
+// ---------------------- Hooks ----------------------
 // Transaction Hooks
-FinanceTrackerDatabase.transactions.hook("creating", function (primaryKey, obj, transaction) {
-  this.onsuccess = function (primaryKey) {
-    if (obj.transactionId !== undefined)
-      return;
-
-    obj.id = primaryKey;
-    const childTransactions = generateChildTransactions(obj);
-    for (const childTransaction of childTransactions) {
-      FinanceTrackerDatabase.transactions.add(childTransaction);
-    }
-  };
+FinanceTrackerDatabase.transactions.hook("creating", (primaryKey, obj, transaction) => {
+  console.log("Creating transaction", obj.name);
 });
 
 FinanceTrackerDatabase.transactions.hook("deleting", (primaryKey, transaction) => {

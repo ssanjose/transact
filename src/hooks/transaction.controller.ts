@@ -1,5 +1,6 @@
-import FinanceTrackerDatabase, { Frequency, Transaction } from '@/lib/db/db.model';
+import { Frequency, Transaction } from '@/lib/db/db.model';
 import { PromptCallback } from './prompt-callback-tempfile';
+import FinanceTrackerDatabase from '@/lib/db/db.init';
 
 /**
  * Creates a transaction and its corresponding child Transactions based on frequency and datetime.
@@ -9,13 +10,14 @@ import { PromptCallback } from './prompt-callback-tempfile';
  */
 function createAndApplyTransaction(transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    const transactionId = await FinanceTrackerDatabase.transactions.add(transaction);
-    transaction.id = transactionId;
+    let txId = await FinanceTrackerDatabase.transactions.add(transaction);
+    let childTransactions: Transaction[] = [];
 
-    const childTransactions = generateChildTransactions(transaction);
-    for (const childTransaction of childTransactions) {
-      await FinanceTrackerDatabase.transactions.add(childTransaction);
-    }
+    if (txId!)
+      childTransactions = generateChildTransactions((await FinanceTrackerDatabase.transactions.get(txId))!);
+    else throw new Error("Transaction not created");
+
+    FinanceTrackerDatabase.transactions.bulkAdd(childTransactions);
   })
 }
 
@@ -33,44 +35,6 @@ function getTransactionById(id: number) {
       console.error('Failed to get transaction by ID:', error);
       throw error;
     });
-}
-
-/**
- * Generates child Transactions based on the transaction's frequency and datetime.
- *
- * @param {Transaction} transaction - The parent transaction object.
- * @returns {Transaction[]} - An array of child Transactions.
- */
-function generateChildTransactions(transaction: Transaction): Transaction[] {
-  const childTransactions: Transaction[] = [];
-  const startDate = new Date(transaction.date);
-  const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // End of the month
-  let currentDate = new Date(startDate);
-
-  switch (transaction.frequency) {
-    case Frequency.OneTime:
-      break;
-    case Frequency.Daily:
-      while (currentDate <= endDate) {
-        currentDate.setDate(currentDate.getDate() + 1);
-        childTransactions.push({ ...transaction, transactionId: transaction.id, id: undefined, date: new Date(currentDate) });
-      }
-      break;
-    case Frequency.Weekly:
-      while (currentDate <= endDate) {
-        currentDate.setDate(currentDate.getDate() + 7);
-        childTransactions.push({ ...transaction, transactionId: transaction.id, id: undefined, date: new Date(currentDate) });
-      }
-      break;
-    case Frequency.Monthly:
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      childTransactions.push({ ...transaction, transactionId: transaction.id, id: undefined, date: new Date(currentDate) });
-      break;
-    default:
-      throw new Error('Invalid frequency');
-  }
-
-  return childTransactions;
 }
 
 /**
@@ -199,23 +163,6 @@ function getTransactionsByAccount(accountId: number): Promise<Transaction[]> {
 }
 
 /**
- * Handles the 'preserve' decision by updating the frequency of out-of-bound child Transactions to one-time.
- *
- * @param {Transaction[]} outOfBoundChildTransactions - The array of out-of-bound child Transactions.
- * @param {Transaction} existingTransaction - The existing transaction object.
- * @returns {Promise<void>} - A promise that resolves when the operations are complete.
- */
-async function handlePreserveDecision(outOfBoundChildTransactions: Transaction[], existingTransaction: Transaction): Promise<void> {
-  for (const outOfBoundChildTransaction of outOfBoundChildTransactions) {
-    await FinanceTrackerDatabase.transactions.update(outOfBoundChildTransaction.id!, {
-      ...outOfBoundChildTransaction,
-      frequency: Frequency.OneTime,
-      transactionId: undefined,
-    });
-  }
-}
-
-/**
  * Deletes out-of-bound child Transactions.
  *
  * @param {Transaction[]} childTransactions - The array of out-of-bound child Transactions to delete.
@@ -223,35 +170,8 @@ async function handlePreserveDecision(outOfBoundChildTransactions: Transaction[]
  */
 async function deleteOutOfBoundChildTransactions(childTransactions: Transaction[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    for (const childTransaction of childTransactions) {
-      await FinanceTrackerDatabase.transactions.delete(childTransaction.id!);
-    }
+    await FinanceTrackerDatabase.transactions.bulkDelete(childTransactions.map(ct => ct.id!));
   });
-}
-
-/**
- * Identifies out-of-bound child Transactions based on existing and new child Transactions.
- *
- * @param {Transaction[]} existingChildTransactions - The existing child Transactions.
- * @param {Transaction[]} newChildTransactions - The new child Transactions.
- * @returns {Transaction[]} - An array of out-of-bound child Transactions.
- */
-function identifyOutOfBoundChildTransactions(existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Transaction[] {
-  const existingChildTransactionsMap = new Map(existingChildTransactions.map(at => [at.date.toDateString(), at]));
-  const outOfBoundChildTransactions: Transaction[] = [];
-
-  for (const newChildTransaction of newChildTransactions) {
-    const match = existingChildTransactionsMap.get(newChildTransaction.date.toDateString());
-    if (match) {
-      existingChildTransactionsMap.delete(newChildTransaction.date.toDateString());
-    }
-  }
-
-  for (const remainingTransaction of existingChildTransactionsMap.values()) {
-    outOfBoundChildTransactions.push(remainingTransaction);
-  }
-
-  return outOfBoundChildTransactions;
 }
 
 /**
@@ -285,11 +205,92 @@ function findUpcomingTransactions(accountId?: number, limit?: number): Promise<T
   });
 }
 
+// helper functions
+/**
+ * Identifies out-of-bound child Transactions based on existing and new child Transactions.
+ *
+ * @param {Transaction[]} existingChildTransactions - The existing child Transactions.
+ * @param {Transaction[]} newChildTransactions - The new child Transactions.
+ * @returns {Transaction[]} - An array of out-of-bound child Transactions.
+ */
+function identifyOutOfBoundChildTransactions(existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Transaction[] {
+  const existingChildTransactionsMap = new Map(existingChildTransactions.map(at => [at.date.toDateString(), at]));
+  const outOfBoundChildTransactions: Transaction[] = [];
+
+  for (const newChildTransaction of newChildTransactions) {
+    const match = existingChildTransactionsMap.get(newChildTransaction.date.toDateString());
+    if (match) {
+      existingChildTransactionsMap.delete(newChildTransaction.date.toDateString());
+    }
+  }
+
+  for (const remainingTransaction of existingChildTransactionsMap.values()) {
+    outOfBoundChildTransactions.push(remainingTransaction);
+  }
+
+  return outOfBoundChildTransactions;
+}
+
+/**
+ * Handles the 'preserve' decision by updating the frequency of out-of-bound child Transactions to one-time.
+ *
+ * @param {Transaction[]} outOfBoundChildTransactions - The array of out-of-bound child Transactions.
+ * @param {Transaction} existingTransaction - The existing transaction object.
+ * @returns {Promise<void>} - A promise that resolves when the operations are complete.
+ */
+async function handlePreserveDecision(outOfBoundChildTransactions: Transaction[], existingTransaction: Transaction): Promise<void> {
+  for (const outOfBoundChildTransaction of outOfBoundChildTransactions) {
+    await FinanceTrackerDatabase.transactions.update(outOfBoundChildTransaction.id!, {
+      ...outOfBoundChildTransaction,
+      frequency: Frequency.OneTime,
+      transactionId: undefined,
+    });
+  }
+}
+
+/**
+ * Generates child Transactions based on the transaction's frequency and datetime.
+ *
+ * @param {Transaction} transaction - The parent transaction object.
+ * @returns {Transaction[]} - An array of child Transactions.
+ */
+function generateChildTransactions(transaction: Transaction): Transaction[] {
+  const childTransactions: Transaction[] = [];
+  const startDate = new Date(transaction.date);
+  const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // End of the month
+  let currentDate = new Date(startDate);
+
+  switch (transaction.frequency) {
+    case Frequency.OneTime:
+      break;
+    case Frequency.Daily:
+      while (currentDate <= endDate) {
+        currentDate.setDate(currentDate.getDate() + 1);
+        childTransactions.push({ ...transaction, transactionId: transaction.id, id: undefined, date: new Date(currentDate) });
+      }
+      break;
+    case Frequency.Weekly:
+      while (currentDate <= endDate) {
+        currentDate.setDate(currentDate.getDate() + 7);
+        childTransactions.push({ ...transaction, transactionId: transaction.id, id: undefined, date: new Date(currentDate) });
+      }
+      break;
+    case Frequency.Monthly:
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      childTransactions.push({ ...transaction, transactionId: transaction.id, id: undefined, date: new Date(currentDate) });
+      break;
+    default:
+      throw new Error('Invalid frequency');
+  }
+
+  return childTransactions;
+}
+
 export const TransactionController = {
   createAndApplyTransaction,
   getTransactionById,
   updateTransaction,
   deleteTransaction,
   getTransactionsByAccount,
-  findUpcomingTransactions
+  findUpcomingTransactions,
 };
