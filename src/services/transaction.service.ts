@@ -1,5 +1,5 @@
 import { Frequency, Transaction } from '@/lib/db/db.model';
-import { PromptCallback } from './prompt-callback-tempfile';
+import { PromptCallback } from '../hooks/prompt-callback-tempfile';
 import FinanceTrackerDatabase from '@/lib/db/db.init';
 
 /**
@@ -286,7 +286,7 @@ function generateChildTransactions(transaction: Transaction): Transaction[] {
   return childTransactions;
 }
 
-export const TransactionController = {
+export const TransactionService = {
   createAndApplyTransaction,
   getTransactionById,
   updateTransaction,

@@ -4,7 +4,7 @@ import React from 'react';
 import { Sleep } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { AccountController } from '@/hooks/account.controller';
+import { AccountService } from '@/services/account.service';
 import { useRouter } from 'next/navigation';
 
 interface AccountDeleteDialogProps {
@@ -17,7 +17,7 @@ const AccountDeleteDialog = ({ id }: AccountDeleteDialogProps) => {
   const handleDelete = async (id?: number) => {
     const getTransaction = async () => {
       if (id!)
-        await AccountController.deleteAccount(id);
+        await AccountService.deleteAccount(id);
       await Sleep(500);
     }
     getTransaction();

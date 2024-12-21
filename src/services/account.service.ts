@@ -65,7 +65,7 @@ function deleteAccount(id: number): Promise<void> {
   })
 }
 
-export const AccountController = {
+export const AccountService = {
   createAccount,
   getAccount,
   getAllAccounts,

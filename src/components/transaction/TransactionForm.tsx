@@ -4,7 +4,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Frequency, FrequencyOptions, Transaction, TransactionType } from '@/lib/db/db.model';
-import { TransactionController } from '@/hooks/transaction.controller';
+import { TransactionService } from '@/services/transaction.service';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { transactionSchema } from '@/lib/validation/formSchemas';
@@ -48,7 +48,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
       type: values.type,
       frequency: GetFrequency(values.frequency),
     });
-    await TransactionController.createAndApplyTransaction(newTransaction);
+    await TransactionService.createAndApplyTransaction(newTransaction);
 
     form.reset();
     onSave();

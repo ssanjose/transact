@@ -8,14 +8,14 @@ import TransactionForm from '@/components/transaction/TransactionForm';
 import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
 import { Button } from '@/components/ui/button';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AccountController } from '@/hooks/account.controller';
+import { AccountService } from '@/services/account.service';
 import AccountMenu from '@/components/account/AccountMenu';
 import { useDialog } from '@/hooks/use-dialog';
 
 const Page = () => {
   const [transactionId, setTransactionId] = useState<number>(-1);
   const accountId = parseInt(useParams<{ id: string }>().id);
-  const account = useLiveQuery(() => AccountController.getAccount(accountId));
+  const account = useLiveQuery(() => AccountService.getAccount(accountId));
   const createTransactionDialog = useDialog();
 
   return (

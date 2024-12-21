@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AccountController } from '@/hooks/account.controller';
+import { AccountService } from '@/services/account.service';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
@@ -32,9 +32,9 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
     };
 
     if (existingAccount && existingAccount.id !== undefined)
-      await AccountController.updateAccount(existingAccount.id, account);
+      await AccountService.updateAccount(existingAccount.id, account);
     else {
-      let newAccId = await AccountController.createAccount(account);
+      let newAccId = await AccountService.createAccount(account);
       router.push(`/transaction/${newAccId}`);
     }
 

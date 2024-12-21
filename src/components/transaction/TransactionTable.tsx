@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { useLiveQuery } from "dexie-react-hooks";
-import { TransactionController } from "@/hooks/transaction.controller";
+import { TransactionService } from "@/services/transaction.service";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format/formatCurrency";
 
 const TransactionTable = ({ id, setTransactionId }: { id: number, setTransactionId: (id: number) => void }) => {
-  const transactions = useLiveQuery(() => TransactionController.getTransactionsByAccount(id));
+  const transactions = useLiveQuery(() => TransactionService.getTransactionsByAccount(id));
   return (
     <Table>
       <TableHeader>

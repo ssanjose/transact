@@ -62,7 +62,7 @@ function deleteCategory(id: number): Promise<void> {
     });
 }
 
-export const CategoryController = {
+export const CategoryService = {
   createCategory,
   getCategory,
   getAllCategories,

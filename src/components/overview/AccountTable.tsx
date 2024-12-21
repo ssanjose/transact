@@ -8,7 +8,7 @@ import {
   TableFooter,
   TableRow,
 } from "@/components/ui/table"
-import { AccountController } from '../../hooks/account.controller';
+import { AccountService } from '../../services/account.service';
 import { Account } from '../../lib/db/db.model';
 import { Skeleton } from '../ui/skeleton';
 import { formatCurrency } from '../../lib/format/formatCurrency';
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { SquarePen } from 'lucide-react';
 
 const AccountTable = () => {
-  const accounts = useLiveQuery(() => AccountController.getAllAccounts());
+  const accounts = useLiveQuery(() => AccountService.getAllAccounts());
   if (!accounts || accounts === undefined) {
     return <AccountTableSkeleton />
   }

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { TransactionController } from '@/hooks/transaction.controller';
+import { TransactionService } from '@/services/transaction.service';
 import { Transaction } from '@/lib/db/db.model';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -17,7 +17,7 @@ const TransactionDetails = ({ id, className }: { id: number, className?: string 
     }
     const getTransaction = async () => {
       setLoading(true);
-      const t = await TransactionController.getTransactionById(id);
+      const t = await TransactionService.getTransactionById(id);
       setTransaction(t);
       setTimeout(() => setLoading(false), 300);
     }
