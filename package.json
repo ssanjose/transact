@@ -1,6 +1,6 @@
 {
   "name": "finance-tracker-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,7 @@
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
-    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-popover": "^1.1.2",
@@ -21,16 +21,18 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@tanstack/react-table": "^8.20.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.0.0",
     "date-fns": "^4.1.0",
     "dexie": "^4.0.10",
     "dexie-react-hooks": "^1.1.7",
     "lucide-react": "^0.462.0",
-    "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
+    "next": "^15.1.2",
+    "react": "^19.0.0",
     "react-day-picker": "^8.10.1",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.0",
     "recharts": "^2.14.1",
     "tailwind-merge": "^2.5.5",
@@ -49,6 +51,6 @@
     "typescript": "^5"
   },
   "overrides": {
-    "react-is": "^19.0.0-rc-69d4b800-20241021"
+    "@radix-ui/react-focus-scope": "1.1.1"
   }
 }
