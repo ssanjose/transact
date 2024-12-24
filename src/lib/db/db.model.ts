@@ -44,6 +44,7 @@ interface Transaction {
 interface Category {
   id?: number;
   name: string;
+  color: string;
 }
 
 export type { Account, Transaction, Category };

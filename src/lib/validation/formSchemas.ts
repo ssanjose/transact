@@ -46,6 +46,9 @@ const categorySchema = z.object({
   name: z.string().trim().min(3, {
     message: 'Name must be at least 3 characters long',
   }),
+  color: z.string().regex(/^#([0-9A-F]{3}){1,2}$/i, {
+    message: 'Color must be a valid hex code',
+  }),
 });
 
 export { accountSchema, transactionSchema, categorySchema };

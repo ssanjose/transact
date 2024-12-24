@@ -1,6 +1,6 @@
 # Database Changes
 
-## Version 01
+## Version 0.1.0
 ### Data Model
 - Account
   - id
@@ -25,7 +25,7 @@
   - transactionId
   - isManuallyUpdated
 
-## Version 02
+## Version 0.2.0
 ### Data Model
 - Account
 - Transaction
@@ -95,11 +95,11 @@ async function updateTransaction(transaction: Transaction): Promise<void> {
 }
 ```
 
-### Querying Child Transactions
+#### Querying Child Transactions
 
 To get all child transactions of a parent transaction, you can query the transactions table where transactionId matches the parent's id.
 
-### Updated Database Schema
+#### Updated Database Schema
 
 The updated database schema in db.model.ts would look like this:
 ```typescript
@@ -123,3 +123,28 @@ export default FinanceTrackerDatabase;
 AppliedTransaction table is redundant and adds unnecessary space to the database and complicates logic. It is thus removed and Transaction table will be used for child transaction, with transactionId field being used to judge whether a transaction is a parent transaction or a child transaction.
 
 More importantly, every function of the AppliedTransaction table will be successfully kept, allowing cascade UD (updates and deletions) when parent transaction is mutated.
+
+## Version 0.3.0
+### Data Model
+- Account
+- Transaction
+  - id
+  - name
+  - amount
+  - date
+  - type
+  - frequency
+  - accountId
+  - categoryId
+  - transactionId
+- Category
+  - id
+  - name
+  - color
+
+### Reason
+The current category model only allows separation of transactions by different category name which lowers user experience since categories cannot be visualized through color and only by name. Another effect of name-only categories would be that analytics services will have limited ways of visualizing categories.
+
+That is why:
+- Adding color to the category model allows analytics services to visualize transactions via categories.
+- It also allows users to customize the color of their categories, leading to greater user experiences.

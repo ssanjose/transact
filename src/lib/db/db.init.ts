@@ -1,5 +1,6 @@
-import Dexie, { EntityTable } from "dexie";
-import { Account, Transaction, Category } from "@/lib/db/db.model";
+import Dexie, { EntityTable, Transaction as Tx } from "dexie";
+import { Account, Category, Transaction } from "@/lib/db/db.model";
+import { categorySeeds } from "./db.seed";
 
 const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
   accounts: EntityTable<Account, 'id'>;
@@ -10,7 +11,11 @@ const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
 FinanceTrackerDatabase.version(1).stores({
   accounts: "++id, name, balance",
   transactions: "++id, name, amount, date, type, frequency, accountId, categoryId, transactionId",
-  categories: "++id, name",
+  categories: "++id, name, color",
+});
+
+FinanceTrackerDatabase.on("populate", function (db: Tx) {
+  db.table("categories").bulkAdd(categorySeeds);
 });
 
 // ---------------------- Hooks ----------------------

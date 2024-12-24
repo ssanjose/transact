@@ -4,7 +4,7 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -333.3333,
+    "scrollTop": -245.9383,
     "scrollLeft": -164.9839,
     "zoomLevel": 0.71,
     "show": 445,
@@ -168,23 +168,25 @@
         "comment": "",
         "columnIds": [
           "L6-wMb3w4RV934IetfIax",
-          "4qZhpp5TezD4lyIqaLY51"
+          "4qZhpp5TezD4lyIqaLY51",
+          "Z07_FvlzjF_MaMEYBjX32"
         ],
         "seqColumnIds": [
           "L6-wMb3w4RV934IetfIax",
           "4qZhpp5TezD4lyIqaLY51",
-          "ZZK-QBdtmAp4E4o0KMK5F"
+          "ZZK-QBdtmAp4E4o0KMK5F",
+          "Z07_FvlzjF_MaMEYBjX32"
         ],
         "ui": {
-          "x": 857.9674,
-          "y": 451.273,
+          "x": 862.1928,
+          "y": 440.0052,
           "zIndex": 270,
           "widthName": 60,
           "widthComment": 60,
           "color": ""
         },
         "meta": {
-          "updateAt": 1734562766977,
+          "updateAt": 1735060705295,
           "createAt": 1727062947792
         }
       }
@@ -689,6 +691,26 @@
           "updateAt": 1734562783944,
           "createAt": 1734344101621
         }
+      },
+      "Z07_FvlzjF_MaMEYBjX32": {
+        "id": "Z07_FvlzjF_MaMEYBjX32",
+        "tableId": "AhCTV6mrgKXUEbfl90hul",
+        "name": "color",
+        "comment": "",
+        "dataType": "VARCHAR(7)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735060699234,
+          "createAt": 1735060662155
+        }
       }
     },
     "relationshipEntities": {
@@ -730,8 +752,8 @@
           "columnIds": [
             "L6-wMb3w4RV934IetfIax"
           ],
-          "x": 857.9674,
-          "y": 503.273,
+          "x": 862.1928,
+          "y": 504.0052,
           "direction": 1
         },
         "end": {
@@ -1138,6 +1160,16 @@
       -1,
       {
         "relationshipType": 1734562775878
+      }
+    ],
+    "Z07_FvlzjF_MaMEYBjX32": [
+      "tableColumnEntities",
+      1735060662150,
+      -1,
+      {
+        "name": 1735060667408,
+        "dataType": 1735060697227,
+        "options(notNull)": 1735060699233
       }
     ]
   }

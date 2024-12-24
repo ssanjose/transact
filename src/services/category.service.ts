@@ -1,5 +1,4 @@
 import { Category } from '@/lib/db/db.model';
-import { useLiveQuery } from 'dexie-react-hooks';
 import FinanceTrackerDatabase from '@/lib/db/db.init';
 
 /**
@@ -8,9 +7,9 @@ import FinanceTrackerDatabase from '@/lib/db/db.init';
  * @param {Category} category - The category object to create.
  * @returns {Promise<number>} - A promise that resolves to the ID of the created category.
  */
-function createCategory(category: Category): Promise<number> {
+function createCategory(category: Category) {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.categories, async () => {
-    return await FinanceTrackerDatabase.categories.add(category) as number;
+    return await FinanceTrackerDatabase.categories.add(category);
   });
 }
 
@@ -21,7 +20,9 @@ function createCategory(category: Category): Promise<number> {
  * @returns {ReturnType<typeof useLiveQuery>} - The category object wrapped in a live query.
  */
 function getCategory(id: number) {
-  return useLiveQuery(async () => await FinanceTrackerDatabase.categories.get(id), [id]);
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.categories, async () => {
+    return await FinanceTrackerDatabase.categories.get(id), [id];
+  });
 }
 
 /**
@@ -30,7 +31,9 @@ function getCategory(id: number) {
  * @returns {ReturnType<typeof useLiveQuery>} - An array of all category objects wrapped in a live query.
  */
 function getAllCategories() {
-  return useLiveQuery(async () => await FinanceTrackerDatabase.categories.toArray(), []);
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.categories, async () => {
+    return await FinanceTrackerDatabase.categories.toArray();
+  });
 }
 
 /**
@@ -57,9 +60,6 @@ function deleteCategory(id: number): Promise<void> {
     await FinanceTrackerDatabase.transactions.where({ categoryId: id }).modify({ categoryId: undefined });
     return await FinanceTrackerDatabase.categories.delete(id);
   })
-    .catch(error => {
-      console.error(error);
-    });
 }
 
 export const CategoryService = {
