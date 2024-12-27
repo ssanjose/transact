@@ -4,60 +4,35 @@ import React from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { EllipsisVerticalIcon } from 'lucide-react';
-import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
-import { AccountForm } from '@/components/account/AccountForm';
 import { Account } from '@/lib/db/db.model';
-import AccountDeleteDialog from '@/components/account/AccountDeleteDialog';
-import { useDialog } from '@/hooks/use-dialog';
+import { OpenAccountButton, DeleteAccountButton, EditAccountButton } from '@/components/account/AccountButtons';
 
 const AccountMenu = ({ account }: { account?: Account }) => {
-  const editAccountDialog = useDialog();
-  const createAccountDialog = useDialog();
-
   // Menu items.
   const existingAccountMenu = [
     {
-      title: "Edit an Account",
-      content:
-        <DrawerDialog
-          mobileContent={<AccountForm onSave={editAccountDialog.dismiss} existingAccount={account} />}
-          triggerButton={
-            <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" >
-              <span>Edit an Account</span>
-            </Button>
-          }
-          title="Edit an Account"
-          description=""
-          dialog={editAccountDialog}
-        >
-          <AccountForm onSave={editAccountDialog.dismiss} existingAccount={account} />
-        </DrawerDialog>
-      ,
+      content: <EditAccountButton
+        title="Edit an Account"
+        existingAccount={account}
+      />
     },
     {
-      title: "Delete an Account",
-      content:
-        <AccountDeleteDialog id={account?.id} />
+      content: <DeleteAccountButton id={account?.id} />
     }
   ]
 
   const newAccountMenu = [
     {
-      title: "Create Account",
       content:
-        <DrawerDialog
-          mobileContent={<AccountForm onSave={createAccountDialog.dismiss} />}
-          triggerButton={
+        <OpenAccountButton
+          button={
             <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" >
               <span>Create an Account</span>
             </Button>
           }
-          title="Create an Account"
+          title="Create a new Account"
           description=""
-          dialog={createAccountDialog}
-        >
-          <AccountForm onSave={createAccountDialog.dismiss} />
-        </DrawerDialog>
+        />
     },
   ]
 

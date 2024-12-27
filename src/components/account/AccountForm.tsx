@@ -13,7 +13,13 @@ import { Input } from '@/components/ui/input';
 import { Account } from '@/lib/db/db.model';
 import { useRouter } from 'next/navigation';
 
-const AccountForm = ({ className, onSave, existingAccount }: { className?: string, onSave: () => void, existingAccount?: Account }) => {
+interface AccountFormProps {
+  className?: string;
+  onSave: () => void;
+  existingAccount?: Account;
+}
+
+const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof accountSchema>>({
     resolver: zodResolver(accountSchema),
@@ -52,7 +58,7 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
             return (
               <FormItem>
                 <FormLabel>
-                  Account Name
+                  Name
                 </FormLabel>
                 <FormControl>
                   <Input type="text" {...field} placeholder="Chequing" />
@@ -69,7 +75,7 @@ const AccountForm = ({ className, onSave, existingAccount }: { className?: strin
             return (
               <FormItem>
                 <FormLabel>
-                  Account Balance
+                  Balance
                 </FormLabel>
                 <FormControl>
                   <Input type="number" {...field} disabled={!!existingAccount} placeholder="0.00" />
