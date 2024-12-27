@@ -29,7 +29,7 @@ const AccountTable = () => {
         {accounts?.map((account: Account) => (
           <TableRow
             key={account.id}
-            className="cursor-pointer hover:bg-gray-100"
+            className="cursor-pointer hover:bg-accent"
             onClick={() => window.location.href = `/transaction/${account.id}`}
           >
             <TableCell>{account.name}</TableCell>

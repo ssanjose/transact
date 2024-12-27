@@ -32,10 +32,10 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: UpcomingTrans
 
   return (
     <Table className={className}>
-      <TableCaption className="mt-0 mb-4 text-accent-foreground text-semibold text-lg sticky top-0 bg-white">Upcoming Transactions</TableCaption>
+      <TableCaption className="mt-0 mb-4 text-accent-foreground text-semibold text-lg sticky top-0">Upcoming Transactions</TableCaption>
       <TableBody>
         {transactions?.map((transaction: Transaction, index) => (
-          <TableRow className={`even:bg-white odd:bg-cyan-50 h-[60px] hover:bg-emerald-100 border-0`} key={index}>
+          <TableRow className={`even:bg-background odd:bg-secondary h-[60px] hover:bg-accent border-0`} key={index}>
             <TableCell>{transaction.name}</TableCell>
             <TableCell>{format(transaction.date, "PPP")}</TableCell>
             <TableCell className="text-right">{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount)}</TableCell>

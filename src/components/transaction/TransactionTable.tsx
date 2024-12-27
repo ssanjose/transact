@@ -25,6 +25,7 @@ const TransactionTable = ({ id, setTransactionId }: { id: number, setTransaction
             key={transaction.id}
             onMouseEnter={() => setTransactionId(transaction.id ?? -1)}
             onMouseLeave={() => setTransactionId(-1)}
+            className="even:bg-background odd:bg-muted hover:bg-accent"
           >
             <TableCell className="scroll-m-20 text-md font-medium tracking-tight">{transaction.name}</TableCell>
             <TableCell>{

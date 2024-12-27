@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/navigation/AppSidebar";
+import ThemeProvider from "@/components/theming/theme-provider";
+import { ThemeModeToggle } from "@/components/theming/ThemeModeToggle";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,13 +36,26 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <AppSidebar />
-          <SidebarInset>
-            <SidebarTrigger />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="sticky top-0 z-50 p-2 border-b border-gray-200 flex justify-between items-center bg-background">
+            <span className="text-foreground">
+              Finance Tracker App
+            </span>
+            <ThemeModeToggle />
+          </div>
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <AppSidebar />
+            <SidebarInset className="pt-2">
+              <SidebarTrigger className="ml-4" />
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html >
   );

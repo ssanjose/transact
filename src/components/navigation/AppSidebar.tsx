@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Calendar, Home, Inbox, Settings } from "lucide-react"
 
 import {
@@ -40,10 +41,10 @@ const items = [
 
 const AppSidebar = () => {
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar" side="left" className="max-w-[200px]">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Finance Tracking App</SidebarGroupLabel>
+          <SidebarGroupLabel className="block md:hidden">Finance Tracking App</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
