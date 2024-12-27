@@ -4,19 +4,15 @@ import React, { useState } from 'react';
 import { useParams } from "next/navigation";
 import TransactionTable from '@/components/transaction/TransactionTable';
 import TransactionDetails from '@/components/transaction/TransactionDetails';
-import TransactionForm from '@/components/transaction/TransactionForm';
-import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
-import { Button } from '@/components/ui/button';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { AccountService } from '@/services/account.service';
 import AccountMenu from '@/components/account/AccountMenu';
-import { useDialog } from '@/hooks/use-dialog';
+import { OpenTransactionButton } from '@/components/transaction/TransactionButtons';
 
 const Page = () => {
   const [transactionId, setTransactionId] = useState<number>(-1);
   const accountId = parseInt(useParams<{ id: string }>().id);
   const account = useLiveQuery(() => AccountService.getAccount(accountId));
-  const createTransactionDialog = useDialog();
 
   return (
     <div className="min-h-screen p-0 gap-16 sm:p-10 sm:pt-2 font-[family-name:var(--font-geist-sans)]">
@@ -28,17 +24,7 @@ const Page = () => {
                 {account?.name}
                 <span className="text-normal font-normal text-md ml-2">{account ? `(${account?.id})` : null}</span>
               </h1>
-              <DrawerDialog
-                mobileContent={<TransactionForm className="px-4" onSave={createTransactionDialog.dismiss} accountId={accountId} />}
-                triggerButton={<Button size="icon" className="px-2 py-0 w-min text-xs leading-tight h-7 sm:p-2 sm:text-sm sm:leading-3 sm:h-9">
-                  <span>Add Transaction</span>
-                </Button>}
-                title="Transaction"
-                description="Add a new transaction"
-                dialog={createTransactionDialog}
-              >
-                <TransactionForm onSave={createTransactionDialog.dismiss} accountId={accountId} />
-              </DrawerDialog>
+              <OpenTransactionButton accountId={accountId} />
             </div>
             <AccountMenu account={account} />
           </div>

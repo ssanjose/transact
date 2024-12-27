@@ -6,6 +6,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import { TransactionService } from '@/services/transaction.service';
 import { Transaction } from '@/lib/db/db.model';
+import { format } from 'date-fns';
 
 interface UpcomingTransactionsProps {
   className?: string;
@@ -36,7 +37,7 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: UpcomingTrans
         {transactions?.map((transaction: Transaction, index) => (
           <TableRow className={`even:bg-white odd:bg-cyan-50 h-[60px] hover:bg-emerald-100 border-0`} key={index}>
             <TableCell>{transaction.name}</TableCell>
-            <TableCell>{transaction.date.toLocaleString().replace(/:\d{2}\s/, ' ')}</TableCell>
+            <TableCell>{format(transaction.date, "PPP")}</TableCell>
             <TableCell className="text-right">{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount)}</TableCell>
           </TableRow>
         ))}

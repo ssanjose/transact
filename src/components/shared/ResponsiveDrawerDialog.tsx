@@ -11,14 +11,15 @@ import {
   DialogDrawerHeader,
   DialogDrawerTitle,
 } from "@/components/ui/dialogdrawer";
+import { cn } from "@/lib/utils";
 
 interface DrawerDialogProps {
-  mobileContent: React.ReactNode;
   children: React.ReactNode;
   triggerButton?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
   title?: string;
+  className?: string;
   description?: string;
   dialog: {
     triggerProps: {
@@ -42,17 +43,18 @@ interface DrawerDialogProps {
  * @param {React.ReactNode} [triggerButton] - Optional custom trigger button for opening the drawer.
  * @param {React.ReactNode} [header] - Optional custom header content for the drawer.
  * @param {React.ReactNode} [footer] - Optional custom footer content for the drawer.
+ * @param {string} [className] - Optional class name to apply to the drawer.
  * @param {string} [title="Title"] - The title of the drawer.
  * @param {string} [description="Description"] - The description of the drawer.
  * 
  * @returns {JSX.Element} The rendered DrawerDialog component.
  */
 export const DrawerDialog = ({
-  mobileContent,
   children,
   triggerButton,
   header,
   footer,
+  className,
   title = "Title",
   description = "Description",
   dialog,
@@ -80,11 +82,11 @@ export const DrawerDialog = ({
       <DialogDrawerTrigger asChild {...triggerProps}>
         {triggerButton || defaultTriggerButton}
       </DialogDrawerTrigger>
-      <DialogDrawerContent className="sm:max-w-[425px]">
+      <DialogDrawerContent className={cn("sm:max-w-[425px]", className)}>
         <DialogDrawerHeader>
           {header || defaultHeader}
         </DialogDrawerHeader>
-        {isDesktop ? children : mobileContent}
+        {children}
         <DialogDrawerFooter>
           <DialogDrawerClose asChild>
             {footer || defaultFooter}

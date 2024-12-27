@@ -5,6 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { TransactionService } from "@/services/transaction.service";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format/formatCurrency";
+import { cn } from '@/lib/utils';
 
 const TransactionTable = ({ id, setTransactionId }: { id: number, setTransactionId: (id: number) => void }) => {
   const transactions = useLiveQuery(() => TransactionService.getTransactionsByAccount(id));
@@ -32,13 +33,12 @@ const TransactionTable = ({ id, setTransactionId }: { id: number, setTransaction
                   case 0: return "one-time";
                   case 1: return "daily";
                   case 2: return "weekly";
-                  case 3: return "monthly";
-                  default: return "unknown";
+                  default: return "monthly";
                 }
               })()}
             </TableCell>
             <TableCell>{transaction.date.toLocaleString().replace(/:\d{2}\s/, ' ')}</TableCell>
-            <TableCell className="text-right w-fit">{transaction.type === 0 ? "-" : ""}{formatCurrency(transaction.amount ?? 0.00)}</TableCell>
+            <TableCell className={cn("text-right w-fit", transaction.type === 0 ? "text-red-700" : "text-green-700")}>{transaction.type === 0 ? "-" : ""}{formatCurrency(transaction.amount ?? 0.00)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
