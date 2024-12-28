@@ -59,11 +59,11 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
   }, [selectedDateRange])
 
   return (
-    <div className={cn("flex flex-col h-full w-full items-center justify-items-center gap-2", className)}>
+    <Card className={cn("flex flex-col h-full w-full items-center justify-items-center gap-2 bg-card-overview", className)}>
       <Select defaultValue={`${selectedDateRange}`}
         onValueChange={(value) => setSelectedDateRange(parseInt(value) as SelectedDateRange)}
       >
-        <SelectTrigger className="w-fit self-start">
+        <SelectTrigger className="w-fit self-start shadow-none text-left w-[100px] text-secondary-foreground border">
           <SelectValue placeholder={selectedDateRange} />
         </SelectTrigger>
         <SelectContent>
@@ -74,18 +74,18 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
           )}
         </SelectContent>
       </Select>
-      <div className="w-4/5 md:w-11/12 h-full flex flex-col md:flex-row max-h-none md:max-h-56 gap-4">
-        <Card className="flex justify-items-center items-center w-full shadow-md">
+      <div className="w-full sm:w-4/5 md:w-11/12 h-full flex flex-col md:flex-row max-h-none md:max-h-56 gap-4 *>*:bg-background">
+        <Card className="flex justify-items-center items-center w-full shadow-xs border-0">
           <TotalTransactionRadioChart transactions={transactions} selectedDateRange={selectedDateRange} />
         </Card>
-        <Card className="flex items-center h-full w-full shadow-md">
+        <Card className="flex items-center h-full w-full shadow-xs border-0">
           <IncomeTransactionChart transactions={transactions} categories={categories} />
         </Card>
-        <Card className="flex items-center h-full w-full shadow-md">
+        <Card className="flex items-center h-full w-full shadow-xs border-0">
           <ExpenseTransactionChart transactions={transactions} categories={categories} />
         </Card>
       </div>
-    </div>
+    </Card>
   )
 };
 
@@ -158,17 +158,17 @@ const TotalTransactionRadioChart = ({ className, transactions, selectedDateRange
           />
         </PolarRadiusAxis>
         <RadialBar
-          dataKey="income"
-          stackId="a"
-          cornerRadius={5}
-          fill="var(--color-income)"
-          className="stroke-transparent stroke-2"
-        />
-        <RadialBar
           dataKey="expense"
           fill="var(--color-expense)"
           stackId="a"
           cornerRadius={5}
+          className="stroke-transparent stroke-2"
+        />
+        <RadialBar
+          dataKey="income"
+          stackId="a"
+          cornerRadius={5}
+          fill="var(--color-income)"
           className="stroke-transparent stroke-2"
         />
       </RadialBarChart>

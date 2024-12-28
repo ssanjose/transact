@@ -38,11 +38,11 @@ export default async function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="sticky top-0 z-50 p-2 border-b border-gray-200 flex justify-between items-center bg-background">
+          <div className="sticky top-0 z-50 p-2 border-b flex justify-between items-center bg-background">
             <span className="text-foreground">
               Finance Tracker App
             </span>
@@ -51,7 +51,9 @@ export default async function RootLayout({
           <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
             <SidebarInset className="pt-2">
-              <SidebarTrigger className="ml-4" />
+              <div className="flex jsutify-left items-center">
+                <SidebarTrigger className="mx-4" />
+              </div>
               {children}
             </SidebarInset>
           </SidebarProvider>

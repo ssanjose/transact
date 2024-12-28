@@ -21,7 +21,7 @@ function createCategory(category: Category) {
  */
 function getCategory(id: number) {
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.categories, async () => {
-    return await FinanceTrackerDatabase.categories.get(id), [id];
+    return await FinanceTrackerDatabase.categories.get(id);
   });
 }
 

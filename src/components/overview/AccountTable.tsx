@@ -16,9 +16,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { buttonVariants } from '../ui/button';
 import Link from 'next/link';
 import { SquarePen } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const AccountTable = () => {
   const accounts = useLiveQuery(() => AccountService.getAllAccounts());
+  const router = useRouter();
   if (!accounts || accounts === undefined) {
     return <AccountTableSkeleton />
   }
@@ -30,7 +32,7 @@ const AccountTable = () => {
           <TableRow
             key={account.id}
             className="cursor-pointer hover:bg-accent"
-            onClick={() => window.location.href = `/transaction/${account.id}`}
+            onClick={() => router.push(`/transaction/${account.id}`)}
           >
             <TableCell>{account.name}</TableCell>
             <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00)}</TableCell>

@@ -18,13 +18,13 @@ import { OpenAccountButton } from '@/components/account/AccountButtons';
 const Home = () => {
   return (
     <div className="items-center justify-items-center min-h-screen p-4 px-0 sm:pb-10 sm:pt-2 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex flex-col md:flex-row md:flex-start px-4 pb-2 mb-1 gap-4">
-        <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
-          <AccountList className="w-full gap-2 max-w-2xl min-w-md" />
+      <div className="flex flex-col md:flex-row md:flex-start px-4 pb-2 mb-1 gap-2">
+        <Card className="flex flex-col items-center h-fit w-full md:w-5/12 md:items-start shadow-none px-4 pb-4 pt-0">
+          <AccountList className="w-full gap-2 min-w-md" />
         </Card>
-        <Card className="flex h-fit min-h-56 max-h-72 w-full md:w-1/2 p-4 shadow-none border-none">
-          <UpcomingTransactions className="w-full caption-top border-r-2" limit={5} />
-        </Card>
+        <div className="flex h-fit min-h-56 max-h-72 w-full md:w-7/12 p-4 pt-0">
+          <UpcomingTransactions className="w-full caption-top" limit={5} />
+        </div>
       </div>
       <AccountsOverview />
       <div>
@@ -56,9 +56,9 @@ const Header = ({ className }: { className?: string }) => {
 
 const AccountsOverview = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("flex h-fit min-h-72 w-full items-center content-center gap-6", className)}>
+    <div className={cn("flex h-fit min-h-72 w-full items-center content-center gap-2", className)}>
       <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
-      <TransactionChartSummary className="px-4 pb-2" />
+      <TransactionChartSummary className="p-2 py-4 mx-4" />
     </div>
   )
 }
