@@ -14,6 +14,9 @@ import { Card } from '@/components/ui/card';
 import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
 import TransactionChartSummary from '@/components/overview/TransactionChartSummary';
 import { OpenAccountButton } from '@/components/account/AccountButtons';
+import { SelectedDateRange } from '../services/analytics.service';
+import { SelectedDateRangeContext } from '../hooks/use-selecteddaterange-context';
+import SelectDateRange from '../components/overview/SelectDateRange';
 
 const Home = () => {
   return (
@@ -26,7 +29,7 @@ const Home = () => {
           <UpcomingTransactions className="w-full caption-top" limit={5} />
         </div>
       </div>
-      <AccountsOverview />
+      <TransactionsOverview />
       <div>
         <SectionTitle>Trends</SectionTitle>
         <div className="flex flex-col gap-2">
@@ -54,12 +57,19 @@ const Header = ({ className }: { className?: string }) => {
   )
 }
 
-const AccountsOverview = ({ className }: { className?: string }) => {
+const TransactionsOverview = ({ className }: { className?: string }) => {
+  const [selectedDateRange, setSelectedDateRange] = React.useState<SelectedDateRange>(SelectedDateRange.DAY);
+
   return (
-    <div className={cn("flex h-fit min-h-72 w-full items-center content-center gap-2", className)}>
-      <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
-      <TransactionChartSummary className="p-2 py-4 mx-4" />
-    </div>
+    <SelectedDateRangeContext.Provider value={selectedDateRange}>
+      <div className={cn("flex flex-col h-fit min-h-72 mx-4 gap-2", className)}>
+        <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
+        <SelectDateRange selectedDateRange={selectedDateRange} setSelectedDateRange={setSelectedDateRange}
+          className="self-start"
+        />
+        <TransactionChartSummary className="px-0 w-full h-full" />
+      </div>
+    </SelectedDateRangeContext.Provider>
   )
 }
 

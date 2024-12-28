@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/navigation/AppSidebar";
-import ThemeProvider from "@/components/theming/theme-provider";
+import ThemeProvider from "@/components/theming/ThemeProvider";
 import { ThemeModeToggle } from "@/components/theming/ThemeModeToggle";
 
 const geistSans = localFont({

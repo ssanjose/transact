@@ -13,12 +13,12 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { cn } from '@/lib/utils';
-import { AnalyticsService, SelectedDateRange, SelectedDateRangeOptions } from '@/services/analytics.service';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AnalyticsService, SelectedDateRange } from '@/services/analytics.service';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Category, Transaction } from '@/lib/db/db.model';
 import { CategoryService } from '@/services/category.service';
 import { formatCurrency } from '@/lib/format/formatCurrency';
+import { SelectedDateRangeContext } from '../../hooks/use-selecteddaterange-context';
 
 const totalTransactionChartConfig = {
   expense: {
@@ -47,34 +47,21 @@ interface TransactionChartSummaryProps {
 }
 
 const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) => {
-  const [selectedDateRange, setSelectedDateRange] = React.useState<SelectedDateRange>(SelectedDateRange.DAY);
+  const selectedDateRange = React.useContext(SelectedDateRangeContext);
   const [transactions, setTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const categories = useLiveQuery(async () => await CategoryService.getAllCategories())
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      if (selectedDateRange === undefined) return;
       setTransactions(await AnalyticsService.getTransactionsByDateRange({ dateRange: selectedDateRange }));
     };
     fetchTransactions();
   }, [selectedDateRange])
 
   return (
-    <Card className={cn("flex flex-col h-full w-full items-center justify-items-center gap-2 bg-card-overview", className)}>
-      <Select defaultValue={`${selectedDateRange}`}
-        onValueChange={(value) => setSelectedDateRange(parseInt(value) as SelectedDateRange)}
-      >
-        <SelectTrigger className="w-fit self-start shadow-none text-left w-[100px] text-secondary-foreground border">
-          <SelectValue placeholder={selectedDateRange} />
-        </SelectTrigger>
-        <SelectContent>
-          {SelectedDateRangeOptions.map((option, index) =>
-            <SelectItem key={index} value={index.toString()}>
-              {SelectedDateRange[index]}
-            </SelectItem>
-          )}
-        </SelectContent>
-      </Select>
-      <div className="w-full sm:w-4/5 md:w-11/12 h-full flex flex-col md:flex-row max-h-none md:max-h-56 gap-4 *>*:bg-background">
+    <div className={cn("", className)}>
+      <Card className="w-full md:w-full h-full p-4 bg-card-overview flex flex-col md:flex-row max-h-none md:max-h-72 gap-4 *>*:bg-background">
         <Card className="flex justify-items-center items-center w-full shadow-xs border-0">
           <TotalTransactionRadioChart transactions={transactions} selectedDateRange={selectedDateRange} />
         </Card>
@@ -84,8 +71,8 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
         <Card className="flex items-center h-full w-full shadow-xs border-0">
           <ExpenseTransactionChart transactions={transactions} categories={categories} />
         </Card>
-      </div>
-    </Card>
+      </Card>
+    </div>
   )
 };
 
