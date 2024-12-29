@@ -43,7 +43,6 @@ const CategoryForm = ({ className, onSave, existingCategory }: CategoryFormProps
       await CategoryService.createCategory(category);
     }
 
-    form.reset();
     onSave();
   }
 

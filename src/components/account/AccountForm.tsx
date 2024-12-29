@@ -44,7 +44,6 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
       router.push(`/transaction/${newAccId}`);
     }
 
-    form.reset();
     onSave();
   }
 

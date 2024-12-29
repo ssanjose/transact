@@ -58,7 +58,6 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
     });
     await TransactionService.createAndApplyTransaction(newTransaction);
 
-    form.reset();
     onSave();
   }
 
