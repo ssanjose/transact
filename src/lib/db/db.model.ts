@@ -20,7 +20,10 @@ export const TransactionTypeOptions = Object.values(TransactionType);
 interface Account {
   id?: number;
   name: string;
-  balance?: number;
+  balance: number;
+  startingBalance?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**

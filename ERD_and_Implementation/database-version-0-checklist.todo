@@ -50,3 +50,31 @@ Database Version 0 Checklist:
 
     Package.json:
       ✔ Update the version number to 0.3.0 @done(24-12-24 11:15)
+
+  Database Version 0.4.0 Checklist:
+    ERD:
+      ✔ Edit the ERD to include the new fields in the Account model (startingBalance, createdAt, updatedAt) @done(24-12-28 20:38)
+
+    Models:
+      ✔ Edit the Account model to include the new fields (startingBalance, createdAt, updatedAt) @done(24-12-28 21:11)
+      ✔ Adjust Dexie Entity Tables and stores to reflect the changes in the models @done(24-12-28 21:57)
+
+    Validation Schema:
+      ✔ Add the new fields to the Account schema (startingBalance, createdAt, updatedAt) @done(24-12-28 21:57)
+
+    Services:
+      ✔ Edit the AccountService to include the new fields (startingBalance, createdAt, updatedAt) @done(24-12-28 22:06)
+
+    Hooks:
+      Creation:
+        ✔ Add a hook to the Account model to set the startingBalance as Account's balance when the Account is created @done(24-12-28 22:09)
+        ✔ Add a hook to the Account model to set the createdAt and updatedAt fields when the Account is created @done(24-12-28 22:09)
+
+      Update:
+        ✔ Add a hook to the Account model to update the updatedAt field when the Account is updated @done(24-12-28 22:09)
+
+    Components:
+      ✔ Adjust components to display and handle the new fields in the Account model @done(24-12-28 22:06)
+
+    Package.json:
+      ✔ Update the version number to 0.4.0 @done(24-12-28 22:06)

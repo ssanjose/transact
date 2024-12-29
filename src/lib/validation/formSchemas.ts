@@ -15,6 +15,15 @@ const accountSchema = z.object({
   }).multipleOf(0.01, {
     message: 'Balance must only have 2 decimal places',
   })),
+  startingBalance: z.undefined({
+    message: 'Starting balance must be undefined',
+  }),
+  createdAt: z.undefined({
+    message: 'Creation date must be undefined',
+  }),
+  updatedAt: z.undefined({
+    message: 'Updated date must be undefined',
+  }),
 });
 
 const transactionSchema = z.object({

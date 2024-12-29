@@ -9,11 +9,12 @@ const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
 };
 
 FinanceTrackerDatabase.version(1).stores({
-  accounts: "++id, name, balance",
+  accounts: "++id, name, balance, startingBalance, createdAt, updatedAt",
   transactions: "++id, name, amount, date, type, frequency, accountId, categoryId, transactionId",
   categories: "++id, name, color",
 });
 
+// ---------------------- Seeding ----------------------
 FinanceTrackerDatabase.on("populate", function (db: Tx) {
   db.table("categories").bulkAdd(categorySeeds);
 });
@@ -29,6 +30,16 @@ FinanceTrackerDatabase.transactions.hook("deleting", (primaryKey, transaction) =
 });
 
 // Account Hooks
+FinanceTrackerDatabase.accounts.hook("creating", function (primaryKey, account, transaction) {
+  account.startingBalance = account.balance;
+  account.createdAt = new Date();
+  account.updatedAt = new Date();
+
+  this.onsuccess = function () {
+    console.log("Creating account", account.name);
+  }
+});
+
 FinanceTrackerDatabase.accounts.hook("deleting", async (primaryKey, transaction) => {
   console.log("Deleting account", primaryKey, transaction.name);
   if (!primaryKey)
@@ -37,8 +48,12 @@ FinanceTrackerDatabase.accounts.hook("deleting", async (primaryKey, transaction)
   console.log("Deleted", deletedItems.valueOf(), "related transactions");
 });
 
-FinanceTrackerDatabase.accounts.hook("updating", (primaryKey, transaction) => {
-  console.log("Updating account", transaction);
+FinanceTrackerDatabase.accounts.hook("updating", function (mods, primaryKey, account, transaction) {
+  this.onsuccess = function () {
+    console.log("Updating account", account.name);
+  }
+
+  return { updatedAt: new Date() };
 });
 
 export default FinanceTrackerDatabase;

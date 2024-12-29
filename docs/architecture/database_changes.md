@@ -148,3 +148,22 @@ The current category model only allows separation of transactions by different c
 That is why:
 - Adding color to the category model allows analytics services to visualize transactions via categories.
 - It also allows users to customize the color of their categories, leading to greater user experiences.
+
+## Version 0.4.0
+### Data Model
+- Account
+  - id
+  - name
+  - balance
+  - startingBalance
+  - createdAt
+  - updatedAt
+- Transaction
+- Category
+
+### Reason | Why?
+Account is a simple model. An id, name, and balance. However, statistics need more than that. They need a sort of starting balance for comparison between dates. They also need to have several date fields to determine when was it created, when was it updated for analytics service to decide whether it is an old account or an active account.
+
+That is why:
+- Adding a starting balance will allow analytics modules to compared daily, weekly, monthly, and yearly data
+- Adding a createdAt and updateAt date fields will allow analytics modules to determine the accounts age and whether it is an active account.
