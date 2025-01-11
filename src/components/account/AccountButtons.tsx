@@ -57,7 +57,7 @@ const OpenAccountButton = ({ button, dialogProps, title, description }: AccountB
     <DrawerDialog
       triggerButton={buttonChildren}
       title={title ? title : "Create a new Account"}
-      description={description ? description : ""}
+      description={description ? description : "You cannot adjust the balance of an account after it has been created."}
       dialog={openAccountDialog}
     >
       <AccountForm onSave={openAccountDialog.dismiss} />
