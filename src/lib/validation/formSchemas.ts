@@ -32,11 +32,11 @@ const transactionSchema = z.object({
     message: 'Name must be at least 3 characters long',
   }),
   amount: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
-    message: 'Balance must be a number',
-  }).min(0, {
-    message: 'Balance must be at least 0',
+    message: 'The transaction must be a number',
+  }).min(0.01, {
+    message: 'The transaction must be more than 0',
   }).multipleOf(0.01, {
-    message: 'Balance must only have 2 decimal places',
+    message: 'The transaction must only have 2 decimal places',
   })),
   date: z.date(),
   type: z.nativeEnum(TransactionType, {
