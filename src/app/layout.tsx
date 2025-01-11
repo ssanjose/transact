@@ -5,7 +5,7 @@ import "./globals.css";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/navigation/AppSidebar";
 import ThemeProvider from "@/components/theming/ThemeProvider";
-import { ThemeModeToggle } from "@/components/theming/ThemeModeToggle";
+import Header from "./header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,19 +42,17 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="sticky top-0 z-50 p-2 border-b flex justify-between items-center bg-background">
-            <span className="text-foreground">
-              Finance Tracker App
-            </span>
-            <ThemeModeToggle />
-          </div>
+          <Header />
           <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
             <SidebarInset className="pt-2">
-              <div className="flex jsutify-left items-center">
+              <div className="flex justify-left items-center">
                 <SidebarTrigger className="mx-4" />
               </div>
               {children}
+              <footer className="z-50 p-2 border-t flex justify-between items-center bg-background">
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere, tempora! Quisquam voluptatibus repellendus reiciendis eaque aliquam reprehenderit, animi, eos non laborum maxime sed eum necessitatibus. Enim perspiciatis dignissimos ducimus modi?</p>
+              </footer>
             </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>
