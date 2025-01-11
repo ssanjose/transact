@@ -43,6 +43,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
       type: TransactionType.Expense,
       categoryId: undefined,
       frequency: Frequency.OneTime,
+      transactionId: undefined,
     },
   });
 
@@ -55,8 +56,9 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
       type: values.type,
       categoryId: values.categoryId,
       frequency: GetFrequency(values.frequency),
+      transactionId: values.transactionId,
     });
-    await TransactionService.createAndApplyTransaction(newTransaction);
+    await TransactionService.createTransaction(newTransaction);
 
     onSave();
   }
