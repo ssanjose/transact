@@ -15,28 +15,22 @@ const Page = () => {
   const account = useLiveQuery(() => AccountService.getAccount(accountId));
 
   return (
-    <div className="min-h-screen p-0 gap-16 sm:p-10 sm:pt-2 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex relative top-0">
-        <div className="md:w-3/4 w-full p-2 pt-2 sm:p-4 sm:pt-4">
-          <div className="flex flex-start justify-between min-w-sm mb-2 px-2 sm:p-0 sm:pb-2 border-b">
-            <div className="w-full flex justify-between items-center">
-              <h1 className="scroll-m-20 mb-2 text-2xl font-semibold tracking-tight first:mt-0 mr-2">
-                {account?.name}
-                <span className="text-normal font-normal text-md ml-2">{account ? `(${account?.id})` : null}</span>
-              </h1>
-              <OpenTransactionButton accountId={accountId} />
-            </div>
-            <AccountMenu account={account} />
+    <div className="grid grid-cols-4 gap-2 px-4 sm:px-2 w-full relative">
+      <div className="col-span-4 lg:col-span-3 w-full px-0 sm:p-2 pt-2">
+        <div className="flex flex-start justify-between min-w-sm px-2 sm:p-0 sm:pb-2 border-b">
+          <div className="w-full flex justify-between items-center">
+            <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight mr-2">
+              {account?.name}
+              <span className="text-normal font-normal text-md ml-2">{account ? `(${account?.id})` : null}</span>
+            </h1>
+            <OpenTransactionButton accountId={accountId} />
           </div>
-          <TransactionTable id={accountId} setTransactionId={setTransactionId} />
-          <div className="sticky min-h-24 bottom-0 margin-2 bg-white">
-            test
-          </div>
+          <AccountMenu account={account} />
         </div>
-        <div className="hidden md:block w-1/4 h-fit sticky pt-2 sm:pt-4 top-0">
-          <TransactionDetails id={transactionId} className="p-2 sm:p-4 min-h-80 border rounded" />
-        </div>
+        <TransactionTable id={accountId} setTransactionId={setTransactionId} />
       </div>
+      <TransactionDetails id={transactionId}
+        className="col-span-0 lg:col-span-1 hidden lg:block h-fit mt-4 min-h-[60vh] border rounded-b p-2 sticky top-[45px]" />
     </div>
   );
 }
