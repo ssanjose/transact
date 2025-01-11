@@ -12,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link";
 
@@ -40,6 +41,8 @@ const items = [
 ]
 
 const AppSidebar = () => {
+  const { setOpenMobile } = useSidebar();
+
   return (
     <Sidebar variant="sidebar" side="left" className="max-w-[200px]">
       <SidebarContent>
@@ -50,7 +53,7 @@ const AppSidebar = () => {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link href={item.url} onClick={() => setOpenMobile(false)}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
