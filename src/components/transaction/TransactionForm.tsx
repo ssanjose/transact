@@ -23,32 +23,34 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { OpenCategoryButton } from '@/components/category/CategoryButtons';
 
-interface TransactionFormProps {
-  className?: string;
+interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   accountId: number;
   onSave: () => void;
+  existingTransaction?: Transaction;
 }
 
-const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps) => {
+const TransactionForm = ({ className, accountId, onSave, existingTransaction }: TransactionFormProps) => {
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
 
   const form = useForm<z.infer<typeof transactionSchema>>({
     resolver: zodResolver(transactionSchema),
     mode: "onChange",
     defaultValues: {
-      name: "",
-      amount: 0,
-      date: new Date(),
-      accountId: accountId,
-      type: TransactionType.Expense,
-      categoryId: undefined,
-      frequency: Frequency.OneTime,
-      transactionId: undefined,
+      id: existingTransaction?.id || undefined,
+      name: existingTransaction?.name || "",
+      amount: existingTransaction?.amount || 0.00,
+      date: existingTransaction?.date || new Date(),
+      accountId: existingTransaction?.accountId || accountId,
+      type: existingTransaction?.type || TransactionType.Expense,
+      categoryId: existingTransaction?.categoryId || undefined,
+      frequency: existingTransaction?.frequency || Frequency.OneTime,
+      transactionId: existingTransaction?.transactionId || undefined,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof transactionSchema>) => {
-    const newTransaction: Transaction = transactionSchema.parse({
+    const transaction: Transaction = transactionSchema.parse({
+      id: values.id,
       name: values.name,
       amount: (Math.round(values.amount * 100) / 100),
       date: values.date,
@@ -58,7 +60,11 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
       frequency: GetFrequency(values.frequency),
       transactionId: values.transactionId,
     });
-    await TransactionService.createTransaction(newTransaction);
+
+    if (existingTransaction && existingTransaction.id !== undefined)
+      await TransactionService.updateTransaction(transaction);
+    else
+      await TransactionService.createTransaction(transaction);
 
     onSave();
   }
@@ -160,6 +166,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
                   onValueChange={(value) => {
                     if (!isNaN(parseInt(value)) && value !== "-1") field.onChange(parseInt(value));
                   }}
+                  disabled={!!existingTransaction?.transactionId}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -240,7 +247,7 @@ const TransactionForm = ({ className, accountId, onSave }: TransactionFormProps)
               </FormItem>
             } />
         </div>
-        <Button type="submit" className="w-full">Create Transaction</Button>
+        <Button type="submit" className="w-full">{existingTransaction ? "Edit " : "Create an "}Transaction</Button>
       </form>
     </Form >
   )
