@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -22,11 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useDialog } from "@/hooks/use-dialog"
-import { DeleteTransactionButton } from "@/components/transaction/TransactionButtons"
+import { DeleteTransactionButton, EditTransactionButton } from "@/components/transaction/TransactionButtons"
 import { DataTablePagination } from "@/components/data-table/PaginationControls"
 import { DataTableViewOptions } from "@/components/data-table/ColumnToggle"
 import dataTableConfig from "@/config/data-table"
 import SimpleInputFilter from "@/components/data-table/SimpleInputFilter"
+import { Transaction } from "@/lib/db/db.model"
+import { TransactionService } from "@/services/transaction.service"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -36,10 +38,22 @@ interface DataTableProps<TData, TValue> {
 
 const DataTable = <TData, TValue>({ columns, data, setTransactionId }: DataTableProps<TData, TValue>) => {
   const [selectedRowForAction, setSelectedRowForAction] = React.useState<number | undefined>(undefined);
+  const [rowData, setRowData] = React.useState<TData>({} as TData);
   const [sorting, setSorting] = React.useState<SortingState>(dataTableConfig.sorting)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const deleteDialog = useDialog();
   const editDialog = useDialog();
+
+  useEffect(() => {
+    if (selectedRowForAction === -1 || !selectedRowForAction) return;
+
+    else if (selectedRowForAction) {
+      TransactionService.getTransaction(selectedRowForAction)
+        .then((transaction) => {
+          setRowData(transaction as TData);
+        })
+    };
+  }, [selectedRowForAction])
 
   const table = useReactTable({
     data,
@@ -58,8 +72,10 @@ const DataTable = <TData, TValue>({ columns, data, setTransactionId }: DataTable
       columnFilters,
     },
     meta: {
-      setToBeDeleted: (id: number) => setSelectedRowForAction(id),
+      setId: (id: number) => setSelectedRowForAction(id),
+      removeId: () => setSelectedRowForAction(undefined),
       deleteDialogTrigger: () => deleteDialog.trigger(),
+      editDialogTrigger: () => editDialog.trigger(),
     }
   });
 
@@ -122,6 +138,12 @@ const DataTable = <TData, TValue>({ columns, data, setTransactionId }: DataTable
         <DataTablePagination table={table} />
       </div>
 
+      <EditTransactionButton
+        existingTransaction={rowData as Transaction}
+        dialogProps={() => editDialog}
+        visible={false}
+        title="Edit a Transaction"
+      />
       <DeleteTransactionButton
         id={selectedRowForAction ? selectedRowForAction : -1}
         dialogProps={() => deleteDialog}

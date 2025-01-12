@@ -18,22 +18,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
+import { Transaction } from '@/lib/db/db.model';
 
 interface TransactionButtonProps {
   button?: React.ReactNode;
   dialogProps?: typeof useDialog;
   title?: string;
   description?: string;
+  visible?: boolean;
 }
 
 interface OpenTransactionButtonProps extends TransactionButtonProps {
   accountId: number;
 }
 
+interface EditTransactionButtonProps extends TransactionButtonProps {
+  existingTransaction?: Transaction;
+}
+
 interface DeleteTransactionButtonProps extends TransactionButtonProps {
   id: number;
   name?: string;
-  visible?: boolean;
 }
 
 /**
@@ -60,6 +65,38 @@ const OpenTransactionButton = ({ button, accountId, dialogProps }: OpenTransacti
     </DrawerDialog>
   )
 };
+
+const EditTransactionButton = ({
+  button,
+  dialogProps,
+  title,
+  description,
+  existingTransaction,
+  visible,
+}: EditTransactionButtonProps) => {
+  const editTransactionDialog = dialogProps ? dialogProps() : useDialog();
+  const buttonChildren = button || (
+    <Button variant="ghost" size="icon" className={`px-2 w-full flex justify-start ${visible ? "block" : "hidden"}`} >
+      <span>Edit a Transaction</span>
+    </Button>
+  );
+
+  return (
+    <DrawerDialog
+      triggerButton={buttonChildren}
+      title={title ? title : ""}
+      description={description ? description :
+        ``
+      }
+      dialog={editTransactionDialog}
+    >
+      <TransactionForm
+        onSave={editTransactionDialog.dismiss}
+        accountId={existingTransaction?.accountId!}
+        existingTransaction={existingTransaction} />
+    </DrawerDialog>
+  )
+}
 
 const DeleteTransactionButton = ({ id, button, title, description, name, dialogProps, visible }: DeleteTransactionButtonProps) => {
   const deleteTransactionDialog = dialogProps ? dialogProps() : useDialog();
@@ -107,4 +144,8 @@ const DeleteTransactionButton = ({ id, button, title, description, name, dialogP
   )
 };
 
-export { OpenTransactionButton, DeleteTransactionButton };
+export {
+  OpenTransactionButton,
+  EditTransactionButton,
+  DeleteTransactionButton
+};
