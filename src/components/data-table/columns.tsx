@@ -11,8 +11,10 @@ import { DataTableColumnHeader } from "@/components/data-table/ColumnHeader";
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
-    setToBeDeleted: (id: number) => void,
+    setId: (id: number) => void,
+    removeId: () => void,
     deleteDialogTrigger: () => void,
+    editDialogTrigger: () => void,
   }
 }
 
@@ -103,7 +105,9 @@ export const columns: ColumnDef<Transaction>[] = [
       return (
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="size-8 p-0 text-right self-end">
+            <Button variant="ghost" className="size-8 p-0 text-right self-end"
+              onClick={() => table.options.meta?.setId(transaction.id ?? -1)}
+            >
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="size-4" />
             </Button>
@@ -111,12 +115,15 @@ export const columns: ColumnDef<Transaction>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+              onClick={() => {
+                table.options.meta?.editDialogTrigger();
+                table.options.meta?.removeId();
+              }}
             >
               Edit Transaction
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                table.options.meta?.setToBeDeleted(transaction.id ?? -1)
                 table.options.meta?.deleteDialogTrigger();
               }}
             >
