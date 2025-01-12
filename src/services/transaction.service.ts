@@ -220,31 +220,6 @@ function findUpcomingTransactions(accountId?: number, limit?: number): Promise<T
 
 // helper functions
 /**
- * Identifies out-of-bound child Transactions based on existing and new child Transactions.
- *
- * @param {Transaction[]} existingChildTransactions - The existing child Transactions.
- * @param {Transaction[]} newChildTransactions - The new child Transactions.
- * @returns {Transaction[]} - An array of out-of-bound child Transactions.
- */
-function identifyOutOfBoundChildTransactions(existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Transaction[] {
-  const existingChildTransactionsMap = new Map(existingChildTransactions.map(at => [at.date.toDateString(), at]));
-  const outOfBoundChildTransactions: Transaction[] = [];
-
-  for (const newChildTransaction of newChildTransactions) {
-    const match = existingChildTransactionsMap.get(newChildTransaction.date.toDateString());
-    if (match) {
-      existingChildTransactionsMap.delete(newChildTransaction.date.toDateString());
-    }
-  }
-
-  for (const remainingTransaction of existingChildTransactionsMap.values()) {
-    outOfBoundChildTransactions.push(remainingTransaction);
-  }
-
-  return outOfBoundChildTransactions;
-}
-
-/**
  * Generates child Transactions based on the transaction's frequency and datetime.
  *
  * @param {Transaction} transaction - The parent transaction object.
