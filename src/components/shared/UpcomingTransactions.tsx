@@ -41,8 +41,8 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
   }, [transactions]);
 
   return (
-    <Table className={className}>
-      <TableCaption className="mt-0 p-2 text-accent-foreground bg-background text-xl font-semibold tracking-tight sticky top-0 text-left">Upcoming Transactions</TableCaption>
+    <Table className={className} containerClassName="no-scrollbar">
+      <TableCaption className="mt-0 py-2 text-accent-foreground bg-background text-xl font-semibold tracking-tight sticky top-0 text-left">Upcoming Transactions</TableCaption>
       <TableBody>
         {
           formattedTransactions?.map((tx, index) => (
