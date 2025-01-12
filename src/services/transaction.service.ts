@@ -1,6 +1,6 @@
 import { Frequency, Transaction } from '@/lib/db/db.model';
-import { PromptCallback } from '../hooks/prompt-callback-tempfile';
 import FinanceTrackerDatabase from '@/lib/db/db.init';
+import { checkIfExists } from '@/lib/utils';
 
 /**
  * Creates a transaction and its corresponding child Transactions based on frequency and datetime.
@@ -8,16 +8,14 @@ import FinanceTrackerDatabase from '@/lib/db/db.init';
  * @param {Transaction} transaction - The transaction object to create and apply.
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are created.
  */
-function createAndApplyTransaction(transaction: Transaction): Promise<void> {
+function createTransaction(transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
     let txId = await FinanceTrackerDatabase.transactions.add(transaction);
     let childTransactions: Transaction[] = [];
 
-    if (txId!)
-      childTransactions = generateChildTransactions((await FinanceTrackerDatabase.transactions.get(txId))!);
-    else throw new Error("Transaction not created");
-
-    FinanceTrackerDatabase.transactions.bulkAdd(childTransactions);
+    let persistedTransaction = await FinanceTrackerDatabase.transactions.get(checkIfExists(txId));
+    childTransactions = generateChildTransactions(checkIfExists(persistedTransaction));
+    await FinanceTrackerDatabase.transactions.bulkAdd(childTransactions);
   })
 }
 
@@ -25,74 +23,118 @@ function createAndApplyTransaction(transaction: Transaction): Promise<void> {
  * Gets a transaction by ID.
  *
  * @param {number} id - The ID of the transaction to retrieve.
- * @returns {Promise<Transaction | undefined>} - A promise that resolves to the transaction object or undefined if not found.
+ * @returns {PromiseExtended<Transaction | undefined>} - A promise that resolves to the transaction object or undefined if not found.
  */
-function getTransactionById(id: number) {
+function getTransaction(id: number) {
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
-    return await FinanceTrackerDatabase.transactions.get(id);
+    let transaction = await FinanceTrackerDatabase.transactions.get(id)
+
+    checkIfExists(transaction);
+    return transaction;
   })
-    .catch((error) => {
-      console.error('Failed to get transaction by ID:', error);
-      throw error;
-    });
 }
 
 /**
- * Updates a transaction and its corresponding child Transactions.
- *
- * @param {Transaction} transaction - The transaction object to update.
+ * Updates a transaction and its corresponding child Transactions based on frequency and datetime.
+ * - If the transaction is a one-time transaction, no child Transactions are generated.
+ * - If the transaction is a child transaction, no child Transactions are generated.
+ * - If the transaction is a parent transaction, the child Transactions are updated.
+ * - If the transaction is a parent transaction and the frequency or datetime has changed, 
+ *    - the child Transactions are regenerated, 
+ *    - the out-of-bound child Transactions are deleted, 
+ *    - the new child Transactions are created, 
+ *    - the existing child Transactions are updated, 
+ *    - the remaining unmatched existing child Transactions are deleted, 
+ *    - the out-of-bound child Transactions are deleted, 
+ *    - the child Transactions are updated.
+ * @param {Transaction} transaction - The updated transaction object.
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are updated.
+ * @throws {Error} - An error is thrown if the transaction is not found.
  */
-function updateTransaction(transaction: Transaction, promptCallback: PromptCallback): Promise<void> {
+function updateTransaction(transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    // Fetch the existing transaction
-    const existingTransaction = await FinanceTrackerDatabase.transactions.get(transaction.id);
-    if (!existingTransaction) {
-      throw new Error(`Transaction with ID ${transaction.id} not found`);
-    }
+    const existingTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id));
 
     // Update the parent transaction
-    await FinanceTrackerDatabase.transactions.update(transaction.id, transaction);
+    await FinanceTrackerDatabase.transactions.update(transaction.id, {
+      ...transaction,
+      // Make child transactions independent if updated by itself by removing the transactionId, and setting the frequency to one-time
+      frequency: transaction.transactionId ? Frequency.OneTime : transaction.frequency,
+      // Ensure that the transactionId is undefined for parent transactions and child transactions
+      transactionId: undefined,
+    });
+
+    const updatedTransaction = (checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id)));
+    // stop if the transaction is a child transaction
+    if (updatedTransaction.transactionId) return;
 
     // If datetime or frequency has changed, regenerate child Transactions
-    if (existingTransaction.date !== transaction.date || existingTransaction.frequency !== transaction.frequency) {
-      // Fetch existing child Transactions
-      const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
-
-      // Generate new child Transactions
+    const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
+    if (existingTransaction.date.toISOString() !== transaction.date.toISOString() || existingTransaction.frequency !== transaction.frequency) {
       const newChildTransactions = generateChildTransactions(transaction);
-
-      // Identify out-of-bound child Transactions
-      const outOfBoundChildTransactions = identifyOutOfBoundChildTransactions(existingChildTransactions, newChildTransactions);
-
-      // If there are out-of-bound child Transactions, prompt the user
-      if (outOfBoundChildTransactions.length > 0) {
-        // const userDecision = await promptCallback(outOfBoundChildTransactions);
-
-        // if (userDecision === 'preserve') {
-        //   await handlePreserveDecision(outOfBoundChildTransactions, transaction);
-        // } else if (userDecision === 'delete') {
-        //   await deleteOutOfBoundChildTransactions(outOfBoundChildTransactions);
-        // }
-        await deleteOutOfBoundChildTransactions(outOfBoundChildTransactions);
-      }
-
-      // Proceed with updating the transaction and its child Transactions
       await updateChildTransactions(transaction, existingChildTransactions, newChildTransactions);
     } else {
-      // Update existing child Transactions to reflect the updated parent transaction
-      const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
-      for (const childTransaction of existingChildTransactions) {
-        await FinanceTrackerDatabase.transactions.update(childTransaction.id, {
-          ...childTransaction,
-          name: transaction.name,
-          amount: transaction.amount,
-          type: transaction.type,
-          accountId: transaction.accountId,
-          categoryId: transaction.categoryId,
-        });
-      }
+      let changes = await convertToUpdateChanges(existingChildTransactions, updatedTransaction);
+      await FinanceTrackerDatabase.transactions.bulkUpdate(changes);
     }
+  });
+}
+
+/**
+ * Deletes a transaction and its corresponding child Transactions.
+ *
+ * @param {number} transactionId - The ID of the transaction to delete.
+ * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are deleted.
+ */
+function deleteTransaction(transactionId: number): Promise<void> {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
+    let transaction = await FinanceTrackerDatabase.transactions.get(transactionId);
+    if (!transaction)
+      throw new Error(`Transaction with ID ${transactionId} not found`);
+
+    if (transaction.transactionId === undefined)
+      await FinanceTrackerDatabase.transactions.where({ transactionId: transactionId }).delete();
+    await FinanceTrackerDatabase.transactions.delete(transactionId);
+  });
+}
+
+/**
+ * Retrieves all transactions for a specific account.
+ *
+ * @param {number} accountId - The ID of the account.
+ * @returns {Promise<Transaction[]>} - A promise that resolves to an array of transactions for the account.
+ */
+function getTransactionsByAccount(accountId?: number): Promise<Transaction[]> {
+  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
+    return FinanceTrackerDatabase.transactions.where({ accountId }).toArray();
+  });
+}
+
+/**
+ * Converts update transactions to structure used by Dexie.js for batch update operations.
+ * @example [{transaction1}] => [{key: transaction1.id, changes: {"keyPath1": newValue1, "keyPath2": newValue2}}]
+ */
+async function convertToUpdateChanges(transactions: Transaction[], parentTransaction: Transaction): Promise<{ key: number, changes: Partial<Transaction> }[]> {
+  function findChanges(oldTransaction: Transaction, newTransaction: Transaction): Partial<Transaction> {
+    let changes = {
+      name: newTransaction.name !== oldTransaction.name ? newTransaction.name : undefined,
+      amount: newTransaction.amount !== oldTransaction.amount ? newTransaction.amount : undefined,
+      type: newTransaction.type !== oldTransaction.type ? newTransaction.type : undefined,
+      accountId: newTransaction.accountId !== oldTransaction.accountId ? newTransaction.accountId : undefined,
+      categoryId: newTransaction.categoryId !== oldTransaction.categoryId ? newTransaction.categoryId : undefined,
+    }
+    return Object.fromEntries(Object.entries(changes).filter(([_, v]) => v !== undefined && v !== null));
+  }
+
+  return transactions.map((transaction) => {
+    let id = checkIfExists(transaction.id);
+    let oldTransaction = transactions.find((change) => change?.id === id);
+    oldTransaction = checkIfExists(oldTransaction);
+
+    return {
+      key: id,
+      changes: findChanges(oldTransaction, parentTransaction),
+    };
   });
 }
 
@@ -109,7 +151,6 @@ async function updateChildTransactions(transaction: Transaction, existingChildTr
   const existingChildTransactionsMap = new Map(existingChildTransactions.map(ct => [ct.date.toDateString(), ct]));
 
   // Prepare batch operations
-  const deleteOperations = [];
   const updateOperations = [];
   const createOperations = [];
 
@@ -118,7 +159,7 @@ async function updateChildTransactions(transaction: Transaction, existingChildTr
     if (match) {
       // Only update if there are changes
       if (match.date.getTime() !== newChildTransaction.date.getTime() || match.amount !== newChildTransaction.amount) {
-        updateOperations.push(FinanceTrackerDatabase.transactions.update(match.id!, {
+        updateOperations.push(FinanceTrackerDatabase.transactions.update(match.id, {
           ...match,
           date: newChildTransaction.date,
           amount: newChildTransaction.amount,
@@ -130,54 +171,29 @@ async function updateChildTransactions(transaction: Transaction, existingChildTr
     }
   }
 
-  // Delete remaining unmatched existing child Transactions
-  for (const remainingTransaction of existingChildTransactionsMap.values()) {
-    deleteOperations.push(FinanceTrackerDatabase.transactions.delete(remainingTransaction.id!));
-  }
+  // Delete remaining unmdatched existing child Transactions
+  deleteOutOfBoundTransactions(Array.from(existingChildTransactionsMap.values()));
 
   // Execute batch operations in parallel
-  await Promise.all([...deleteOperations, ...updateOperations, ...createOperations]);
+  await Promise.all([...updateOperations, ...createOperations]);
 }
 
 /**
- * Deletes a transaction and its corresponding child Transactions.
+ * Deletes out-of-bound Transactions.
  *
- * @param {number} transactionId - The ID of the transaction to delete.
- * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are deleted.
- */
-function deleteTransaction(transactionId: number): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    await FinanceTrackerDatabase.transactions.where({ transactionId }).delete();
-    await FinanceTrackerDatabase.transactions.delete(transactionId);
-  });
-}
-
-/**
- * Retrieves all transactions for a specific account.
- *
- * @param {number} accountId - The ID of the account.
- * @returns {Promise<Transaction[]>} - A promise that resolves to an array of transactions for the account.
- */
-function getTransactionsByAccount(accountId: number): Promise<Transaction[]> {
-  return FinanceTrackerDatabase.transactions.where({ accountId }).toArray();
-}
-
-/**
- * Deletes out-of-bound child Transactions.
- *
- * @param {Transaction[]} childTransactions - The array of out-of-bound child Transactions to delete.
+ * @param {Transaction[]} transactions - The array of out-of-bound  Transactions to delete.
  * @returns {Promise<void>} - A promise that resolves when the child Transactions are deleted.
  */
-async function deleteOutOfBoundChildTransactions(childTransactions: Transaction[]): Promise<void> {
+function deleteOutOfBoundTransactions(transactions: Transaction[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    await FinanceTrackerDatabase.transactions.bulkDelete(childTransactions.map(ct => ct.id!));
+    await FinanceTrackerDatabase.transactions.bulkDelete(transactions.map(ct => ct.id!));
   });
 }
 
 /**
  * Finds the upcoming transactions for the given account ID and limit.
  *
- * @param {number} accountId - The account ID.
+ * @param {number} accountId - The ID of an account. If not provided, all transactions are considered.
  * @param {number} limit - The maximum number of transactions to return.
  * @returns {Promise<Transaction[]>} - A promise that resolves to an array of Transactions.
  */
@@ -187,17 +203,14 @@ function findUpcomingTransactions(accountId?: number, limit?: number): Promise<T
   twoDaysFromNow.setDate(today.getDate() + 2);
 
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
-    let transactions: Transaction[];
+    let transactions: Transaction[] = [];
     if (accountId)
       transactions = await FinanceTrackerDatabase.transactions
         .where({ accountId: accountId })
         .and((transaction) => transaction.date >= today && transaction.date <= twoDaysFromNow)
         .sortBy('date');
     else
-      transactions = await FinanceTrackerDatabase.transactions
-        .where('date')
-        .between(today, twoDaysFromNow)
-        .sortBy('date');
+      transactions = await getTransactionsByDate({ lowerBound: today, upperBound: twoDaysFromNow, sorted: true, sortedDirection: 'asc' });
 
     transactions = transactions.slice(0, limit);
 
@@ -232,23 +245,6 @@ function identifyOutOfBoundChildTransactions(existingChildTransactions: Transact
 }
 
 /**
- * Handles the 'preserve' decision by updating the frequency of out-of-bound child Transactions to one-time.
- *
- * @param {Transaction[]} outOfBoundChildTransactions - The array of out-of-bound child Transactions.
- * @param {Transaction} existingTransaction - The existing transaction object.
- * @returns {Promise<void>} - A promise that resolves when the operations are complete.
- */
-async function handlePreserveDecision(outOfBoundChildTransactions: Transaction[], existingTransaction: Transaction): Promise<void> {
-  for (const outOfBoundChildTransaction of outOfBoundChildTransactions) {
-    await FinanceTrackerDatabase.transactions.update(outOfBoundChildTransaction.id!, {
-      ...outOfBoundChildTransaction,
-      frequency: Frequency.OneTime,
-      transactionId: undefined,
-    });
-  }
-}
-
-/**
  * Generates child Transactions based on the transaction's frequency and datetime.
  *
  * @param {Transaction} transaction - The parent transaction object.
@@ -257,7 +253,7 @@ async function handlePreserveDecision(outOfBoundChildTransactions: Transaction[]
 function generateChildTransactions(transaction: Transaction): Transaction[] {
   const childTransactions: Transaction[] = [];
   const startDate = new Date(transaction.date);
-  const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // End of the month
+  const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1); // End of the month
   let currentDate = new Date(startDate);
 
   switch (transaction.frequency) {
@@ -286,11 +282,43 @@ function generateChildTransactions(transaction: Transaction): Transaction[] {
   return childTransactions;
 }
 
+interface DateRangeProps {
+  lowerBound: Date;
+  upperBound: Date;
+  sorted?: boolean;
+  sortedDirection?: 'asc' | 'desc';
+}
+
+/**
+ * Get transactions by date
+ * @param {DateRangeProps} dateRange - The date range
+ * @returns {Promise<Transaction[]>} - The transactions within the date range
+ */
+function getTransactionsByDate({ lowerBound, upperBound, sorted, sortedDirection }: DateRangeProps) {
+  return FinanceTrackerDatabase.transaction("r", FinanceTrackerDatabase.transactions, async () => {
+    let transactionCollection = await FinanceTrackerDatabase.transactions
+      .where('date')
+      .between(lowerBound, upperBound);
+
+    let transactions: Transaction[] = [];
+    if (sorted)
+      if (sortedDirection === 'asc')
+        transactions = await transactionCollection.sortBy('date');
+      else
+        transactions = await transactionCollection.reverse().sortBy('date');
+    else
+      transactions = await transactionCollection.toArray();
+
+    return transactions;
+  });
+}
+
 export const TransactionService = {
-  createAndApplyTransaction,
-  getTransactionById,
+  createTransaction,
+  getTransaction,
   updateTransaction,
   deleteTransaction,
   getTransactionsByAccount,
   findUpcomingTransactions,
+  getTransactionsByDate,
 };
