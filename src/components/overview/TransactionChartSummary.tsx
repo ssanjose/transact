@@ -13,12 +13,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { cn } from '@/lib/utils';
-import { AnalyticsService, SelectedDateRange } from '@/services/analytics.service';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Category, Transaction } from '@/lib/db/db.model';
 import { CategoryService } from '@/services/category.service';
 import { formatCurrency } from '@/lib/format/formatCurrency';
-import { SelectedDateRangeContext } from '../../hooks/use-selecteddaterange-context';
+import { SelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
+import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
+import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 
 const totalTransactionChartConfig = {
   expense: {
@@ -46,6 +47,18 @@ interface TransactionChartSummaryProps {
   className?: string;
 }
 
+const DayString = (selectedDateRange: SelectedDateRange | undefined) => {
+  if (selectedDateRange === SelectedDateRange.DAY) {
+    return " today";
+  } else if (selectedDateRange === SelectedDateRange.WEEK) {
+    return " this past week";
+  } else if (selectedDateRange === SelectedDateRange.MONTH) {
+    return " this month";
+  } else {
+    return " this year";
+  }
+}
+
 const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) => {
   const selectedDateRange = React.useContext(SelectedDateRangeContext);
   const [transactions, setTransactions] = React.useState<Transaction[] | undefined>(undefined);
@@ -54,7 +67,7 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
   useEffect(() => {
     const fetchTransactions = async () => {
       if (selectedDateRange === undefined) return;
-      setTransactions(await AnalyticsService.getTransactionsByDateRange({ dateRange: selectedDateRange }));
+      setTransactions(await TransactionAnalyticsService.getTransactionsByDateRange({ dateRange: selectedDateRange }));
     };
     fetchTransactions();
   }, [selectedDateRange])
@@ -63,13 +76,24 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
     <div className={cn("", className)}>
       <Card className="w-full md:w-full h-full p-4 bg-card-overview flex flex-col md:flex-row max-h-none md:max-h-72 gap-4 *>*:bg-background">
         <Card className="flex justify-items-center items-center w-full shadow-xs border-0">
-          <TotalTransactionRadioChart transactions={transactions} selectedDateRange={selectedDateRange} />
+          <TotalTransactionRadioChart
+            transactions={transactions}
+            selectedDateRange={selectedDateRange}
+          />
         </Card>
-        <Card className="flex items-center h-full w-full shadow-xs border-0">
-          <IncomeTransactionChart transactions={transactions} categories={categories} />
+        <Card className="flex items-center w-full shadow-xs border-0">
+          <IncomeTransactionChart
+            transactions={transactions}
+            categories={categories}
+            selectedDateRange={selectedDateRange}
+          />
         </Card>
-        <Card className="flex items-center h-full w-full shadow-xs border-0">
-          <ExpenseTransactionChart transactions={transactions} categories={categories} />
+        <Card className="flex items-center w-full shadow-xs border-0">
+          <ExpenseTransactionChart
+            transactions={transactions}
+            categories={categories}
+            selectedDateRange={selectedDateRange}
+          />
         </Card>
       </Card>
     </div>
@@ -83,7 +107,7 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
  * @param selectedDateRange The date range to filter transactions by
  * @returns A radial bar chart of total transactions
  */
-const TotalTransactionRadioChart = ({ className, transactions, selectedDateRange }: BaseRadioChartSummaryProps) => {
+const TotalTransactionRadioChart = ({ transactions, selectedDateRange }: BaseRadioChartSummaryProps) => {
   const [expenseData, incomeData] = transactions?.reduce((acc, tx) => {
     if (tx.type === 0) acc[0] += 1
     else acc[1] += 1
@@ -125,18 +149,8 @@ const TotalTransactionRadioChart = ({ className, transactions, selectedDateRange
                       y={(viewBox.cy || 0) + 16}
                       className="fill-muted-foreground"
                     >
-                      Transactions
-                      {(() => {
-                        if (selectedDateRange === SelectedDateRange.DAY) {
-                          return " today";
-                        } else if (selectedDateRange === SelectedDateRange.WEEK) {
-                          return " this past week";
-                        } else if (selectedDateRange === SelectedDateRange.MONTH) {
-                          return " this month";
-                        } else {
-                          return " this year";
-                        }
-                      })()}
+                      Transactions {DayString(selectedDateRange)}
+
                     </tspan>
                   </text>
                 )
@@ -169,7 +183,7 @@ const TotalTransactionRadioChart = ({ className, transactions, selectedDateRange
  * @param transactions The transactions to display
  * @returns A pie chart of income transactions
  */
-const IncomeTransactionChart = ({ className, transactions }: ExpenseIncomeRadioChartProps) => {
+const IncomeTransactionChart = ({ transactions, selectedDateRange }: ExpenseIncomeRadioChartProps) => {
   const [incomeTransactions, setIncomeTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const categories = useLiveQuery(async () => await CategoryService.getAllCategories())
 
@@ -194,6 +208,15 @@ const IncomeTransactionChart = ({ className, transactions }: ExpenseIncomeRadioC
 
     setIncomeTransactions(transactions.filter((tx) => tx.type === 1));
   }, [transactions])
+
+  if (incomeTransactions === undefined || incomeTransactions.length === 0)
+    return (
+      <div className="flex flex-col items-center justify-center w-full min-h-[210px]">
+        <h4 className="my-auto h-fit text-center text-xl md:text-sm lg:text-lg tracking-tight text-muted-foreground p-2">
+          No income received for {DayString(selectedDateRange)}
+        </h4>
+      </div>
+    )
 
   return (
     <ChartContainer
@@ -248,6 +271,7 @@ const IncomeTransactionChart = ({ className, transactions }: ExpenseIncomeRadioC
           />
         </Pie>
       </PieChart>
+
     </ChartContainer>
   )
 }
@@ -258,7 +282,7 @@ const IncomeTransactionChart = ({ className, transactions }: ExpenseIncomeRadioC
  * @param transactions The transactions to display
  * @returns A pie chart of expense transactions
  */
-const ExpenseTransactionChart = ({ className, transactions }: ExpenseIncomeRadioChartProps) => {
+const ExpenseTransactionChart = ({ transactions, selectedDateRange }: ExpenseIncomeRadioChartProps) => {
   const [expenseTransactions, setExpenseTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const categories = useLiveQuery(async () => await CategoryService.getAllCategories())
 
@@ -283,6 +307,15 @@ const ExpenseTransactionChart = ({ className, transactions }: ExpenseIncomeRadio
 
     setExpenseTransactions(transactions.filter((tx) => tx.type === 0));
   }, [transactions])
+
+  if (expenseTransactions === undefined || expenseTransactions.length === 0)
+    return (
+      <div className="flex flex-col items-center justify-center w-full min-h-[210px]">
+        <h4 className="my-auto h-fit text-center text-xl md:text-sm lg:text-lg tracking-tight text-muted-foreground p-2">
+          No expenses for {DayString(selectedDateRange)}
+        </h4>
+      </div>
+    )
 
   return (
     <ChartContainer

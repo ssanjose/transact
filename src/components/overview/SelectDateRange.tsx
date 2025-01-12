@@ -1,9 +1,9 @@
 'use client';
 
 import React from "react";
-import { SelectedDateRange, SelectedDateRangeOptions } from "@/services/analytics.service";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { SelectedDateRange, SelectedDateRangeOptions } from "@/services/analytics/props/date-range.props";
 
 interface SelectDateRangeProps {
   className?: string;
