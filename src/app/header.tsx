@@ -2,6 +2,7 @@
 
 import React from "react"
 import { ThemeModeToggle } from "@/components/theming/ThemeModeToggle";
+import { GitHubButton } from "@/components/common/SocialMediaIcons";
 
 const Header = () => {
   return (
@@ -9,7 +10,10 @@ const Header = () => {
       <span className="text-foreground">
         Finance Tracker App
       </span>
-      <ThemeModeToggle />
+      <div>
+        <GitHubButton />
+        <ThemeModeToggle />
+      </div>
     </header>
   )
 }
