@@ -8,6 +8,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { AccountService } from '@/services/account.service';
 import AccountMenu from '@/components/account/AccountMenu';
 import { OpenTransactionButton } from '@/components/transaction/TransactionButtons';
+import ContentContainer from '@/components/common/ContentContainer';
 
 const Page = () => {
   const [transactionId, setTransactionId] = useState<number>(-1);
@@ -15,7 +16,7 @@ const Page = () => {
   const account = useLiveQuery(() => AccountService.getAccount(accountId));
 
   return (
-    <div className="grid grid-cols-4 gap-2 px-4 sm:px-2 w-full relative">
+    <ContentContainer className="grid grid-cols-4 gap-2">
       <div className="col-span-4 lg:col-span-3 w-full px-0 sm:p-2 pt-2">
         <div className="flex flex-start justify-between min-w-sm px-2 sm:p-0 sm:pb-2 border-b">
           <div className="w-full flex justify-between items-center">
@@ -31,7 +32,7 @@ const Page = () => {
       </div>
       <TransactionDetails id={transactionId}
         className="col-span-0 lg:col-span-1 hidden lg:block h-fit mt-4 min-h-[60vh] border rounded-b p-2 sticky top-[45px]" />
-    </div>
+    </ContentContainer>
   );
 }
 

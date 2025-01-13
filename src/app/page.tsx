@@ -14,22 +14,30 @@ import { Card } from '@/components/ui/card';
 import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
 import TransactionChartSummary from '@/components/overview/TransactionChartSummary';
 import { OpenAccountButton } from '@/components/account/AccountButtons';
-import { SelectedDateRange } from '../services/analytics.service';
-import { SelectedDateRangeContext } from '../hooks/use-selecteddaterange-context';
-import SelectDateRange from '../components/overview/SelectDateRange';
+import { SelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
+import SelectDateRange from '@/components/overview/SelectDateRange';
+import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
+import ContentContainer from '@/components/common/ContentContainer';
 
 const Home = () => {
   return (
-    <div className="items-center justify-items-center min-h-screen p-4 px-0 sm:pb-10 sm:pt-2 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex flex-col md:flex-row md:flex-start px-4 pb-2 mb-1 gap-2">
-        <Card className="flex flex-col items-center h-fit w-full md:w-5/12 md:items-start shadow-none px-4 pb-4 pt-0">
-          <AccountList className="w-full gap-2 min-w-md" />
-        </Card>
-        <div className="flex h-fit min-h-56 max-h-72 w-full md:w-7/12 p-4 pt-0">
-          <UpcomingTransactions className="w-full caption-top" limit={5} />
+    <ContentContainer className="items-center justify-items-center min-h-screen">
+      <div className="flex flex-start justify-between flex relative top-0 px-2 pt-2 mb-1 sm:px-2">
+        <div className="sm:pb-2 w-full">
+          <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            Overview
+          </h1>
         </div>
       </div>
-      <TransactionsOverview />
+      <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 mb-0 gap-4">
+        <Card className="flex flex-col items-center h-fit w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
+          <AccountList className="w-full min-w-md" />
+        </Card>
+        <div className="flex h-fit min-h-56 w-full md:w-1/2 p-4 px-0 pt-0">
+          <UpcomingTransactions className="w-full caption-top" limit={3} />
+        </div>
+      </div>
+      <TransactionsOverview className="h-fit min-h-72" />
       <div>
         <SectionTitle>Trends</SectionTitle>
         <div className="flex flex-col gap-2">
@@ -44,17 +52,8 @@ const Home = () => {
           </Card>
         </div>
       </div>
-    </div>
+    </ContentContainer>
   );
-}
-
-const Header = ({ className }: { className?: string }) => {
-  return (
-    <div className={cn("", className)}>
-      <h1 className="scroll-m-20 border-b pb-2 mb-2 text-2xl font-semibold tracking-tight first:mt-0">Finance Tracker</h1>
-      <p className="text-muted-foreground">Welcome to the Finance Tracker app! This app will help you keep track of your finances.</p>
-    </div>
-  )
 }
 
 const TransactionsOverview = ({ className }: { className?: string }) => {
@@ -62,26 +61,20 @@ const TransactionsOverview = ({ className }: { className?: string }) => {
 
   return (
     <SelectedDateRangeContext.Provider value={selectedDateRange}>
-      <div className={cn("flex flex-col h-fit min-h-72 mx-4 gap-2", className)}>
+      <div className={cn("flex flex-col mx-4 gap-2", className)}>
         <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
         <SelectDateRange selectedDateRange={selectedDateRange} setSelectedDateRange={setSelectedDateRange}
           className="self-start"
         />
-        <TransactionChartSummary className="px-0 w-full h-full" />
+        <TransactionChartSummary className="w-full h-full" />
       </div>
     </SelectedDateRangeContext.Provider>
   )
 }
 
-const TransactionSummary = ({ className }: { className?: string }) => {
-  return (
-    <div></div>
-  )
-}
-
 const AccountList = ({ className }: { className?: string }) => {
   return (
-    <Accordion type="single" collapsible className={cn("", className)} defaultValue="item-1">
+    <Accordion type="single" collapsible className={cn("gap-2", className)} defaultValue="item-1">
       <AccordionItem value="item-1" className="border-none">
         <AccordionTrigger className="border-b">Accounts</AccordionTrigger>
         <AccordionContent>
