@@ -5,7 +5,6 @@ import "./globals.css";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/navigation/AppSidebar";
 import ThemeProvider from "@/components/theming/ThemeProvider";
-import Header from "./header";
 import { siteConfig } from "@/config/site";
 
 const geistSans = localFont({
@@ -54,7 +53,6 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
           <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
             <SidebarInset className="pt-2">
@@ -62,9 +60,6 @@ export default async function RootLayout({
                 <SidebarTrigger className="mx-4" />
               </div>
               {children}
-              <footer className="z-50 p-2 border-t flex justify-between items-center bg-background">
-                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere, tempora! Quisquam voluptatibus repellendus reiciendis eaque aliquam reprehenderit, animi, eos non laborum maxime sed eum necessitatibus. Enim perspiciatis dignissimos ducimus modi?</p>
-              </footer>
             </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>
