@@ -6,6 +6,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import AppSidebar from "@/components/navigation/AppSidebar";
 import ThemeProvider from "@/components/theming/ThemeProvider";
 import Header from "./header";
+import { siteConfig } from "@/config/site";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,8 +20,19 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Finance Tracker App",
-  description: "Made by Kurt San Jose",
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [
+    {
+      name: siteConfig.author,
+      url: siteConfig.url.author
+    },
+  ],
+  creator: siteConfig.author,
 };
 
 export default async function RootLayout({
