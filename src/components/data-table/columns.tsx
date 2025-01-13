@@ -36,10 +36,10 @@ export const columns: ColumnDef<Transaction>[] = [
   },
   {
     accessorKey: "name",
-    header: () => <div className="text-left">Name</div>,
+    header: () => <div className="text-left w-[200px]">Name</div>,
     cell: ({ row }) => {
       return (
-        <div className="text-md truncate">
+        <div className="text-md truncate w-[200px]">
           {row.original.name}
         </div>
       )
