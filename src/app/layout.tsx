@@ -6,6 +6,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import AppSidebar from "@/components/navigation/AppSidebar";
 import ThemeProvider from "@/components/theming/ThemeProvider";
 import { siteConfig } from "@/config/site";
+import Footer from "@/components/common/Footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -60,6 +61,7 @@ export default async function RootLayout({
                 <SidebarTrigger className="mx-4" />
               </div>
               {children}
+              <Footer />
             </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>
