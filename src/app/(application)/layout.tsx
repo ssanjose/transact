@@ -7,6 +7,7 @@ import AppSidebar from "@/components/navigation/AppSidebar";
 import ThemeProvider from "@/components/theming/ThemeProvider";
 import { siteConfig } from "@/config/site";
 import Footer from "@/components/common/Footer";
+import Header from "@/components/common/Header";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -44,7 +45,7 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -56,6 +57,7 @@ export default async function RootLayout({
         >
           <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
+            <Header className="sr-only" />
             <SidebarInset className="pt-2">
               <div className="flex justify-left items-center">
                 <SidebarTrigger className="mx-4" />
