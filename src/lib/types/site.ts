@@ -10,5 +10,9 @@ export type SiteConfig = {
   links: {
     github: string;
     linkedin?: string;
-  }
+  },
+  navLinks?: {
+    href: string;
+    text: string;
+  }[],
 }

@@ -27,4 +27,10 @@ export const siteConfig: SiteConfig = {
     github: "https://github.com/ssanjose",
     linkedin: "https://www.linkedin.com/in/kurtsanjose/",
   },
+  navLinks: [
+    { href: "/", text: "Home" },
+    { href: "/#about", text: "About" },
+    { href: "/#features", text: "Features" },
+    { href: "/overview", text: "Overview" },
+  ]
 }
