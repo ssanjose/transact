@@ -2,6 +2,8 @@
 
 The Finance Tracker App is an application designed to help users track their expenses, income, and overall financial status. It provides a convenient way to categorize and visualize financial data through graphs.
 
+![Landing Page](/public/transact_landing.jpg)
+
 With this app, users can record their expenses and income, assigning them to specific categories such as groceries, transportation, entertainment, or any other custom categories they define. By categorizing their transactions, users can gain insights into their spending habits and identify areas where they can potentially save money.
 
 In addition to tracking individual expenses and income, the app also calculates the net amount, which represents the difference between the total income and total expenses. This allows users to see their overall financial status at a glance.
@@ -11,6 +13,9 @@ One of the key features of the Finance Tracker App is its ability to generate gr
 By using the Finance Tracker App, users can gain better control over their finances, make informed decisions about their spending, and work towards achieving their financial goals.
 
 The Finance Tracker App lists your income and expenses and posts them as a graph and informatics.
+
+## Goal
+
 
 ## Directory Structure for Important Files
 ```
