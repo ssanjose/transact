@@ -222,7 +222,10 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                               value={category.name}
                               key={category.id}
                               onSelect={() => {
-                                form.setValue("categoryId", category.id)
+                                if (category.id === form.getValues("categoryId"))
+                                  form.setValue("categoryId", undefined);
+                                else
+                                  form.setValue("categoryId", category.id)
                               }}
                               className="flex items-center w-full"
                             >
