@@ -22,6 +22,7 @@ import { CategoryService } from '@/services/category.service';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { OpenCategoryButton } from '@/components/category/CategoryButtons';
+import { useDialog } from '@/hooks/use-dialog';
 
 interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   accountId: number;
@@ -31,9 +32,15 @@ interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 const TransactionForm = ({ className, accountId, onSave, existingTransaction }: TransactionFormProps) => {
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
+  const editCategory = useDialog();
+  const deleteCategory = useDialog();
 
-  const form = useForm<z.infer<typeof transactionSchema>>({
-    resolver: zodResolver(transactionSchema),
+  const nullableTransactionSchema = transactionSchema.merge(z.object({
+    categoryId: z.nullable(z.number()),
+  }));
+
+  const form = useForm<z.infer<typeof nullableTransactionSchema>>({
+    resolver: zodResolver(nullableTransactionSchema),
     mode: "onChange",
     defaultValues: {
       id: existingTransaction?.id || undefined,
@@ -42,13 +49,13 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
       date: existingTransaction?.date || new Date(),
       accountId: existingTransaction?.accountId || accountId,
       type: existingTransaction?.type || TransactionType.Expense,
-      categoryId: existingTransaction?.categoryId || undefined,
+      categoryId: existingTransaction?.categoryId || null,
       frequency: existingTransaction?.frequency || Frequency.OneTime,
       transactionId: existingTransaction?.transactionId || undefined,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof transactionSchema>) => {
+  const onSubmit = async (values: z.infer<typeof nullableTransactionSchema>) => {
     const transaction: Transaction = transactionSchema.parse({
       id: values.id,
       name: values.name,
@@ -56,7 +63,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
       date: values.date,
       accountId: values.accountId,
       type: values.type,
-      categoryId: values.categoryId,
+      categoryId: values.categoryId === null ? undefined : values.categoryId,
       frequency: GetFrequency(values.frequency),
       transactionId: values.transactionId,
     });
@@ -222,10 +229,10 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                               value={category.name}
                               key={category.id}
                               onSelect={() => {
-                                if (category.id === form.getValues("categoryId"))
-                                  form.setValue("categoryId", undefined);
+                                if (category.id === field.value)
+                                  field.onChange(null);
                                 else
-                                  form.setValue("categoryId", category.id)
+                                  field.onChange(category.id);
                               }}
                               className="flex items-center w-full"
                             >

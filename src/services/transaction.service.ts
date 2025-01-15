@@ -117,13 +117,13 @@ function getTransactionsByAccount(accountId?: number): Promise<Transaction[]> {
 async function convertToUpdateChanges(transactions: Transaction[], parentTransaction: Transaction): Promise<{ key: number, changes: Partial<Transaction> }[]> {
   function findChanges(oldTransaction: Transaction, newTransaction: Transaction): Partial<Transaction> {
     let changes = {
-      name: newTransaction.name !== oldTransaction.name ? newTransaction.name : undefined,
-      amount: newTransaction.amount !== oldTransaction.amount ? newTransaction.amount : undefined,
-      type: newTransaction.type !== oldTransaction.type ? newTransaction.type : undefined,
-      accountId: newTransaction.accountId !== oldTransaction.accountId ? newTransaction.accountId : undefined,
-      categoryId: newTransaction.categoryId !== oldTransaction.categoryId ? newTransaction.categoryId : undefined,
+      name: newTransaction.name !== oldTransaction.name ? newTransaction.name : null,
+      amount: newTransaction.amount !== oldTransaction.amount ? newTransaction.amount : null,
+      type: newTransaction.type !== oldTransaction.type ? newTransaction.type : null,
+      accountId: newTransaction.accountId !== oldTransaction.accountId ? newTransaction.accountId : null,
+      categoryId: newTransaction.categoryId !== oldTransaction.categoryId ? newTransaction.categoryId : null,
     }
-    return Object.fromEntries(Object.entries(changes).filter(([_, v]) => v !== undefined && v !== null));
+    return Object.fromEntries(Object.entries(changes).filter(([_, v]) => v !== null));
   }
 
   return transactions.map((transaction) => {
