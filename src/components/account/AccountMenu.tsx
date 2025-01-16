@@ -7,17 +7,16 @@ import { EllipsisVerticalIcon } from 'lucide-react';
 import { Account } from '@/lib/db/db.model';
 import { OpenAccountButton, DeleteAccountButton, EditAccountButton } from '@/components/account/AccountButtons';
 
-const AccountMenu = ({ account }: { account?: Account }) => {
+const AccountMenu = ({ account }: { account: Account }) => {
   // Menu items.
   const existingAccountMenu = [
     {
       content: <EditAccountButton
-        title="Edit an Account"
         existingAccount={account}
       />
     },
     {
-      content: <DeleteAccountButton id={account?.id} />
+      content: <DeleteAccountButton id={account.id} />
     }
   ]
 

@@ -30,7 +30,7 @@ interface AccountButtonProps {
 }
 
 interface EditAccountButtonProps extends AccountButtonProps {
-  existingAccount?: Account;
+  existingAccount: Account;
 }
 
 interface DeleteAccountButtonProps extends AccountButtonProps {
@@ -59,6 +59,8 @@ const OpenAccountButton = ({ button, dialogProps, title, description }: AccountB
       title={title ? title : "Create a new Account"}
       description={description ? description : "You cannot adjust the balance of an account after it has been created."}
       dialog={openAccountDialog}
+      footer={null}
+      noX
     >
       <AccountForm onSave={openAccountDialog.dismiss} />
     </DrawerDialog>
@@ -84,9 +86,11 @@ const EditAccountButton = ({ button, dialogProps, title, description, existingAc
   return (
     <DrawerDialog
       triggerButton={buttonChildren}
-      title={title ? title : ""}
-      description={description ? description : ""}
+      title={title ? title : "Edit an Account"}
+      description={description ? description : "You cannot adjust the balance of an account after it has been created."}
       dialog={editAccountDialog}
+      footer={null}
+      noX
     >
       <AccountForm onSave={editAccountDialog.dismiss} existingAccount={existingAccount} />
     </DrawerDialog>
@@ -115,7 +119,7 @@ const DeleteAccountButton = ({ id, button, title, description }: DeleteAccountBu
       await Sleep(500);
     }
     getTransaction();
-    router.push('/');
+    router.push('/overview');
   }
 
   return (

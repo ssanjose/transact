@@ -8,10 +8,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { accountSchema } from '@/lib/validation/formSchemas';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Account } from '@/lib/db/db.model';
 import { useRouter } from 'next/navigation';
+
+import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ["latin"] });
 
 interface AccountFormProps {
   className?: string;
@@ -49,7 +52,7 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
 
   return (
     <Form {...form}>
-      <form className={cn("grid items-start gap-4", className)} onSubmit={form.handleSubmit(onSubmit)}>
+      <form className={cn("flex flex-col items-start gap-2", className, inter.className)} onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -63,6 +66,7 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
                   <Input type="text" {...field} placeholder="Chequing" />
                 </FormControl>
                 <FormMessage />
+                {!existingAccount && <FormDescription className="text-muted-foreground font-normal">Name of the account.</FormDescription>}
               </FormItem>
             );
           }}
@@ -80,10 +84,17 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
                   <Input type="number" {...field} disabled={!!existingAccount} placeholder="0.00" />
                 </FormControl>
                 <FormMessage />
+                {!existingAccount && <FormDescription className="text-muted-foreground font-normal">Initial balance when created.</FormDescription>}
               </FormItem>
             );
           }} />
-        <Button type="submit">{existingAccount ? "Edit " : "Create an "}Account</Button>
+        <div className="flex gap-2 mt-2">
+          <Button type="submit">{existingAccount ? "Edit " : "Create an "}Account</Button>
+          <Button variant="outline" onClick={(e) => {
+            e.preventDefault();
+            onSave();
+          }}>Cancel</Button>
+        </div>
       </form>
     </Form>
   )
