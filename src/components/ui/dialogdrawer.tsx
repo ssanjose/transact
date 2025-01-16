@@ -75,14 +75,25 @@ const DialogDrawerClose = ({ children, className, ...props }: ChildProps) => {
   )
 }
 
-const DialogDrawerContent = ({ children, className, ...props }: ChildProps) => {
-  const { isDesktop } = useDialogDrawerContext()
-  const DialogDrawerContent = isDesktop ? DialogContent : DrawerContent;
+interface WithNoXProps extends ChildProps {
+  noX?: boolean;
+}
+
+const DialogDrawerContent = ({ children, className, noX, ...props }: WithNoXProps) => {
+  const { isDesktop } = useDialogDrawerContext();
 
   return (
-    <DialogDrawerContent onKeyDown={(e) => e.stopPropagation()} className={className} {...props}>
-      {children}
-    </DialogDrawerContent>
+    <>
+      {isDesktop ? (
+        <DialogContent onKeyDown={(e) => e.stopPropagation()} className={className} noX={noX} {...props}>
+          {children}
+        </DialogContent>
+      ) : (
+        <DrawerContent onKeyDown={(e) => e.stopPropagation()} className={className} {...props}>
+          {children}
+        </DrawerContent>
+      )}
+    </>
   )
 }
 

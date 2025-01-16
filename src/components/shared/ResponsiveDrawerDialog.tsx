@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/dialogdrawer";
 import { cn } from "@/lib/utils";
 
+import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ["latin"] });
+
 interface DrawerDialogProps {
   children: React.ReactNode;
   triggerButton?: React.ReactNode;
@@ -33,6 +36,7 @@ interface DrawerDialogProps {
     trigger: () => void;
     dismiss: () => void;
   };
+  noX?: boolean;
 }
 
 /**
@@ -58,6 +62,7 @@ export const DrawerDialog = ({
   title = "Title",
   description = "Description",
   dialog,
+  noX,
 }: DrawerDialogProps) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { dialogProps, triggerProps } = dialog;
@@ -73,25 +78,25 @@ export const DrawerDialog = ({
     </>
   );
 
-  const defaultFooter = (
-    <Button variant="outline" className="w-full">Cancel</Button>
-  );
+  const defaultFooter = <Button variant="outline" className="w-full">Cancel</Button>
 
   return (
     <DialogDrawer {...dialogProps}>
       <DialogDrawerTrigger asChild {...triggerProps}>
         {triggerButton || defaultTriggerButton}
       </DialogDrawerTrigger>
-      <DialogDrawerContent className={cn("sm:max-w-[425px]", className)}>
+      <DialogDrawerContent noX={noX} className={cn("sm:max-w-[425px]", className, inter.className)}>
         <DialogDrawerHeader>
           {header || defaultHeader}
         </DialogDrawerHeader>
         {children}
-        <DialogDrawerFooter>
-          <DialogDrawerClose asChild>
-            {footer || defaultFooter}
-          </DialogDrawerClose>
-        </DialogDrawerFooter>
+        {footer === null ? null : (
+          <DialogDrawerFooter>
+            <DialogDrawerClose asChild>
+              {footer || defaultFooter}
+            </DialogDrawerClose>
+          </DialogDrawerFooter>
+        )}
       </DialogDrawerContent>
     </DialogDrawer>
   );
