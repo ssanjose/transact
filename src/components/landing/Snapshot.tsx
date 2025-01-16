@@ -28,7 +28,7 @@ const images = [
     className: "",
   },
   {
-    src: "/transact_overview.jpg",
+    src: "/transact_transaction_form.jpg",
     alt: "Transact Landing",
     width: "1000",
     height: "800",

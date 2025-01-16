@@ -89,6 +89,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                 <Input {...field} type="text" />
               </FormControl>
               <FormMessage />
+              {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Title e.g. 'Insurance', 'Quick Shopping'.</FormDescription>}
             </FormItem>
           } />
         <FormField
@@ -101,7 +102,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                 <Input {...field} value={field.value} type="number" />
               </FormControl>
               <FormMessage />
-              {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Amount used for the transaction</FormDescription>}
+              {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Money exchanged during transaction i.e. purchase amount for bought items.</FormDescription>}
             </FormItem>
           } />
         <div className="flex gap-2 w-full">
@@ -137,7 +138,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
-                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Date when it happens</FormDescription>}
+                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Date when it happens.</FormDescription>}
               </FormItem>
             } />
           <FormField
@@ -261,7 +262,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
-                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Category of the Transaction</FormDescription>}
+                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">What category it belongs to?</FormDescription>}
               </FormItem>
             } />
         </div>
