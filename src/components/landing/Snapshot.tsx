@@ -21,8 +21,8 @@ const images = [
     className: "",
   },
   {
-    src: "/transact_overview.jpg",
-    alt: "Transact Landing",
+    src: "/transact_account_form.jpg",
+    alt: "Account Form",
     width: "1000",
     height: "800",
     className: "",
@@ -46,7 +46,7 @@ const Images = () => {
           height={image.height}
           alt={image.alt}
           className={image.className}
-          containerClassName="mt-[2rem] mx-0"
+          containerClassName="mt-[2rem] mx-0 border-2 border-secondary"
         />
       ))}
     </div>
