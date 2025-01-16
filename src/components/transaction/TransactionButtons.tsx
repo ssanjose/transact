@@ -33,7 +33,7 @@ interface OpenTransactionButtonProps extends TransactionButtonProps {
 }
 
 interface EditTransactionButtonProps extends TransactionButtonProps {
-  existingTransaction?: Transaction;
+  existingTransaction: Transaction;
 }
 
 interface DeleteTransactionButtonProps extends TransactionButtonProps {
@@ -60,6 +60,8 @@ const OpenTransactionButton = ({ button, accountId, dialogProps }: OpenTransacti
       title="Transaction"
       description="Add a new transaction"
       dialog={openTransactionDialog}
+      footer={null}
+      noX
     >
       <TransactionForm onSave={openTransactionDialog.dismiss} accountId={accountId} />
     </DrawerDialog>
@@ -70,7 +72,6 @@ const EditTransactionButton = ({
   button,
   dialogProps,
   title,
-  description,
   existingTransaction,
   visible,
 }: EditTransactionButtonProps) => {
@@ -81,14 +82,27 @@ const EditTransactionButton = ({
     </Button>
   );
 
+  const GetDescription = (transaction: Transaction) => {
+    let description: string;
+
+    if (transaction.transactionId)
+      description = "This transaction will become a standalone transaction upon edit.";
+    else
+      description = `
+        This transaction will update all other related transactions upon edit. 
+        Changing the frequency might also delete some transactions.
+        `;
+    return description;
+  }
+
   return (
     <DrawerDialog
       triggerButton={buttonChildren}
       title={title ? title : ""}
-      description={description ? description :
-        ``
-      }
+      description={GetDescription(existingTransaction)}
       dialog={editTransactionDialog}
+      footer={null}
+      noX
     >
       <TransactionForm
         onSave={editTransactionDialog.dismiss}

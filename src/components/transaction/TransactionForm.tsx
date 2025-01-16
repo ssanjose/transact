@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { transactionSchema } from '@/lib/validation/formSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
@@ -78,13 +78,13 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
 
   return (
     <Form {...form}>
-      <form className={cn("grid items-start gap-2 z-20 justify-items-end", className)} onSubmit={form.handleSubmit(onSubmit)}>
+      <form className={cn("flex flex-col items-start gap-2 z-20", className)} onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
           render={({ field }) =>
             <FormItem className="w-full">
-              <FormLabel>Name:</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input {...field} type="text" />
               </FormControl>
@@ -96,11 +96,12 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
           name="amount"
           render={({ field }) =>
             <FormItem className="w-full">
-              <FormLabel>Amount:</FormLabel>
+              <FormLabel>Amount</FormLabel>
               <FormControl>
                 <Input {...field} value={field.value} type="number" />
               </FormControl>
               <FormMessage />
+              {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Amount used for the transaction</FormDescription>}
             </FormItem>
           } />
         <div className="flex gap-2 w-full">
@@ -136,18 +137,23 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
+                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Date when it happens</FormDescription>}
               </FormItem>
             } />
           <FormField
             control={form.control}
             name="type"
             render={({ field }) =>
-              <FormItem className={cn("flex flex-col w-2/6")}>
-                <FormLabel>Transaction is an:
-                  <span className={`${field.value === 0 ? "text-red-500" : "text-green-500"}`}>
-                    {field.value === TransactionType.Income ? " Income" : " Expense"}
-                  </span></FormLabel>
-                <div className="h-full flex items-center justify-start">
+              <FormItem className={cn("space-y-2 flex flex-col w-2/6")}>
+                <FormDescription className="text-muted-foreground font-normal">Transaction is an:</FormDescription>
+                <div className="flex items-center justify-between w-full max-w-[105px]">
+                  <FormLabel
+                    className="cursor-pointer"
+                    onClick={() => form.setValue("type", field.value === TransactionType.Expense ? TransactionType.Expense : TransactionType.Income)}>
+                    <span className={`${field.value === 0 ? "text-number-negative" : "text-number-positive"}`}>
+                      {field.value === TransactionType.Income ? " Income" : " Expense"}
+                    </span>
+                  </FormLabel>
                   <FormControl>
                     <Switch
                       checked={field.value === TransactionType.Income}
@@ -189,6 +195,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                   </SelectContent>
                 </Select>
                 <FormMessage />
+                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">How frequent is it?</FormDescription>}
               </FormItem>
             } />
           <FormField
@@ -254,10 +261,17 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
+                {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Category of the Transaction</FormDescription>}
               </FormItem>
             } />
         </div>
-        <Button type="submit" className="w-full">{existingTransaction ? "Edit " : "Create an "}Transaction</Button>
+        <div className="flex gap-2 mt-2">
+          <Button type="submit">{existingTransaction ? "Edit " : "Create an "}Transaction</Button>
+          <Button variant="outline" onClick={(e) => {
+            e.preventDefault();
+            onSave();
+          }}>Cancel</Button>
+        </div>
       </form>
     </Form >
   )
