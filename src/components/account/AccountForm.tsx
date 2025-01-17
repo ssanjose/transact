@@ -58,7 +58,7 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
           name="name"
           render={({ field }) => {
             return (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel>
                   Name
                 </FormLabel>
@@ -76,7 +76,7 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
           name="balance"
           render={({ field }) => {
             return (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel>
                   Balance
                 </FormLabel>
