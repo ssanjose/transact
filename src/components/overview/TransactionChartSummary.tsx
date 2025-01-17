@@ -17,7 +17,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Category, Transaction } from '@/lib/db/db.model';
 import { CategoryService } from '@/services/category.service';
 import { formatCurrency } from '@/lib/format/formatCurrency';
-import { SelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
+import { useSelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
 import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 
@@ -60,21 +60,23 @@ const DayString = (selectedDateRange: SelectedDateRange | undefined) => {
 }
 
 const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) => {
-  const selectedDateRange = React.useContext(SelectedDateRangeContext);
+  const selectedDateRange = useSelectedDateRangeContext();
   const [transactions, setTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const categories = useLiveQuery(async () => await CategoryService.getAllCategories())
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      if (selectedDateRange === undefined) return;
-      setTransactions(await TransactionAnalyticsService.getTransactionsByDateRange({ dateRange: selectedDateRange }));
-    };
-    fetchTransactions();
+    let isMounted = true;
+    (async () => {
+      const data = await TransactionAnalyticsService.getTransactionsByDateRange({ dateRange: selectedDateRange });
+      if (isMounted) setTransactions(data);
+    })();
+
+    return () => { isMounted = false; }
   }, [selectedDateRange])
 
   return (
     <div className={cn("", className)}>
-      <Card className="w-full md:w-full h-full p-4 bg-card-overview flex flex-col md:flex-row max-h-none md:max-h-72 gap-4 *>*:bg-background">
+      <div className="w-full md:w-full h-full flex flex-col md:flex-row max-h-none md:max-h-72 gap-4 *>*:bg-background">
         <Card className="flex justify-items-center items-center w-full shadow-xs border-0">
           <TotalTransactionRadioChart
             transactions={transactions}
@@ -95,7 +97,7 @@ const TransactionChartSummary = ({ className }: TransactionChartSummaryProps) =>
             selectedDateRange={selectedDateRange}
           />
         </Card>
-      </Card>
+      </div>
     </div>
   )
 };
@@ -206,7 +208,10 @@ const IncomeTransactionChart = ({ transactions, selectedDateRange }: ExpenseInco
   useEffect(() => {
     if (!transactions) return;
 
-    setIncomeTransactions(transactions.filter((tx) => tx.type === 1));
+    let isMounted = true;
+    if (isMounted) setIncomeTransactions(transactions.filter((tx) => tx.type === 1));
+
+    return () => { isMounted = false };
   }, [transactions])
 
   if (incomeTransactions === undefined || incomeTransactions.length === 0)
@@ -305,7 +310,10 @@ const ExpenseTransactionChart = ({ transactions, selectedDateRange }: ExpenseInc
   useEffect(() => {
     if (!transactions) return;
 
-    setExpenseTransactions(transactions.filter((tx) => tx.type === 0));
+    let isMounted = true;
+    if (isMounted) setExpenseTransactions(transactions.filter((tx) => tx.type === 0));
+
+    return () => { isMounted = false };
   }, [transactions])
 
   if (expenseTransactions === undefined || expenseTransactions.length === 0)

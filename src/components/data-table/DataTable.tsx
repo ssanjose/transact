@@ -46,13 +46,13 @@ const DataTable = <TData, TValue>({ columns, data, setTransactionId }: DataTable
 
   useEffect(() => {
     if (selectedRowForAction === -1 || !selectedRowForAction) return;
+    let isMounted = true;
+    (async () => {
+      const data = await TransactionService.getTransaction(selectedRowForAction);
+      if (isMounted) setRowData(data as TData);
+    })();
 
-    else if (selectedRowForAction) {
-      TransactionService.getTransaction(selectedRowForAction)
-        .then((transaction) => {
-          setRowData(transaction as TData);
-        })
-    };
+    return () => { isMounted = false };
   }, [selectedRowForAction])
 
   const table = useReactTable({
@@ -115,7 +115,6 @@ const DataTable = <TData, TValue>({ columns, data, setTransactionId }: DataTable
                     data-state={row.getIsSelected() && "selected"}
                     className="hover:bg-inherit"
                     onMouseEnter={() => setTransactionId !== undefined ? setTransactionId(Number(row.getValue("id"))) : null}
-                    onMouseLeave={() => setTransactionId !== undefined ? setTransactionId(-1) : null}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="last:w-[40px] last:sticky last:right-0 last:bg-background">

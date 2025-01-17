@@ -14,12 +14,15 @@ function OpenSource() {
   const [stars, setStars] = React.useState(0)
 
   useEffect(() => {
+    let isMounted = true
     fetch("https://api.github.com/repos/ssanjose/transact", {
       next: { revalidate: 60 },
     })
       .then((res) => res.json())
-      .then((data) => setStars(data.stargazers_count))
+      .then((data) => isMounted && setStars(data.stargazers_count))
       .catch((e) => console.error(e))
+
+    return () => { isMounted = false };
   }, [])
 
   return (

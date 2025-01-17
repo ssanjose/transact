@@ -36,13 +36,14 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
 
   useEffect(() => {
     if (!transactions) return;
+    let isMounted = true;
 
-    const getFormattedTransactions = async () => {
+    (async () => {
       let fTxs = await separateByDateFormat(transactions);
-      setFormattedTransactions(fTxs);
-    }
+      if (isMounted) setFormattedTransactions(fTxs);
+    })();
 
-    getFormattedTransactions();
+    return () => { isMounted = false };
   }, [transactions]);
 
   return (
