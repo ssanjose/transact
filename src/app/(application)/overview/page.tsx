@@ -21,20 +21,20 @@ import ContentContainer from '@/components/common/ContentContainer';
 
 const Home = () => {
   return (
-    <ContentContainer className="items-center justify-items-center min-h-screen">
-      <div className="flex flex-start justify-between flex relative top-0 px-2 pt-2 mb-1 sm:px-2">
+    <ContentContainer className="flex flex-col gap-2 min-h-screen">
+      <div className="flex flex-start justify-between flex relative top-0 px-2 pt-2 sm:px-2">
         <div className="sm:pb-2 w-full">
           <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight">
             Overview
           </h1>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 mb-0 gap-4">
+      <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 gap-4">
         <Card className="flex flex-col items-center h-fit w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full min-w-md" />
         </Card>
-        <div className="flex h-fit min-h-56 w-full md:w-1/2 p-4 px-0 pt-0">
-          <UpcomingTransactions className="w-full caption-top" limit={3} />
+        <div className="flex h-fit min-h-56 w-full md:w-1/2">
+          <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={4} />
         </div>
       </div>
       <TransactionsOverview className="h-fit min-h-72" />

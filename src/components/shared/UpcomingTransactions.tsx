@@ -7,6 +7,11 @@ import { separateByDateFormat, SeparatedTransaction } from '@/lib/analysis/separ
 import { Card } from '@/components/ui/card';
 import { TransactionService } from '@/services/transaction.service';
 import { useLiveQuery } from 'dexie-react-hooks';
+import HeaderText from '../common/HeaderText';
+
+import { Inter } from 'next/font/google';
+import { cn } from '../../lib/utils';
+const inter = Inter({ subsets: ["latin"] });
 
 /**
  * Display a list of upcoming transactions for an account(s) in a table, with the ability to filter by account
@@ -41,8 +46,10 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
   }, [transactions]);
 
   return (
-    <Table className={className} containerClassName="no-scrollbar">
-      <TableCaption className="mt-0 py-2 text-accent-foreground bg-background text-xl font-semibold tracking-tight sticky top-0 text-left">Upcoming Transactions</TableCaption>
+    <Table className="w-full caption-top" containerClassName={cn("no-scrollbar p-2", className, inter.className)}>
+      <TableCaption className="mt-0 mb-2">
+        <HeaderText mainHeading="Upcoming" subHeading="Transactions" className="uppercase" />
+      </TableCaption>
       <TableBody>
         {
           formattedTransactions?.map((tx, index) => (
@@ -66,13 +73,13 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
 const UpcomingTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
   return (tx ?
     <TableRow className={`h-fit hover:bg-transaparent border-0`}>
-      <TableCell className="flex flex-col gap-1 bg-card-overview rounded mb-4">
-        <div className="flex justify-between items-center px-2">
+      <TableCell className="flex flex-col gap-1 rounded mb-4 p-0">
+        <div className="flex justify-between items-center">
           <h3 className="text-accent-foreground text-md font-semibold tracking-tight">{tx.key}</h3>
           <p className={`text-lg tracking-tight ${tx.total < 0 ? 'text-number-negative' : 'text-number-positive'}`}>{formatCurrency(tx.total)}</p>
         </div>
         {tx.transactions.map((transaction, index) => (
-          <Card className="shadow-none bg-background rounded p-2" key={index}>
+          <Card className="bg-background rounded p-2" key={index}>
             <div className="flex justify-between items-center">
               <h4 className="text-accent-foreground text-sm font-semibold tracking-tight">{transaction.name}</h4>
               <p>{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount)}</p>
