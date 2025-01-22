@@ -7,7 +7,7 @@ import ImageFrame from '@/components/common/ImageFrame';
 
 const images = [
   {
-    src: "/transact_overview1.jpg",
+    src: "/transact_overview.jpg",
     alt: "Transact Overview",
     width: "1000",
     height: "800",
@@ -29,6 +29,13 @@ const images = [
   },
   {
     src: "/transact_transaction_form.jpg",
+    alt: "Transact Landing",
+    width: "1000",
+    height: "800",
+    className: "",
+  },
+  {
+    src: "/transact_account_view.jpg",
     alt: "Transact Landing",
     width: "1000",
     height: "800",
