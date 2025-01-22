@@ -6,10 +6,22 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
 import { useDialog } from '@/hooks/use-dialog';
+import { Category } from '@/lib/db/db.model';
 
 interface CategoryButtonProps {
-  button?: React.ReactNode;
+  button?: React.ReactElement;
   dialogProps?: typeof useDialog;
+  title?: string;
+  description?: string;
+  visible?: boolean;
+}
+
+interface EditCategoryButtonProps extends CategoryButtonProps {
+  existingCategory?: Category;
+}
+
+interface DeleteCategoryButtonProps extends CategoryButtonProps {
+  id?: number;
 }
 
 /**
@@ -31,10 +43,45 @@ const OpenCategoryButton = ({ button, dialogProps }: CategoryButtonProps) => {
       title="Create a new Category"
       description=""
       dialog={openCategoryDialog}
+      footer={null}
+      noX
     >
       <CategoryForm onSave={openCategoryDialog.dismiss} />
     </DrawerDialog>
   )
 };
 
-export { OpenCategoryButton };
+/**
+ * Opens a dialog to edit a category
+ * @param {React.ReactNode} button - The button to render
+ * @param {typeof useDialog} dialogProps - The dialog props
+ * @param {string} title - The title of the dialog
+ * @param {string} description - The description of the dialog
+ * @param {Category} existingCategory - The existing category
+ * @returns {React.ReactElement}
+ */
+const EditCategoryButton = ({ button, dialogProps, title, description, existingCategory, visible }: EditCategoryButtonProps) => {
+  const editCategoryDialog = dialogProps ? dialogProps() : useDialog();
+  const buttonChildren = button || (
+    <Button variant="ghost" size="icon" className={`px-2 w-full flex justify-start ${visible ? "block" : "hidden"}`}>
+      <span>Edit a Category</span>
+    </Button>
+  );
+
+  return (
+    <DrawerDialog
+      triggerButton={buttonChildren}
+      title={title ? title : ""}
+      description={description ? description : ""}
+      dialog={editCategoryDialog}
+      footer={null}
+      noX
+    >
+      <CategoryForm
+        onSave={editCategoryDialog.dismiss}
+        existingCategory={existingCategory} />
+    </DrawerDialog>
+  )
+}
+
+export { OpenCategoryButton, EditCategoryButton };
