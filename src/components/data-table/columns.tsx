@@ -63,8 +63,29 @@ export const columns: ColumnDef<Transaction>[] = [
     }
   },
   {
+    accessorKey: "frequency",
     header: "Frequency",
-    accessorFn: row => FrequencyOptions[row.frequency],
+    cell: ({ row }) => {
+      return (
+        <div className="text-right text-md">
+          {FrequencyOptions[row.original.frequency]}
+        </div>
+      )
+    }
+  },
+  {
+    header: "Status",
+    cell: ({ row }) => {
+      let status = row.original.date.valueOf() < new Date().valueOf();
+      // make badge type of element and check whether is it 'PROCESSED' or 'PROJECTED'
+      return (
+        <div className={`w-fit text-xs border py-1 px-3  rounded-3xl text-center opacity-60 ${status ? "text-number-positive border-number-positive" : "text-number-negative border-number-negative"}`}>
+          {
+            (status ? "PROCESSED" : "PROJECTED")
+          }
+        </div>
+      )
+    }
   },
   {
     accessorKey: "categoryId",
