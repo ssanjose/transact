@@ -2,7 +2,7 @@ import { SiteConfig } from "@/lib/types/site";
 
 
 export const siteConfig: SiteConfig = {
-  name: "Finance Tracking App",
+  name: "Transact",
   author: "Kurt San Jose",
   description: "A simple finance tracking app",
   keywords: [
@@ -24,13 +24,12 @@ export const siteConfig: SiteConfig = {
     author: "https://kurtsanjose.dev",
   },
   links: {
-    github: "https://github.com/ssanjose",
-    linkedin: "https://www.linkedin.com/in/kurtsanjose/",
+    github: "https://github.com/ssanjose/transact",
   },
   navLinks: [
     { href: "/", text: "Home" },
-    { href: "/#about", text: "About" },
     { href: "/#features", text: "Features" },
+    { href: "/#about", text: "About" },
     { href: "/overview", text: "Overview" },
   ]
 }

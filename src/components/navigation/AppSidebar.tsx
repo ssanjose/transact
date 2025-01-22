@@ -13,10 +13,18 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
+  SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link";
 import { FaChartLine, FaTag } from 'react-icons/fa';
+import { siteConfig } from '@/config/site';
+import { Inter } from 'next/font/google';
+import { cn } from '@/lib/utils';
+import { ThemeModeToggle } from '../theming/ThemeModeToggle';
+
+const inter = Inter({ subsets: ["latin"] });
 
 // Menu items.
 const items = [
@@ -39,8 +47,8 @@ const items = [
 
 const analytics = [
   {
-    title: "Analytics",
-    url: "/analytics",
+    title: "Dashboard",
+    url: "/dashboard",
     icon: FaChartLine,
   },
   {
@@ -54,16 +62,18 @@ const AppSidebar = () => {
   const { setOpenMobile } = useSidebar();
 
   return (
-    <Sidebar variant="sidebar" side="left" className="max-w-[200px]">
+    <Sidebar variant="sidebar" side="left" className={cn("max-w-[200px]", inter.className)}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <Link href={"/"} onClick={() => setOpenMobile(false)} className="py-0">
-              <span className="text-sm tracking-tight">Finance Tracker App</span>
+          <SidebarMenuItem className="flex justify-between items-center">
+            <Link href={(siteConfig.navLinks![0].href) || '/'} onClick={() => setOpenMobile(false)} className="py-0">
+              <h1 className="text-lg font-semibold">{siteConfig.name}</h1>
             </Link>
+            <ThemeModeToggle className="size-8 bg-inherit mr-0" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+      <SidebarSeparator />
       <SidebarContent className="gap-0">
         <SidebarGroup>
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -103,6 +113,7 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarRail />
     </Sidebar>
   )
 }

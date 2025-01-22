@@ -206,8 +206,8 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
-            <SheetTitle className="invisible">Sidebar</SheetTitle>
-            <SheetDescription className="invisible">Swipe to close</SheetDescription>
+            <SheetTitle className="sr-only">Sidebar</SheetTitle>
+            <SheetDescription className="sr-only">Swipe to close</SheetDescription>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>

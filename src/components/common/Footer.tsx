@@ -8,7 +8,7 @@ import { siteConfig } from "@/config/site";
 const Footer = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <footer className={cn("", className)}>
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-background border-b px-6 pb-6 mb-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-background border-b border-secondary px-6 pb-6 mb-10">
         <Link href="/">
           <h1 className="text-foreground text-xl md:text-2xl font-bold">
             {siteConfig.name}
@@ -18,7 +18,7 @@ const Footer = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
           <ul className="flex flex-row gap-6">
             {siteConfig.navLinks?.map(({ href, text }) => (
               <li key={href}>
-                <Link href={href} className="text-md text-inherit opacity-70 hover:opacity-100 hover:underline">
+                <Link href={href + (href === '/' ? '#top' : "")} className="text-md text-inherit opacity-70 hover:opacity-100 hover:underline">
                   {text}
                 </Link>
               </li>

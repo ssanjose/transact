@@ -24,7 +24,7 @@ export const Links = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
         <ul className="flex flex-row gap-6">
           {siteConfig.navLinks?.map(({ href, text }) => (
             <li key={href}>
-              <Link href={href} className="text-md text-inherit opacity-70 hover:opacity-100 hover:underline">
+              <Link href={href + (href === '/' ? '#top' : "")} className="text-md text-inherit opacity-70 hover:opacity-100 hover:underline">
                 {text}
               </Link>
             </li>
