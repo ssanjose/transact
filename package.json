@@ -3,8 +3,10 @@
   "version": "0.4.0",
   "private": true,
   "scripts": {
+    "watch:workers": "tsc -p tsconfig.workers.json --watch",
     "dev": "next dev",
     "build": "next build",
+    "build:workers": "tsc -p tsconfig.workers.json",
     "start": "next start",
     "lint": "next lint"
   },
