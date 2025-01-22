@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { categorySchema } from '@/lib/validation/formSchemas';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Category } from '@/lib/db/db.model';
 import { CategoryService } from '@/services/category.service';
@@ -62,6 +62,7 @@ const CategoryForm = ({ className, onSave, existingCategory }: CategoryFormProps
                   <Input type="text" {...field} placeholder="New Category" />
                 </FormControl>
                 <FormMessage />
+                {!existingCategory && <FormDescription className="text-muted-foreground font-normal">Title e.g. Miscellaneous, Birthday Props.</FormDescription>}
               </FormItem>
             );
           }}
@@ -81,11 +82,18 @@ const CategoryForm = ({ className, onSave, existingCategory }: CategoryFormProps
                   } placeholder="#000" />
                 </FormControl>
                 <FormMessage />
+                {!existingCategory && <FormDescription className="text-muted-foreground font-normal">3-digits or 6-digits hex number.</FormDescription>}
               </FormItem>
             );
           }} />
-        <Button type="submit">{existingCategory
-          ? "Edit " : "Create a "}Category</Button>
+        <div className="flex gap-2 mt-2">
+          <Button type="submit">{existingCategory
+            ? "Edit " : "Create a "}Category</Button>
+          <Button variant="outline" onClick={(e) => {
+            e.preventDefault();
+            onSave();
+          }}>Cancel</Button>
+        </div>
       </form>
     </Form>
   )
