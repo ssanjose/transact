@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Frequency, FrequencyOptions, Transaction, TransactionType } from '@/lib/db/db.model';
+import { Category, Frequency, FrequencyOptions, Transaction, TransactionType } from '@/lib/db/db.model';
 import { TransactionService } from '@/services/transaction.service';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -13,7 +13,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import { CalendarIcon, Check, ChevronsUpDown, MoreHorizontal } from 'lucide-react';
 import CalendarWithTime from '@/components/transaction/CalendarWithTime';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,8 +21,9 @@ import { SelectItem } from '@radix-ui/react-select';
 import { CategoryService } from '@/services/category.service';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { OpenCategoryButton } from '@/components/category/CategoryButtons';
+import { EditCategoryButton, OpenCategoryButton } from '@/components/category/CategoryButtons';
 import { useDialog } from '@/hooks/use-dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   accountId: number;
@@ -32,6 +33,7 @@ interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 const TransactionForm = ({ className, accountId, onSave, existingTransaction }: TransactionFormProps) => {
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
+  const [category, setCategory] = React.useState<Category | undefined>(undefined);
   const editCategory = useDialog();
   const deleteCategory = useDialog();
 
@@ -254,6 +256,35 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                                     : "opacity-0"
                                 )}
                               />
+                              <DropdownMenu modal={false}>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="size-5 p-0 text-right self-end z-10"
+                                    onClick={(e) => {
+                                      setCategory(category);
+                                    }}
+                                  >
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreHorizontal />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem
+                                    onSelect={(e) => {
+                                      editCategory.trigger();
+                                    }}
+                                  >
+                                    Edit Transaction
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      console.log("uwu");
+                                    }}
+                                  >
+                                    Delete Transaction
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </CommandItem>
                           ))}
                         </CommandGroup>
@@ -273,6 +304,12 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
             onSave();
           }}>Cancel</Button>
         </div>
+        <EditCategoryButton
+          existingCategory={category}
+          dialogProps={() => editCategory}
+          visible={false}
+          title={`Edit ${category?.name}`}
+        />
       </form>
     </Form >
   )
