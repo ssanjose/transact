@@ -14,7 +14,7 @@ const Hero = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
       <div className="flex flex-col max-w-[64rem] gap-2 items-center justify-center text-center">
         <Link
           href={siteConfig.links.github}
-          className="rounded-2xl bg-muted hover:bg-gray-700 px-4 py-1.5 text-sm font-medium"
+          className="rounded-2xl bg-muted hover:bg-secondary px-4 py-1.5 text-sm font-medium"
           target="_blank"
         >
           Free and open source!
@@ -44,7 +44,7 @@ const Hero = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
         </div>
       </div>
       <ImageFrame
-        src="/transact_overview.jpg"
+        src="/transact_hero.jpg"
         width="1000"
         height="800"
         alt="Hero Image"
