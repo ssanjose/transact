@@ -8,6 +8,7 @@ import ThemeProvider from "@/components/theming/ThemeProvider";
 import { siteConfig } from "@/config/site";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
+import Breadcrumbs from "@/components/navigation/Breadcrumb";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -62,6 +63,7 @@ export default async function RootLayout({
             <SidebarInset className="pt-2">
               <div className="flex justify-left items-center">
                 <SidebarTrigger className="mx-4" />
+                <Breadcrumbs />
               </div>
               {children}
               <Footer className="w-full mx-auto my-5 md:my-10" />
