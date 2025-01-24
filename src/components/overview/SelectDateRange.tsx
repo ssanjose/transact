@@ -13,23 +13,20 @@ interface SelectDateRangeProps {
 
 const SelectDateRange = ({ className, selectedDateRange, setSelectedDateRange }: SelectDateRangeProps) => {
   return (
-    <div className={cn("", className)}>
-      <Select defaultValue={`${selectedDateRange}`}
-        onValueChange={(value) => setSelectedDateRange(parseInt(value) as SelectedDateRange)}
-      >
-        <SelectTrigger className="w-fit self-start shadow-none text-left w-[100px] text-secondary-foreground border">
-          <SelectValue placeholder={selectedDateRange} />
-        </SelectTrigger>
-        <SelectContent>
-          {SelectedDateRangeOptions.map((option, index) =>
-            <SelectItem key={index} value={index.toString()}>
-              {SelectedDateRange[index]}
-            </SelectItem>
-          )}
-        </SelectContent>
-      </Select>
-    </div>
-
+    <Select defaultValue={`${selectedDateRange}`}
+      onValueChange={(value) => setSelectedDateRange(parseInt(value) as SelectedDateRange)}
+    >
+      <SelectTrigger className={cn("w-fit self-start shadow-none text-left w-[100px]", className)}>
+        <SelectValue placeholder={selectedDateRange} />
+      </SelectTrigger>
+      <SelectContent>
+        {SelectedDateRangeOptions.map((option, index) =>
+          <SelectItem key={index} value={index.toString()}>
+            {option}
+          </SelectItem>
+        )}
+      </SelectContent>
+    </Select>
   )
 };
 
