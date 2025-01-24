@@ -1,8 +1,26 @@
-# Finance Tracker App
+<h1 align="center">
+  <br />
+  Transact
+  <br />
+</h1>
 
-The Finance Tracker App is an application designed to help users track their expenses, income, and overall financial status. It provides a convenient way to categorize and visualize financial data through graphs.
+<p align="center">
+  <a href="#why-should-i-use-this-app">Why</a> •
+  <a href="#documentation">Documentation</a> •
+  <a href="#core-process">How</a> •
+  <a href="#getting-started">Get Started</a>
+</p>
+
+Transact is an application designed to help users track their expenses, income, and overall financial status. It provides a convenient way to categorize and visualize financial data through graphs.
 
 ![Landing Page](/public/transact_landing.jpg)
+
+<img src="./public/transact_account_form.jpg" width="24.4%" />
+<img src="./public/transact_account_view.jpg" width="24.4%" />
+<img src="./public/transact_transaction_form.jpg" width="24.4%" />
+<img src="./public/transact_overview.jpg" width="24.4%" />
+
+# Why Should I use this App?
 
 With this app, users can record their expenses and income, assigning them to specific categories such as groceries, transportation, entertainment, or any other custom categories they define. By categorizing their transactions, users can gain insights into their spending habits and identify areas where they can potentially save money.
 
@@ -14,28 +32,34 @@ By using the Finance Tracker App, users can gain better control over their finan
 
 The Finance Tracker App lists your income and expenses and posts them as a graph and informatics.
 
-## Directory Structure for Important Files
+## Important Files
 ```
-finance-tracker-app/
+transact/
 ├── docs/
-│   ├── design/
-│   │   └── software_design.md
-│   ├── architecture/
-│   │   └── system_architecture.md
 │   ├── conventions/
-│   │   └── coding_conventions.md
-│   └── style/
-│       └── style_guide.md
+│   │   ├── coding_conventions.md
+│   │   └── best_practices_in_next.md
+│   ├── design/
+│   │   ├── software_design.md
+│   │   ├── database_design.md
+│   │   ├── data_design_for_visualizations.md
+│   │   └── system_architecture.md
+│   ├── discussion/
+│   │   └── component_folder_organization.md
+│   ├── ...
+│   ├── style/
+│   │   └── style_guide.md
+│   ├── CHANGELOG.md
 ├── ERD_and_Implementation/
+│   ├── diagrams/...
 │   ├── Plan.erd
 │   ├── Requirements.todo
-│   └── Typing&Validation.todo
+│   └── ...
 ├── src/
 │   ├── app/
-│   ├── hooks/
-│   ├── lib/
 │   └── ...
 ├── README.md
+├── LICENSE
 └── ...
 ```
 
@@ -46,23 +70,35 @@ finance-tracker-app/
 - [Coding Conventions](./docs/conventions/coding_conventions.md)
 - [Style Guide](./docs/style/style_guide.md)
 
-## Core Process
-### Account, Input, Output
-#### Accounts
+# Core Process
+## Account, Input, Output
+### Accounts
 Places for income to be stored.
-#### Input
+### Input
 Takes in amounts labeled as either income, savings, or expense, along with its frequency. User can declare if expense is non-essential.
 
 'Income' are sent into accounts. 'Expenses' subtract from accounts. 
-#### Output
+### Output
 **Compile** income, savings, and expense. Turn income, saving, and expense account into a csv and reset 'Income' and 'Expense' accounts. 'Saving' accounts will remain for the next iteration.
 
 Charts income and usage, either arranged by name or category.
 
-## Getting Started
-First, run the development server:
+# Getting Started
+This project is an offline-first based app which means you can easily run and use the application with a few commands:
 
+1. Clone the project by using:
 ```bash
+git clone https://github.com/ssanjose/transact.git
+# or
+git clone (your-forked-repo)
+```
+
+2. Go to the directory and run the development server:
+
+> [!NOTE]
+> Go into the folder with `cd ./transact`
+
+```cmd
 npm run dev
 # or
 yarn dev
@@ -80,9 +116,10 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the tools used in the app, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [shadcn/ui Documentation](https://ui.shadcn.com/) - a collection of re-usable components that can be copy and pasted into your apps.
+- [Tailwind Documentation](https://tailwindcss.com/) - a utility-first CSS framework that can be use directly in your markup.
 
-## Deployment (Coming Soon)
+# Deployment (Coming Soon)
 Soon to be deployed with GitHub pages
