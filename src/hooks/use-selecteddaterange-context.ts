@@ -1,5 +1,5 @@
 import React from 'react';
-import { SelectedDateRange } from '@/services/analytics.service';
+import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
 
 export const SelectedDateRangeContext = React.createContext<SelectedDateRange | undefined>(SelectedDateRange.DAY);
 
