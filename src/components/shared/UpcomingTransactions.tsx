@@ -76,7 +76,7 @@ const UpcomingTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
     <TableRow className={`h-fit hover:bg-transaparent border-0`}>
       <TableCell className="flex flex-col gap-1 rounded mb-4 p-0">
         <div className="flex justify-between items-center">
-          <h3 className="text-accent-foreground text-md font-semibold tracking-tight">{tx.key}</h3>
+          <h3 className="text-muted-foreground text-xs font-semibold tracking-tight">{tx.key}</h3>
           <p className={`text-lg tracking-tight ${tx.total < 0 ? 'text-number-negative' : 'text-number-positive'}`}>{formatCurrency(tx.total)}</p>
         </div>
         {tx.transactions.map((transaction, index) => (
