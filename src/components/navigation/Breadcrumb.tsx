@@ -10,7 +10,7 @@ const Breadcrumbs = ({ className }: React.HTMLAttributes<HTMLElement>) => {
   const paths = pathname.split('/').filter(Boolean);
 
   return (
-    <Breadcrumb className={cn("text-sm text-foreground", className)}>
+    <Breadcrumb className={cn("text-sm text-foreground border-l-2 pl-6", className)}>
       <BreadcrumbList>
         {paths.map((path, index) => (
           <span key={index} className="flex items-center gap-2">
