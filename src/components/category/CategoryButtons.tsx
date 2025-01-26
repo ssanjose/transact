@@ -8,6 +8,20 @@ import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
 import { useDialog } from '@/hooks/use-dialog';
 import { Category } from '@/lib/db/db.model';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
+import { CategoryService } from '@/services/category.service';
+import { Sleep } from '@/lib/utils';
+
 interface CategoryButtonProps {
   button?: React.ReactElement;
   dialogProps?: typeof useDialog;
@@ -22,6 +36,7 @@ interface EditCategoryButtonProps extends CategoryButtonProps {
 
 interface DeleteCategoryButtonProps extends CategoryButtonProps {
   id?: number;
+  name?: string;
 }
 
 /**
@@ -84,4 +99,50 @@ const EditCategoryButton = ({ button, dialogProps, title, description, existingC
   )
 }
 
-export { OpenCategoryButton, EditCategoryButton };
+const DeleteCategoryButton = ({ id, button, title, description, name, dialogProps, visible }: DeleteCategoryButtonProps) => {
+  const deleteCategoryDialog = dialogProps ? dialogProps() : useDialog();
+  const buttonChildren = button || (
+    <Button variant="link" size="icon" className="p-none w-min">
+      <span>Delete Category</span>
+    </Button>
+  );
+
+  const handleDelete = async (id?: number) => {
+    const deleteCategory = async () => {
+      if (id === -1)
+        return;
+
+      if (id!)
+        await CategoryService.deleteCategory(id);
+      await Sleep(500);
+    }
+
+    deleteCategory();
+    deleteCategoryDialog.dismiss();
+  }
+
+  return (
+    <AlertDialog {...deleteCategoryDialog.dialogProps}>
+      <AlertDialogTrigger asChild
+        className={visible ? "block" : "hidden"}
+      >{buttonChildren}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-lg font-semibold">
+            {title ? title : "Are you sure you want to delete this category?"}
+            {name ? `: ${name}` : ""}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {description ? description : "This action cannot be undone. This will permanently delete the category. This will also remove the category selection from all transactions associated with this category."}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={() => handleDelete(id)}>Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+};
+
+export { OpenCategoryButton, EditCategoryButton, DeleteCategoryButton };
