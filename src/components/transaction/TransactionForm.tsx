@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Category, Frequency, FrequencyOptions, Transaction, TransactionType } from '@/lib/db/db.model';
@@ -23,7 +23,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { EditCategoryButton, OpenCategoryButton } from '@/components/category/CategoryButtons';
 import { useDialog } from '@/hooks/use-dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   accountId: number;
@@ -34,8 +34,16 @@ interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
 const TransactionForm = ({ className, accountId, onSave, existingTransaction }: TransactionFormProps) => {
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
   const [category, setCategory] = React.useState<Category | undefined>(undefined);
+  const [modal, setModal] = React.useState(false);
   const editCategory = useDialog();
   const deleteCategory = useDialog();
+
+  useEffect(() => {
+    editCategory.dismiss = () => {
+      editCategory.dismiss();
+      setModal(false);
+    };
+  }, []);
 
   const nullableTransactionSchema = transactionSchema.merge(z.object({
     categoryId: z.nullable(z.number()),
@@ -58,6 +66,8 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
   });
 
   const onSubmit = async (values: z.infer<typeof nullableTransactionSchema>) => {
+    if (modal) return;
+
     const transaction: Transaction = transactionSchema.parse({
       id: values.id,
       name: values.name,
@@ -271,6 +281,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuItem
                                     onSelect={(e) => {
+                                      setModal(true);
                                       editCategory.trigger();
                                     }}
                                   >
