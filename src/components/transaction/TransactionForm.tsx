@@ -21,7 +21,7 @@ import { SelectItem } from '@radix-ui/react-select';
 import { CategoryService } from '@/services/category.service';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { EditCategoryButton, OpenCategoryButton } from '@/components/category/CategoryButtons';
+import { DeleteCategoryButton, EditCategoryButton, OpenCategoryButton } from '@/components/category/CategoryButtons';
 import { useDialog } from '@/hooks/use-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
@@ -43,6 +43,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
 
   const closeModal = () => {
     editCategory.dialogProps.onOpenChange(false);
+    deleteCategory.dialogProps.onOpenChange(false);
     setModal(false);
   };
 
@@ -289,8 +290,9 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                                     Edit Transaction
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    onClick={() => {
-                                      console.log("uwu");
+                                    onClick={(e) => {
+                                      setModal(true);
+                                      deleteCategory.trigger();
                                     }}
                                   >
                                     Delete Transaction
@@ -321,6 +323,11 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
           dialogProps={() => editCategory}
           visible={false}
           title={`Edit ${category?.name}`}
+        />
+        <DeleteCategoryButton
+          id={category?.id || -1}
+          dialogProps={() => deleteCategory}
+          visible={false}
         />
       </form>
     </Form >
