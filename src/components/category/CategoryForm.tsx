@@ -11,6 +11,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Category } from '@/lib/db/db.model';
 import { CategoryService } from '@/services/category.service';
+import { ColorPicker, ColorPickerHex, ColorPickerInput } from '@/components/ui/color-picker';
 
 interface CategoryFormProps {
   className?: string;
@@ -77,9 +78,17 @@ const CategoryForm = ({ className, onSave, existingCategory }: CategoryFormProps
                   Color
                 </FormLabel>
                 <FormControl>
-                  <Input type="text" {...field} disabled={!!existingCategory
-
-                  } placeholder="#000" />
+                  <ColorPicker>
+                    <ColorPickerHex
+                      color={field.value}
+                      onChange={field.onChange}
+                    />
+                    <ColorPickerInput
+                      type="text"
+                      {...field}
+                      placeholder="#000"
+                    />
+                  </ColorPicker>
                 </FormControl>
                 <FormMessage />
                 {!existingCategory && <FormDescription className="text-muted-foreground font-normal">3-digits or 6-digits hex number.</FormDescription>}
