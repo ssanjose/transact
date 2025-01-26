@@ -85,7 +85,7 @@ export const DrawerDialog = ({
       <DialogDrawerTrigger asChild {...triggerProps}>
         {triggerButton || defaultTriggerButton}
       </DialogDrawerTrigger>
-      <DialogDrawerContent noX={noX} className={cn("sm:max-w-[425px]", className, inter.className)}>
+      <DialogDrawerContent noX={noX} className={cn("sm:max-w-[425px] p-6 pt-2 sm:p-6", className, inter.className)}>
         <DialogDrawerHeader>
           {header || defaultHeader}
         </DialogDrawerHeader>
