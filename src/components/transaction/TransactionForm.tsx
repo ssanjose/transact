@@ -34,16 +34,17 @@ interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
 const TransactionForm = ({ className, accountId, onSave, existingTransaction }: TransactionFormProps) => {
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
   const [category, setCategory] = React.useState<Category | undefined>(undefined);
+
   const [modal, setModal] = React.useState(false);
-  const editCategory = useDialog();
+  const editCategory = { ...useDialog() };
+  editCategory.dismiss = () => closeModal();
+
   const deleteCategory = useDialog();
 
-  useEffect(() => {
-    editCategory.dismiss = () => {
-      editCategory.dismiss();
-      setModal(false);
-    };
-  }, []);
+  const closeModal = () => {
+    editCategory.dialogProps.onOpenChange(false);
+    setModal(false);
+  };
 
   const nullableTransactionSchema = transactionSchema.merge(z.object({
     categoryId: z.nullable(z.number()),
@@ -66,7 +67,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
   });
 
   const onSubmit = async (values: z.infer<typeof nullableTransactionSchema>) => {
-    if (modal) return;
+    if (modal === true) return;
 
     const transaction: Transaction = transactionSchema.parse({
       id: values.id,
