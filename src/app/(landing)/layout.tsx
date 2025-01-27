@@ -19,6 +19,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url.base),
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`
@@ -51,7 +52,6 @@ export default async function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange
         >
           <Header className="w-11/12 sm:w-4/5 max-w-[1300px] mx-auto mt-2" />
           {children}
