@@ -1,6 +1,6 @@
 <h1 align="center">
   <br />
-  Transact
+  Transact (WIP)
   <br />
 </h1>
 
@@ -8,7 +8,7 @@
   <a href="#why-should-i-use-this-app">Why</a> •
   <a href="#documentation">Documentation</a> •
   <a href="#core-process">How</a> •
-  <a href="#getting-started">Get Started</a>
+  <a href="#getting-started">Contributing</a>
 </p>
 
 Transact is an application designed to help users track their expenses, income, and overall financial status. It provides a convenient way to categorize and visualize financial data through graphs.
@@ -67,20 +67,11 @@ transact/
 - [Coding Conventions](./docs/conventions/coding_conventions.md)
 - [Style Guide](./docs/style/style_guide.md)
 
-# Core Process
-## Account, Input, Output
-### Accounts
-Places for income to be stored.
-### Input
-Takes in amounts labeled as either income, savings, or expense, along with its frequency. User can declare if expense is non-essential.
+## Core Process
+### Data Flow
+You can find the software's data flow [here](./docs/design/software_design.md).
 
-'Income' are sent into accounts. 'Expenses' subtract from accounts. 
-### Output
-**Compile** income, savings, and expense. Turn income, saving, and expense account into a csv and reset 'Income' and 'Expense' accounts. 'Saving' accounts will remain for the next iteration.
-
-Charts income and usage, either arranged by name or category.
-
-# Getting Started
+## Getting Started
 This project is an offline-first based app which means you can easily run and use the application with a few commands:
 
 1. Clone the project by using:
@@ -95,7 +86,7 @@ git clone (your-forked-repo)
 > [!NOTE]
 > Go into the folder with `cd ./transact`
 
-```cmd
+```bash
 npm run dev
 # or
 yarn dev
