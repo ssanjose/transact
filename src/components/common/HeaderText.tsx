@@ -10,15 +10,15 @@ interface HeaderTextProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const HeaderText = ({ className, mainHeading, subHeading }: HeaderTextProps) => {
   return (
-    <div className={cn(`flex flex-col items-start text-foreground`, className)}>
+    <div className={cn(`flex items-center justify-between`, className)}>
+      <h2 className="text-lg font-extrabold text-accent-foreground">
+        {mainHeading}
+      </h2>
       {subHeading && (
         <p className="text-xs font-semibold text-muted-foreground">
           {subHeading}
         </p>
       )}
-      <h2 className="text-md font-extrabold lg:text-2xl">
-        {mainHeading}
-      </h2>
     </div>
   )
 };
