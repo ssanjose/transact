@@ -4,8 +4,6 @@ import * as React from "react"
 import { HexColorPicker } from "react-colorful"
 import { cn } from "@/lib/utils"
 
-
-
 export type ColorPickerProps = React.ComponentProps<typeof HexColorPicker>
 
 const ColorPicker = React.forwardRef<
@@ -14,7 +12,7 @@ const ColorPicker = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("w-full h-[200px] rounded-md border shadow-sm", className)}
+    className={cn("w-fit h-fit min-h-[200px] rounded-md border shadow-sm", className)}
     {...props}
   >
     {children}
@@ -24,21 +22,17 @@ ColorPicker.displayName = "ColorPicker"
 
 const ColorPickerHex = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> &
+  Omit<React.ComponentProps<typeof HexColorPicker>, 'onChange'> &
   ColorPickerProps
->(({ className, ...props }, ref) => (
+>(({ className, ...props }) => (
   <HexColorPicker
-    className={cn("rounded-none", className)}
-    style={{
-      width: "100%",
-      height: "85%",
-      borderRadius: "0",
-    }}
+    className={cn("rounded-none w-[100% !important] h-[100% !important] border-[0 !important]", className)}
     {...props}
   />
 ))
 ColorPickerHex.displayName = "ColorPickerHex"
 
+// You can also use shadcn input instead of this one
 const ColorPickerInput = React.forwardRef<
   HTMLInputElement,
   React.ComponentProps<"input">
@@ -46,7 +40,7 @@ const ColorPickerInput = React.forwardRef<
   <input
     type={type}
     className={cn(
-      "flex w-full h-fit px-3 py-1 bg-transparent transition-colors uppercase text-base md:text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      "flex w-[200px] h-fit px-1 py-1 mt-0.5 bg-transparent transition-colors uppercase text-base md:text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     ref={ref}
