@@ -12,7 +12,9 @@ This document describes the system architecture of the Finance Tracker App.
 - Account
 - Transaction
 - Category
-- AppliedTransaction
 
 ## ERD
 Refer to `ERD_and_Implementation/Plan.erd` for the Entity-Relationship Diagram.
+
+## Services
+Refer to `ERD_and_Implementation/diagrams/` for the Services diagrams and Analytics Diagram
