@@ -73,7 +73,7 @@ You can find the software's data flow [here](./docs/design/software_design.md).
 
 ## Getting Started
 > [!NOTE]
-> If you want to contribute, please take a look at the [Requirements file](./docs/ERDS_and_Implementation/Requirements.todo) and afterward, make an issue detailing what feature do you want to develop. Help is always appreciated! :)
+> If you want to contribute, please take a look at the [Requirements file](./docs/ERD_and_Implementation/Requirements.todo) and afterward, make an issue detailing what feature do you want to develop. Help is always appreciated! :)
 
 This project is an offline-first based app which means you can easily run and use the application with a few commands:
 
