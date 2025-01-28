@@ -72,6 +72,9 @@ transact/
 You can find the software's data flow [here](./docs/design/software_design.md).
 
 ## Getting Started
+> [!NOTE]
+> If you want to contribute, please take a look at the [Requirements file](./docs/ERDS_and_Implementation/Requirements.todo) and afterward, make an issue detailing what feature do you want to develop. Help is always appreciated! :)
+
 This project is an offline-first based app which means you can easily run and use the application with a few commands:
 
 1. Clone the project by using:
@@ -97,8 +100,6 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
