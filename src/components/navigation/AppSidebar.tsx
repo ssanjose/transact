@@ -22,7 +22,7 @@ import { FaChartLine, FaTag } from 'react-icons/fa';
 import { siteConfig } from '@/config/site';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import { ThemeModeToggle } from '../theming/ThemeModeToggle';
+import { ThemeModeToggle } from '@/components/theming/ThemeModeToggle';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,6 +39,11 @@ const items = [
     icon: Inbox,
   },
   {
+    title: "Categories",
+    url: "/categories",
+    icon: FaTag,
+  },
+  {
     title: "Settings",
     url: "/settings",
     icon: Settings,
@@ -48,13 +53,8 @@ const items = [
 const analytics = [
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/analysis/dashboard",
     icon: FaChartLine,
-  },
-  {
-    title: "Categories",
-    url: "/categories",
-    icon: FaTag,
   },
 ]
 
