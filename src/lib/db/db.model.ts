@@ -15,7 +15,7 @@ export enum TransactionType {
 export const TransactionTypeOptions = Object.values(TransactionType);
 
 /**
- * Represents an account in the finance tracker.
+ * Represents an account to track finances.
  */
 interface Account {
   id?: number;
@@ -27,7 +27,7 @@ interface Account {
 }
 
 /**
- * Represents a transaction in the finance tracker.
+ * Represents a transaction or exchange of money.
  */
 interface Transaction {
   id?: number;
@@ -42,7 +42,16 @@ interface Transaction {
 }
 
 /**
- * Represents a category in the finance tracker.
+ * Represents a committed transaction that has been applied to an account.
+ */
+interface AccountTransaction {
+  id?: number;
+  accountId: number;
+  transactionId: number;
+}
+
+/**
+ * Represents a category of a transaction.
  */
 interface Category {
   id?: number;
@@ -50,4 +59,4 @@ interface Category {
   color: string;
 }
 
-export type { Account, Transaction, Category };
+export type { Account, Transaction, AccountTransaction, Category };
