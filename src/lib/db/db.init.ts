@@ -1,16 +1,18 @@
 import Dexie, { EntityTable, Transaction as Tx } from "dexie";
-import { Account, Category, Transaction } from "@/lib/db/db.model";
+import { Account, AccountTransaction, Category, Transaction } from "@/lib/db/db.model";
 import { categorySeeds } from "./db.seed";
 
 const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
   accounts: EntityTable<Account, 'id'>;
   transactions: EntityTable<Transaction, 'id'>;
+  accountTransactions: EntityTable<AccountTransaction, 'id'>;
   categories: EntityTable<Category, 'id'>;
 };
 
 FinanceTrackerDatabase.version(1).stores({
   accounts: "++id, name, balance, startingBalance, createdAt, updatedAt",
   transactions: "++id, name, amount, date, type, frequency, accountId, categoryId, transactionId",
+  accountTransactions: "++id, accountId, transactionId",
   categories: "++id, name, color",
 });
 
@@ -54,6 +56,11 @@ FinanceTrackerDatabase.accounts.hook("updating", function (mods, primaryKey, acc
   }
 
   return { updatedAt: new Date() };
+});
+
+// AccountTransaction Hooks
+FinanceTrackerDatabase.accountTransactions.hook("creating", function (primaryKey, accountTransaction, transaction) {
+  console.log("Commiting transaction: ", accountTransaction.transactionId, " to account: ", accountTransaction.accountId);
 });
 
 export default FinanceTrackerDatabase;
