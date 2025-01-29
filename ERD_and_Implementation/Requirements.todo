@@ -24,6 +24,8 @@ Requirements:
         ✔ Users can view the nearest upcoming transactions for all Accounts @done(24-12-27 02:56)
         ✔ Users can edit a Transaction's date and subsequent Transactions will be updated @done(25-01-28 01:00)
         ☐ Users can view all child transactions for a specific Transaction
+        ☐ When a user creates a transaction, some transactions will be committed and balance will be recalculated
+        ☐ When a user edits a Transaction's date or frequency and subsequent Transactions are updated or deleted, the account balance will be recalculated
 
       Category:
         ✔ Users can create a Category @done(24-12-27 02:50)
@@ -46,7 +48,7 @@ Requirements:
         ✔ Users can navigate to the Settings page @done(24-12-27 02:58)
 
   Complex Features:
-    Visualization:
+    Analysis-&-Visualization:
       Account:
         ☐ Users can view a pie chart of their total balance by Account
 
@@ -54,6 +56,10 @@ Requirements:
         ✔ Users can view a pie chart of their transactions by type income for the previous day, previous week, previous month, and entire year @done(24-12-27 02:53)
         ✔ Users can view a pie chart of their transactions by type expense for the previous day, previous week, previous month, and entire year @done(24-12-27 02:53)
         ✔ Users can view a pie chart of their total amount of transactions made for the previous day, previous week, previous month, and entire year @done(24-12-27 02:54)
+
+      Category:
+        ☐ Users can view a pie chart of their total amount of transactions made for each Category
+        ☐ Users can view a pie chart of their total amount of transactions made for each Category for the previous day, previous week, previous month, and entire year
 
     Offline:
       Progressive Web App:
@@ -63,10 +69,8 @@ Requirements:
         ☐ App will update the user's PWA when they visit the website
 
     Automatic Processing (SW & WW):
-      ☐ When a user edits a Transaction's date and subsequent Transactions are updated, the account balance will be recalculated
       ☐ App will automatically process Transactions that are due on the current date and send a notification to the user
-      ☐ In the case of a Transaction changes, fire up analysis modules for recalculation
-      ☐ When a user creates a transaction, the workers will analyze the transaction, committing every transaction that has passed
+      ☐ In the case of a Transaction change, fire up analysis modules for recalculation
       ☐ When a user creates a transaction, the workers will analyze the transaction, adding every transaction that hasn't passed and are close to their commit date to the commit queue, doing periodic checks to watch and automatically process transactions when they reach their commit date
       
     Data Storage:
