@@ -5,6 +5,10 @@
 </h1>
 
 <p align="center">
+  Feature on Progress: Account balance calculation and Service Worker transaction commit tracking.
+</p>
+
+<p align="center">
   <a href="#why-should-i-use-this-app">Why</a> •
   <a href="#documentation">Documentation</a> •
   <a href="#core-process">How</a> •
@@ -63,7 +67,7 @@ transact/
 ## Documentation
 - [Software Design](./docs/design/software_design.md)
 - [Data Design for Visualizations](./docs/design/data_design_for_visualizations.md)
-- [System Architecture](./docs/architecture/system_architecture.md)
+- [System Architecture](./docs/design/system_architecture.md)
 - [Coding Conventions](./docs/conventions/coding_conventions.md)
 - [Style Guide](./docs/style/style_guide.md)
 
