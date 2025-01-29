@@ -167,3 +167,25 @@ Account is a simple model. An id, name, and balance. However, statistics need mo
 That is why:
 - Adding a starting balance will allow analytics modules to compared daily, weekly, monthly, and yearly data
 - Adding a createdAt and updateAt date fields will allow analytics modules to determine the accounts age and whether it is an active account.
+
+## Version 0.5.0
+### Data Model
+- Account
+- Transaction
+- AccountTransaction
+  - id
+  - accountId
+  - transactionId
+- Category
+
+### Reason | Why?
+The current database structure lacks a way to track account balance history and transaction application states. This makes it difficult to:
+1. Track balance changes over time
+2. Rollback incorrect transactions
+3. Verify transaction integrity
+4. Track when transactions were actually applied to accounts
+
+That is why I am:
+- Adding AccountTransaction will allow us to track account balances changes by recording which transactions have been committed.
+- Rolling back transactions can be as easy as getting the AccountTransaction record of the specific Transaction and doing a reverse calculation of the Account balance, afterward delete the AccounTransaction and Transaction records.
+- This enables better auditing and potential rollback features
