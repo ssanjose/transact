@@ -15,16 +15,17 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { DataTablePagination } from "@/components/data-table/PaginationControls"
+import { cn } from "@/lib/utils"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   columns: ColumnDef<TData, TValue>[]
   table: import("@tanstack/react-table").Table<TData>
   setId?: (id: number) => void
 }
 
-const DataTable = <TData, TValue>({ columns, table, setId }: DataTableProps<TData, TValue>) => {
+const DataTable = <TData, TValue>({ className, columns, table, setId }: DataTableProps<TData, TValue>) => {
   return (
-    <>
+    <div className={cn("", className)}>
       <div className="border rounded-md my-1">
         <Table>
           <TableHeader>
@@ -74,7 +75,7 @@ const DataTable = <TData, TValue>({ columns, table, setId }: DataTableProps<TDat
         </Table>
       </div>
       <DataTablePagination table={table} />
-    </>
+    </div>
   )
 }
 
