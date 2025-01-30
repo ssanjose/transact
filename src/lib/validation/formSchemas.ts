@@ -45,6 +45,9 @@ const transactionSchema = z.object({
   frequency: z.nativeEnum(Frequency, {
     message: 'Frequency must be either "one-time", "daily", "weekly", or "monthly"',
   }),
+  status: z.enum(["pending", "processed"], {
+    message: 'Status must be either "pending" or "processed"',
+  }),
   accountId: z.number(),
   categoryId: z.number().optional(),
   transactionId: z.number().optional(),

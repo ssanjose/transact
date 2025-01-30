@@ -59,10 +59,11 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
       name: existingTransaction?.name || "",
       amount: existingTransaction?.amount || 0.00,
       date: existingTransaction?.date || new Date(),
-      accountId: existingTransaction?.accountId || accountId,
       type: existingTransaction?.type || TransactionType.Expense,
-      categoryId: existingTransaction?.categoryId || null,
       frequency: existingTransaction?.frequency || Frequency.OneTime,
+      status: existingTransaction?.status || "pending",
+      accountId: existingTransaction?.accountId || accountId,
+      categoryId: existingTransaction?.categoryId || null,
       transactionId: existingTransaction?.transactionId || undefined,
     },
   });
@@ -75,10 +76,11 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
       name: values.name,
       amount: (Math.round(values.amount * 100) / 100),
       date: values.date,
-      accountId: values.accountId,
       type: values.type,
-      categoryId: values.categoryId === null ? undefined : values.categoryId,
       frequency: GetFrequency(values.frequency),
+      status: values.status,
+      accountId: values.accountId,
+      categoryId: values.categoryId === null ? undefined : values.categoryId,
       transactionId: values.transactionId,
     });
 

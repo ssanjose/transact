@@ -172,9 +172,15 @@ That is why:
 ### Data Model
 - Account
 - Transaction
-- AccountTransaction
   - id
+  - name
+  - amount
+  - date
+  - type
+  - frequency
+  - status
   - accountId
+  - categoryId
   - transactionId
 - Category
 
@@ -186,6 +192,7 @@ The current database structure lacks a way to track account balance history and 
 4. Track when transactions were actually applied to accounts
 
 That is why I am:
-- Adding AccountTransaction will allow us to track account balances changes by recording which transactions have been committed.
-- Rolling back transactions can be as easy as getting the AccountTransaction record of the specific Transaction and doing a reverse calculation of the Account balance, afterward delete the AccounTransaction and Transaction records.
+- Adding status will allow us to track account balances changes by recording which transactions have been committed.
+- Committing a transaction and changing the balance can be as easy as changing the transaction's status field and updating the account's balance field.
+- Rolling back transaction commits can be as easy as getting the status field of the specific Transaction and doing a reverse calculation of the Account balance, afterward updating the status field or deleting the entire Transaction record.
 - This enables better auditing and potential rollback features

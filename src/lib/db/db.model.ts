@@ -36,18 +36,10 @@ interface Transaction {
   date: Date;
   type: TransactionType; // 0 = expense, 1 = income
   frequency: Frequency; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
+  status: "pending" | "processed";
   accountId: number; // foreign key
   categoryId?: number; // foreign key
   transactionId?: number; // foreign key to parent transaction
-}
-
-/**
- * Represents a committed transaction that has been applied to an account.
- */
-interface AccountTransaction {
-  id?: number;
-  accountId: number;
-  transactionId: number;
 }
 
 /**
@@ -59,4 +51,4 @@ interface Category {
   color: string;
 }
 
-export type { Account, Transaction, AccountTransaction, Category };
+export type { Account, Transaction, Category };
