@@ -1,5 +1,6 @@
 import { Account } from '@/lib/db/db.model';
 import FinanceTrackerDatabase from '@/lib/db/db.init';
+import { TransactionService } from '@/services/transaction.service';
 
 /**
  * Creates a new account.
@@ -65,10 +66,51 @@ function deleteAccount(id: number): Promise<void> {
   })
 }
 
+/**
+ * Rebalances an account by updating the account balance if the account has transactions and transactions has passed the current date, meaning the transaction should be committed to the account balance. If the account id is not given, the function will update all accounts.
+ * If the transaction is commitable, the transaction amount will be added to the account balance based on its type: income(1) or expense(0).
+ * 
+ * @param {number} [id] - The ID of the account to rebalance.
+ * @returns {Promise<void>} - A promise that resolves when the account balance is updated.
+ * @note This function is used to update the account balance based on the transactions that have passed the current date and will be used by the scheduler to update the account balance.
+ */
+function applyTransactionsToAccount(id?: number): Promise<void> {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
+    let accounts: Account[] = [];
+
+    if (id)
+      accounts = await FinanceTrackerDatabase.accounts.where('id').equals(id).toArray();
+    else
+      accounts = await FinanceTrackerDatabase.accounts.toArray();
+
+    for (const account of accounts) {
+      let sum = 0;
+      const transactions = await FinanceTrackerDatabase.transactions.where('accountId').equals(account.id!).toArray();
+      let balance = account.balance;
+      let transactionsToCommit: number[] = [];
+
+      for (const transaction of transactions) {
+        if (transaction.status === 'pending' && transaction.date <= new Date()) {
+          if (transaction.type === 0)
+            sum -= transaction.amount;
+          else
+            sum += transaction.amount;
+          transactionsToCommit.push(transaction.id!);
+        }
+      }
+
+      balance += sum;
+      await FinanceTrackerDatabase.accounts.update(account.id, { balance });
+      await TransactionService.commitTransactions(transactionsToCommit);
+    }
+  });
+}
+
 export const AccountService = {
   createAccount,
   getAccount,
   getAllAccounts,
   updateAccount,
   deleteAccount,
+  applyTransactionsToAccount,
 };
