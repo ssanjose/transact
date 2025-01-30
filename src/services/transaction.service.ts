@@ -1,6 +1,7 @@
 import { Frequency, Transaction } from '@/lib/db/db.model';
 import FinanceTrackerDatabase from '@/lib/db/db.init';
 import { checkIfExists } from '@/lib/utils';
+import { AccountService } from '@/services/account.service';
 
 /**
  * Creates a transaction and its corresponding child Transactions based on frequency and datetime.
@@ -9,13 +10,14 @@ import { checkIfExists } from '@/lib/utils';
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are created.
  */
 function createTransaction(transaction: Transaction): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
     let txId = await FinanceTrackerDatabase.transactions.add(transaction);
     let childTransactions: Transaction[] = [];
 
-    let persistedTransaction = await FinanceTrackerDatabase.transactions.get(checkIfExists(txId));
-    childTransactions = generateChildTransactions(checkIfExists(persistedTransaction));
+    let persistedTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId)));
+    childTransactions = generateChildTransactions(persistedTransaction);
     await FinanceTrackerDatabase.transactions.bulkAdd(childTransactions);
+    await AccountService.applyTransactionsToAccount(persistedTransaction.accountId);
   })
 }
 
@@ -288,6 +290,62 @@ function getTransactionsByDate({ lowerBound, upperBound, sorted, sortedDirection
   });
 }
 
+/**
+ * Commits an array of transactions by updating their status from "pending" to "processed".
+ * @param {Transaction[]} transactions - The transactions to commit.
+ * @returns {Promise<void>} - A promise that resolves when the transactions are committed.
+ */
+function commitTransactions(ids: number[]): Promise<void> {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
+    let transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
+
+    let toBeCommitted = transactions.map((transaction, idx) => {
+      if (!transaction || ids[idx] !== transaction.id!)
+        throw new Error('One or more transactions not found');
+
+      if (transaction.status === 'processed')
+        throw new Error('One or more transactions already processed');
+
+      return {
+        key: transaction.id!,
+        changes: {
+          status: 'processed'
+        } as Partial<Transaction>,
+      };
+    });
+
+    await FinanceTrackerDatabase.transactions.bulkUpdate(toBeCommitted);
+  });
+}
+
+/**
+ * Uncommits an array of transactions by updating their status from "processed" to "pending".
+ * @param {number[]} ids - The IDs of the transactions to uncommit.
+ * @returns {Promise<void>} - A promise that resolves when the transactions are uncommitted.
+ */
+function unCommitTransactions(ids: number[]): Promise<void> {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
+    let transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
+
+    let toBeUncommitted = transactions.map((transaction, idx) => {
+      if (!transaction || ids[idx] === transaction.id!)
+        throw new Error('One or more transactions not found');
+
+      if (transaction.status === 'pending')
+        throw new Error('One or more transactions already pending');
+
+      return {
+        key: transaction.id!,
+        changes: {
+          status: 'pending'
+        } as Partial<Transaction>,
+      };
+    });
+
+    await FinanceTrackerDatabase.transactions.bulkUpdate(toBeUncommitted);
+  });
+}
+
 export const TransactionService = {
   createTransaction,
   getTransaction,
@@ -296,4 +354,6 @@ export const TransactionService = {
   getTransactionsByAccount,
   findUpcomingTransactions,
   getTransactionsByDate,
+  commitTransactions,
+  unCommitTransactions,
 };
