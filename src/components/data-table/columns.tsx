@@ -74,15 +74,13 @@ export const columns: ColumnDef<Transaction>[] = [
     }
   },
   {
+    accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      let status = row.original.date.valueOf() < new Date().valueOf();
       // make badge type of element and check whether is it 'PROCESSED' or 'PROJECTED'
       return (
-        <div className={`w-fit text-xs border py-1 px-3  rounded-3xl text-center opacity-60 ${status ? "text-number-positive border-number-positive" : "text-number-negative border-number-negative"}`}>
-          {
-            (status ? "PROCESSED" : "PROJECTED")
-          }
+        <div className={`w-fit text-xs border py-1 px-3 uppercase rounded-3xl text-center opacity-60 ${row.original.status === 'processed' ? "text-number-positive border-number-positive" : "text-number-negative border-number-negative"}`}>
+          {row.original.status}
         </div>
       )
     }
