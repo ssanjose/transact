@@ -4,9 +4,12 @@
   <br />
 </h1>
 
-<p align="center">
-  Feature on Progress: Account balance calculation and Service Worker transaction commit tracking.
-</p>
+<div>
+  <p align="center">
+    Feature on Progress: Account balance calculation and Service Worker transaction commit tracking.
+  </p>
+  <p align="center">Features left before pre-release: Categories overview, Dashboard, Settings, and Transaction Detail Edit screen</p>
+</div>
 
 <p align="center">
   <a href="#why-should-i-use-this-app">Why</a> •
