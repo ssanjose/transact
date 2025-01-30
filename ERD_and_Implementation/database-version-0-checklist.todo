@@ -45,9 +45,6 @@ Database Version 0 Checklist:
     Services:
       ✔ Edit the CategoryService to include the new color field @done(24-12-24 11:15)
 
-    Components:
-      
-
     Package.json:
       ✔ Update the version number to 0.3.0 @done(24-12-24 11:15)
 
@@ -78,3 +75,30 @@ Database Version 0 Checklist:
 
     Package.json:
       ✔ Update the version number to 0.4.0 @done(24-12-28 22:06)
+
+  Database Version 0.5.0 Checklist:
+    ERD:
+      ✔ Edit the ERD to include the new field in the Transaction model (status) @done(25-01-30 02:05)
+
+    Diagrams:
+      ✔ Edit diagrams to include the new methods(commit, uncommit) in the Transaction model @done(25-01-30 02:09)
+      ☐ Edit diagrams to include the new method(applyTransactionsToAccount, rollbackTransactionFromAccount) in the Account model
+
+    Models:
+      ✔ Edit the Transaction model to include the new field (status) @done(25-01-30 02:05)
+      ✔ Adjust Dexie Entity Tables and stores to reflect the changes in the models @done(25-01-30 02:05)
+
+    Validation Schema:
+      ✔ Add the new field to the Transaction schema (status) @done(25-01-30 02:05)
+
+    Form:
+      ✔ Add a new field to the Transaction form (status), and default to 'pending' @done(25-01-30 02:05)
+
+    Services:
+      ✔ Edit the TransactionService to add the commit and uncommit methods @done(25-01-30 02:04)
+      ✔ Edit the AccountService to add the applyTransactionsToAccount method, which will apply all pending Transactions to the Account's balance and commit them as 'processed' @done(25-01-30 02:04)
+
+      ✔ Edit the TransactionService createTransaction method to call the applyTransactionsToAccount method when a Transaction is created to update the Account's balance @done(25-01-30 02:05)
+      ☐ Edit the TransactionService editTransaction method //todo
+      ☐ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction
+    
