@@ -1,13 +1,12 @@
 "use client"
 
-import { Pie, PieChart as RechartsComponent, ResponsiveContainer } from "recharts"
+import { Pie, PieChart as RechartsComponent } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export interface ChartDataPoint {
-  id: string | number;
   label: string;
   value: number;
   fill: string;
@@ -28,6 +27,7 @@ interface PieChartProps extends Omit<React.HTMLProps<HTMLDivElement>, 'data'> {
   title: string;
   description?: string;
   loading?: boolean;
+  showLegend?: boolean;
 }
 
 export const PieChart = ({
@@ -37,6 +37,7 @@ export const PieChart = ({
   title,
   description,
   loading = false,
+  showLegend = false,
   ...props
 }: PieChartProps) => {
   if (loading) {
@@ -64,33 +65,40 @@ export const PieChart = ({
           config={config}
           className="mx-auto aspect-square max-h-[250px] [&_.recharts-pie-label-text]:fill-foreground"
         >
-          <ResponsiveContainer width="100%" height="100%">
-            <RechartsComponent>
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    hideLabel
-                    formatter={(value) =>
-                      new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD'
-                      }).format(value as number)
-                    }
-                  />
-                }
-              />
-              <Pie
-                data={data}
-                dataKey="value"
-                nameKey="label"
-                label={{
-                  fill: 'var(--foreground)',
-                  fontSize: 12
-                }}
-                labelLine={false}
-              />
-            </RechartsComponent>
-          </ResponsiveContainer>
+          <RechartsComponent>
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="w-[150px]"
+                />
+              }
+            />
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="label"
+              cx="50%"
+              cy="50%"
+              innerRadius={"40%"}
+              outerRadius={"80%"}
+              paddingAngle={2}
+              label={{
+                fill: 'var(--foreground)',
+                fontSize: 10,
+              }}
+              labelLine={true}
+            />
+            {
+              showLegend && (
+                <ChartLegend
+                  content={
+                    <ChartLegendContent nameKey="label" />
+                  }
+                  className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                />
+              )
+            }
+          </RechartsComponent>
         </ChartContainer>
       </CardContent>
     </Card>
