@@ -19,10 +19,6 @@ const CategoryTable = ({ categories }: CategoryTableProps) => {
 
   const columns: ColumnDef<Category>[] = [
     {
-      accessorKey: "id",
-      header: "ID",
-    },
-    {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => {
