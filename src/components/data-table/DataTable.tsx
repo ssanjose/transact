@@ -14,7 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { DataTablePagination } from "@/components/data-table/PaginationControls"
 import { cn } from "@/lib/utils"
 
 interface DataTableProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
@@ -74,7 +73,6 @@ const DataTable = <TData, TValue>({ className, columns, table, setId }: DataTabl
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   )
 }
