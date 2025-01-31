@@ -63,7 +63,7 @@ export const PieChart = ({
       <CardContent className="p-2 flex-1">
         <ChartContainer
           config={config}
-          className="mx-auto aspect-square max-h-[250px] [&_.recharts-pie-label-text]:fill-foreground"
+          className="mx-auto aspect-square max-h-[300px] [&_.recharts-pie-label-text]:fill-foreground"
         >
           <RechartsComponent>
             <ChartTooltip
