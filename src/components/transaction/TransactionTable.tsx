@@ -21,6 +21,7 @@ import {
 import dataTableConfig from '@/config/data-table';
 import SimpleInputFilter from '@/components/data-table/SimpleInputFilter';
 import { DataTableViewOptions } from '@/components/data-table/ColumnToggle';
+import { DataTablePagination } from "@/components/data-table/PaginationControls"
 
 const TransactionTable = ({ id, setTransactionId }: { id?: number, setTransactionId: (id: number) => void }) => {
   const transactions = useLiveQuery<Transaction[], []>(() => TransactionService.getTransactionsByAccount(id), [id], []);
@@ -78,6 +79,7 @@ const TransactionTable = ({ id, setTransactionId }: { id?: number, setTransactio
         setId={setTransactionId}
         table={table}
       />
+      <DataTablePagination table={table} />
       <EditTransactionButton
         existingTransaction={rowData as Transaction}
         dialogProps={() => editDialog}
