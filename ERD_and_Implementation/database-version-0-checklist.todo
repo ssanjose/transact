@@ -82,7 +82,7 @@ Database Version 0 Checklist:
 
     Diagrams:
       ✔ Edit diagrams to include the new methods(commit, uncommit) in the Transaction model @done(25-01-30 02:09)
-      ☐ Edit diagrams to include the new method(applyTransactionsToAccount, rollbackTransactionFromAccount) in the Account model
+      ✔ Edit diagrams to include the new method(applyTransactionsToAccount, rollbackTransactionsFromAccount) in the Account model @done(25-02-01 03:08)
 
     Models:
       ✔ Edit the Transaction model to include the new field (status) @done(25-01-30 02:05)

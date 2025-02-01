@@ -106,6 +106,46 @@ function applyTransactionsToAccount(id?: number): Promise<void> {
   });
 }
 
+/**
+ * Rolls back processed transactions from an account by updating the account balance and uncommitting the transactions.
+ * 
+ * @param {number} [id] - The ID of the account to rollback transactions from.
+ * @returns {Promise<void>} - A promise that resolves when the account balance is updated.
+ */
+function rollbackTransactionsFromAccount(id: number): Promise<void> {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
+    let accounts: Account[] = [];
+
+    accounts = await FinanceTrackerDatabase.accounts.where('id').equals(id).toArray();
+
+    for (const account of accounts) {
+      let sum = 0;
+      const transactions = await FinanceTrackerDatabase.transactions
+        .where('accountId')
+        .equals(account.id!)
+        .toArray();
+
+      let balance = account.balance;
+      let transactionsToUncommit: number[] = [];
+
+      for (const transaction of transactions) {
+        if (transaction.status === 'processed' && transaction.date <= new Date()) {
+          // Reverse the transaction effect
+          if (transaction.type === 0)
+            sum += transaction.amount; // Add back expenses
+          else
+            sum -= transaction.amount; // Subtract income
+          transactionsToUncommit.push(transaction.id!);
+        }
+      }
+
+      balance += sum;
+      await FinanceTrackerDatabase.accounts.update(account.id, { balance });
+      await TransactionService.unCommitTransactions(transactionsToUncommit);
+    }
+  });
+}
+
 export const AccountService = {
   createAccount,
   getAccount,
@@ -113,4 +153,5 @@ export const AccountService = {
   updateAccount,
   deleteAccount,
   applyTransactionsToAccount,
+  rollbackTransactionsFromAccount,
 };
