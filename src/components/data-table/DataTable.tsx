@@ -25,7 +25,7 @@ interface DataTableProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElem
 const DataTable = <TData, TValue>({ className, columns, table, setId }: DataTableProps<TData, TValue>) => {
   return (
     <div className={cn("", className)}>
-      <div className="border rounded-md my-1">
+      <div className="border rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

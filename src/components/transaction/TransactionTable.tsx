@@ -70,7 +70,7 @@ const TransactionTable = ({ id, setTransactionId }: { id?: number, setTransactio
   });
 
   return (
-    <div className="w-full p-1">
+    <div className="w-full p-1 flex flex-col gap-2">
       <div className="flex justify-between items-center">
         <SimpleInputFilter table={table} />
         <DataTableViewOptions table={table} />
