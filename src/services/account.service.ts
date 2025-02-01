@@ -107,41 +107,35 @@ function applyTransactionsToAccount(id?: number): Promise<void> {
 }
 
 /**
- * Rolls back processed transactions from an account by updating the account balance and uncommitting the transactions.
- * 
- * @param {number} [id] - The ID of the account to rollback transactions from.
- * @returns {Promise<void>} - A promise that resolves when the account balance is updated.
+ * Rolls back specific transactions from an account
+ * @param accountId The account to roll back transactions from
+ * @param transactionIds The IDs of transactions to roll back
+ * @returns A promise that resolves when the transactions are rolled back
  */
-function rollbackTransactionsFromAccount(id: number): Promise<void> {
+function rollbackTransactionsFromAccount(accountId: number, transactionIds: number[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
-    let accounts: Account[] = [];
+    const account = await FinanceTrackerDatabase.accounts.get(accountId);
+    if (!account) throw new Error(`Account ${accountId} not found`);
 
-    accounts = await FinanceTrackerDatabase.accounts.where('id').equals(id).toArray();
+    const transactions = await FinanceTrackerDatabase.transactions
+      .where('id')
+      .anyOf(transactionIds)
+      .and(tx => tx.accountId === accountId && tx.status === 'processed')
+      .toArray();
 
-    for (const account of accounts) {
-      let sum = 0;
-      const transactions = await FinanceTrackerDatabase.transactions
-        .where('accountId')
-        .equals(account.id!)
-        .toArray();
+    let balance = account.balance;
 
-      let balance = account.balance;
-      let transactionsToUncommit: number[] = [];
+    // Calculate balance adjustment
+    const balanceAdjustment = transactions.reduce((sum, tx) => {
+      // Reverse the transaction effect
+      return sum + (tx.type === 0 ? tx.amount : -tx.amount);
+    }, 0);
 
-      for (const transaction of transactions) {
-        if (transaction.status === 'processed' && transaction.date <= new Date()) {
-          // Reverse the transaction effect
-          if (transaction.type === 0)
-            sum += transaction.amount; // Add back expenses
-          else
-            sum -= transaction.amount; // Subtract income
-          transactionsToUncommit.push(transaction.id!);
-        }
-      }
-
-      balance += sum;
-      await FinanceTrackerDatabase.accounts.update(account.id, { balance });
-      await TransactionService.unCommitTransactions(transactionsToUncommit);
+    // Update balance and uncommit transactions
+    if (transactions.length > 0) {
+      balance += balanceAdjustment;
+      await FinanceTrackerDatabase.accounts.update(accountId, { balance });
+      await TransactionService.unCommitTransactions(transactions.map(tx => tx.id!));
     }
   });
 }
