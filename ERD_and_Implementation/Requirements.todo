@@ -24,15 +24,15 @@ Requirements:
         ✔ Users can view the nearest upcoming transactions for all Accounts @done(24-12-27 02:56)
         ✔ Users can edit a Transaction's date and subsequent Transactions will be updated @done(25-01-28 01:00)
         ☐ Users can view all child transactions for a specific Transaction
-        ☐ When a user creates a transaction, some transactions will be committed and balance will be recalculated
-        ☐ When a user edits a Transaction's date or frequency and subsequent Transactions are updated or deleted, the account balance will be recalculated
+        ✔ When a user creates a transaction, some transactions will be committed and balance will be recalculated @done(25-02-01 04:15)
+        ✔ When a user edits a Transaction's date or frequency and subsequent Transactions are updated or deleted, the account balance will be recalculated @done(25-02-01 04:15)
 
       Category:
         ✔ Users can create a Category @done(24-12-27 02:50)
         ✔ Users can rename a Category @done(25-01-26 02:11)
         ✔ Users can edit a Category's color @done(25-01-26 08:12)
         ✔ Users can delete a Category @done(25-01-26 02:11)
-        ☐ Users can view all Categories in the category page
+        ✔ Users can view all Categories in the category page @done(25-02-01 04:15)
         ✔ Users can view all Categories in Transaction form @done(24-12-27 02:50)
         ☐ Users can view the Transactions of a single Category
 
