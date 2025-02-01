@@ -100,5 +100,5 @@ Database Version 0 Checklist:
 
       ✔ Edit the TransactionService createTransaction method to call the applyTransactionsToAccount method when a Transaction is created to update the Account's balance @done(25-01-30 02:05)
       ☐ Edit the TransactionService editTransaction method //todo
-      ☐ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction
+      ✔ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction @done(25-02-01 03:21)
     

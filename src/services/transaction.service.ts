@@ -94,9 +94,27 @@ function deleteTransaction(transactionId: number): Promise<void> {
     if (!transaction)
       throw new Error(`Transaction with ID ${transactionId} not found`);
 
-    if (transaction.transactionId === undefined)
-      await FinanceTrackerDatabase.transactions.where({ transactionId: transactionId }).delete();
-    await FinanceTrackerDatabase.transactions.delete(transactionId);
+    // Get all related transactions (parent + children)
+    const transactionsToDelete = [transaction];
+    if (!transaction.transactionId) {
+      const childTransactions = await FinanceTrackerDatabase.transactions
+        .where({ transactionId })
+        .toArray();
+      transactionsToDelete.push(...childTransactions);
+    }
+
+    // Roll back processed transactions
+    const processedTransactions = transactionsToDelete
+      .filter(tx => tx.status === 'processed')
+      .map(tx => tx.id!);
+    if (processedTransactions.length > 0)
+      await AccountService.rollbackTransactionsFromAccount(
+        transaction.accountId,
+        processedTransactions
+      );
+
+    const ids = transactionsToDelete.map(tx => tx.id!);
+    await FinanceTrackerDatabase.transactions.bulkDelete(ids);
   });
 }
 
