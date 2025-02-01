@@ -22,7 +22,7 @@ Transact is an application designed to help users track their expenses, income, 
 
 ![Landing Page](/public/transact_landing.jpg)
 
-<img src="./public/transact_account_form.jpg" width="24.4%" /> <img src="./public/transact_account_view.jpg" width="24.4%" /> <img src="./public/transact_transaction_form.jpg" width="24.4%" /> <img src="./public/transact_overview.jpg" width="24.4%" />
+<img src="./public/transact_overview.jpg" width="24.4%" /> <img src="./public/transact_account_view.jpg" width="24.4%" /> <img src="./public/transact_transaction_form.jpg" width="24.4%" /> <img src="./public/transact_categories.jpg" width="24.4%" />
 
 # Why Should I use this App?
 
