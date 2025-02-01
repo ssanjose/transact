@@ -24,7 +24,7 @@ const HighestValueCategory = ({
 }: TopCategoriesProps) => {
   const transactions = useTransactionContext()
 
-  const topByCount = useMemo(() => {
+  const topByAmount = useMemo(() => {
     if (!transactions || !categories) return []
 
     const categoryMap = new Map(categories.map(cat => [cat.id, cat]))
@@ -74,23 +74,28 @@ const HighestValueCategory = ({
     )
 
   return (
-    <Card className={cn("grid gap-4", className)}>
-      <CardHeader className="p-4 lg:p-6">
-        <CardTitle>Highest Value Category</CardTitle>
+    <Card className={cn("grid", className)}>
+      <CardHeader className="p-4 pb-0 lg:p-6 lg:pb-0">
+        <CardTitle>Highest Valued Category</CardTitle>
         <CardDescription>By total amount</CardDescription>
       </CardHeader>
-      <CardContent className="flex items-center gap-2 p-4 lg:p-6">
+      <CardContent className="flex items-center gap-2 p-4 pt-2 lg:p-6 lg:pt-2">
         <div
           className="w-4 h-4 rounded"
-          style={{ backgroundColor: (topByCount as Metric).category.color }}
+          style={{ backgroundColor: (topByAmount as Metric)?.category.color }}
         />
         <span className="text-lg font-semibold">
-          {(topByCount as Metric).category.name} (
-          {new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-          }).format((topByCount as Metric).amount || 0)}
-          )
+          {topByAmount ?
+            <>
+              {(topByAmount as Metric).category.name} (
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format((topByAmount as Metric).amount || 0)}
+              )
+            </> :
+            "No transactions"
+          }
         </span>
       </CardContent>
     </Card>
