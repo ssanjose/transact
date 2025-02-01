@@ -54,32 +54,60 @@ function getTransaction(id: number) {
  * @throws {Error} - An error is thrown if the transaction is not found.
  */
 function updateTransaction(transaction: Transaction): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    const existingTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id));
+  return FinanceTrackerDatabase.transaction('rw',
+    FinanceTrackerDatabase.accounts,
+    FinanceTrackerDatabase.transactions,
+    async () => {
+      const existingTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id));
 
-    // Update the parent transaction
-    await FinanceTrackerDatabase.transactions.update(transaction.id, {
-      ...transaction,
-      // Make child transactions independent if updated by itself by removing the transactionId, and setting the frequency to one-time
-      frequency: transaction.transactionId ? Frequency.OneTime : transaction.frequency,
-      // Ensure that the transactionId is undefined for parent transactions and child transactions
-      transactionId: undefined,
+      // Get all affected transactions (parent + existing children)
+      const affectedTransactions = [existingTransaction];
+      if (!existingTransaction.transactionId) {
+        const childTransactions = await FinanceTrackerDatabase.transactions
+          .where({ transactionId: existingTransaction.id })
+          .toArray();
+        affectedTransactions.push(...childTransactions);
+      }
+
+      // Rollback processed transactions before updating
+      const processedTransactions = affectedTransactions.filter(tx => tx.status === 'processed').map(tx => tx.id!);
+
+      if (processedTransactions.length > 0)
+        await AccountService.rollbackTransactionsFromAccount(
+          existingTransaction.accountId,
+          processedTransactions
+        );
+
+      // Update the parent transaction
+      await FinanceTrackerDatabase.transactions.update(transaction.id, {
+        ...transaction,
+        // Make child transactions independent if updated by itself by removing the transactionId, and setting the frequency to one-time
+        frequency: transaction.transactionId ? Frequency.OneTime : transaction.frequency,
+        status: 'pending',
+        // Ensure that the transactionId is undefined for parent transactions and child transactions
+        transactionId: undefined,
+      });
+
+      const updatedTransaction = (checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id)));
+      // stop if the transaction is a child transaction
+      if (updatedTransaction.transactionId) {
+        await AccountService.applyTransactionsToAccount(updatedTransaction.accountId);
+        return;
+      }
+
+      // If datetime or frequency has changed, regenerate child Transactions
+      const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
+      if (existingTransaction.date.toISOString() !== transaction.date.toISOString() || existingTransaction.frequency !== transaction.frequency) {
+        const newChildTransactions = generateChildTransactions(updatedTransaction);
+        await updateChildTransactions(updatedTransaction, existingChildTransactions, newChildTransactions);
+      } else {
+        const changes = await convertToUpdateChanges(existingChildTransactions, updatedTransaction);
+        await FinanceTrackerDatabase.transactions.bulkUpdate(changes);
+      }
+
+      // call updates to account for all the transactions that need to be committed
+      await AccountService.applyTransactionsToAccount(transaction.accountId);
     });
-
-    const updatedTransaction = (checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id)));
-    // stop if the transaction is a child transaction
-    if (updatedTransaction.transactionId) return;
-
-    // If datetime or frequency has changed, regenerate child Transactions
-    const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
-    if (existingTransaction.date.toISOString() !== transaction.date.toISOString() || existingTransaction.frequency !== transaction.frequency) {
-      const newChildTransactions = generateChildTransactions(transaction);
-      await updateChildTransactions(transaction, existingChildTransactions, newChildTransactions);
-    } else {
-      let changes = await convertToUpdateChanges(existingChildTransactions, updatedTransaction);
-      await FinanceTrackerDatabase.transactions.bulkUpdate(changes);
-    }
-  });
 }
 
 /**
@@ -89,33 +117,36 @@ function updateTransaction(transaction: Transaction): Promise<void> {
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are deleted.
  */
 function deleteTransaction(transactionId: number): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    let transaction = await FinanceTrackerDatabase.transactions.get(transactionId);
-    if (!transaction)
-      throw new Error(`Transaction with ID ${transactionId} not found`);
+  return FinanceTrackerDatabase.transaction('rw',
+    FinanceTrackerDatabase.accounts,
+    FinanceTrackerDatabase.transactions,
+    async () => {
+      let transaction = await FinanceTrackerDatabase.transactions.get(transactionId);
+      if (!transaction)
+        throw new Error(`Transaction with ID ${transactionId} not found`);
 
-    // Get all related transactions (parent + children)
-    const transactionsToDelete = [transaction];
-    if (!transaction.transactionId) {
-      const childTransactions = await FinanceTrackerDatabase.transactions
-        .where({ transactionId })
-        .toArray();
-      transactionsToDelete.push(...childTransactions);
-    }
+      // Get all related transactions (parent + children)
+      const transactionsToDelete = [transaction];
+      if (!transaction.transactionId) {
+        const childTransactions = await FinanceTrackerDatabase.transactions
+          .where({ transactionId })
+          .toArray();
+        transactionsToDelete.push(...childTransactions);
+      }
 
-    // Roll back processed transactions
-    const processedTransactions = transactionsToDelete
-      .filter(tx => tx.status === 'processed')
-      .map(tx => tx.id!);
-    if (processedTransactions.length > 0)
-      await AccountService.rollbackTransactionsFromAccount(
-        transaction.accountId,
-        processedTransactions
-      );
+      // Roll back processed transactions
+      const processedTransactions = transactionsToDelete
+        .filter(tx => tx.status === 'processed')
+        .map(tx => tx.id!);
+      if (processedTransactions.length > 0)
+        await AccountService.rollbackTransactionsFromAccount(
+          transaction.accountId,
+          processedTransactions
+        );
 
-    const ids = transactionsToDelete.map(tx => tx.id!);
-    await FinanceTrackerDatabase.transactions.bulkDelete(ids);
-  });
+      const ids = transactionsToDelete.map(tx => tx.id!);
+      await FinanceTrackerDatabase.transactions.bulkDelete(ids);
+    });
 }
 
 /**
@@ -346,7 +377,7 @@ function unCommitTransactions(ids: number[]): Promise<void> {
     let transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
 
     let toBeUncommitted = transactions.map((transaction, idx) => {
-      if (!transaction || ids[idx] === transaction.id!)
+      if (!transaction || ids[idx] !== transaction.id)
         throw new Error('One or more transactions not found');
 
       if (transaction.status === 'pending')

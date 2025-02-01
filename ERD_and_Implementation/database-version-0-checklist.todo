@@ -99,6 +99,6 @@ Database Version 0 Checklist:
       ✔ Edit the AccountService to add the applyTransactionsToAccount method, which will apply all pending Transactions to the Account's balance and commit them as 'processed' @done(25-01-30 02:04)
 
       ✔ Edit the TransactionService createTransaction method to call the applyTransactionsToAccount method when a Transaction is created to update the Account's balance @done(25-01-30 02:05)
-      ☐ Edit the TransactionService editTransaction method //todo
+      ✔ Edit the TransactionService editTransaction method to call the applyTransactionsToAccount method when a Transaction is edited to update the Account's balance and edit, update, or delete some transactions @done(25-02-01 04:14)
       ✔ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction @done(25-02-01 03:21)
     
