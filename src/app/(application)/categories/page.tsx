@@ -15,6 +15,9 @@ import { ChartDataPoint, PieChart, PieChartConfig } from "@/components/charts/Pi
 import { cn } from "@/lib/utils";
 import MostUsedCategory from "@/components/category/MostUsedCategory"
 import HighestValueCategory from "@/components/category/HighestValueCategory";
+import { OpenCategoryButton } from "@/components/category/CategoryButtons";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function CategoryPage() {
   const [date, setDate] = React.useState<DateRange>({
@@ -44,11 +47,19 @@ export default function CategoryPage() {
   return (
     <TransactionContext.Provider value={transactions}>
       <ContentContainer className="flex flex-col gap-2 min-h-screen pt-4">
-        <div className="w-full relative">
+        <div className="w-full relative flex justify-between items-center">
           <DateRangePicker
-            className="w-fit block"
+            className="w-fit inline-block"
             date={date!}
             setDate={setDate}
+          />
+          <OpenCategoryButton
+            button={
+              <Button size="icon" className="p-none rounded-lg w-fit px-3 h-9">
+                <span className="hidden md:block">Add Category</span>
+                <Plus />
+              </Button>
+            }
           />
         </div>
         <div className="w-full block lg:flex gap-2">
