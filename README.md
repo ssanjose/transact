@@ -6,7 +6,7 @@
 
 <div>
   <p align="center">
-    Feature on Progress: Account balance calculation and Service Worker transaction commit tracking.
+    Feature on Progress: Service Worker transaction commit tracking.
   </p>
   <p align="center">Features left before pre-release: Dashboard, Settings</p>
 </div>
