@@ -75,11 +75,11 @@ const MostUsedCategory = ({
 
   return (
     <Card className={cn("grid gap-4", className)}>
-      <CardHeader>
+      <CardHeader className="p-4 lg:p-6">
         <CardTitle>Most Used Category</CardTitle>
         <CardDescription>By number of transactions</CardDescription>
       </CardHeader>
-      <CardContent className="flex items-center gap-2">
+      <CardContent className="flex items-center gap-2 p-4 lg:p-6">
         <div
           className="w-4 h-4 rounded"
           style={{ backgroundColor: (topByCount as Metric)?.category.color || 'transparent' }}
