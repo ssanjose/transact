@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import Breadcrumbs from "@/components/navigation/Breadcrumb";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -70,6 +71,7 @@ export default async function RootLayout({
             </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html >
   );
