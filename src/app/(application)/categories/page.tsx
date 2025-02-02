@@ -7,7 +7,7 @@ import { addMonths } from "date-fns";
 import { Category, Transaction } from "@/lib/db/db.model";
 import { TransactionService } from "@/services/transaction.service";
 import { CategoryService } from "@/services/category.service";
-import { TransactionContext } from "@/hooks/use-transaction-context";
+import { TransactionContext, useTransactionContext } from "@/hooks/use-transaction-context";
 import { useLiveQuery } from "dexie-react-hooks";
 import DateRangePicker from "@/components/analytics/DateRangePicker";
 import CategoryTable from "@/components/category/CategoryTable";
@@ -18,6 +18,7 @@ import HighestValueCategory from "@/components/category/HighestValueCategory";
 import { OpenCategoryButton } from "@/components/category/CategoryButtons";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { CategoryContext, useCategoryContext } from "@/hooks/use-category-context";
 
 export default function CategoryPage() {
   const [date, setDate] = React.useState<DateRange>({
@@ -45,61 +46,48 @@ export default function CategoryPage() {
   }, [date]);
 
   return (
-    <TransactionContext.Provider value={transactions}>
-      <ContentContainer className="flex flex-col gap-2 min-h-screen pt-4">
-        <div className="w-full relative flex justify-between items-center">
-          <DateRangePicker
-            className="w-fit inline-block"
-            date={date!}
-            setDate={setDate}
-          />
-          <OpenCategoryButton
-            button={
-              <Button size="icon" className="p-none rounded-lg w-fit px-3 h-9">
-                <span className="hidden md:block">Add Category</span>
-                <Plus />
-              </Button>
-            }
-          />
-        </div>
-        <div className="w-full block lg:flex gap-2">
-          <div className="w-full lg:w-3/4 h-fit space-y-2">
-            <div className="block md:grid grid-cols-2 space-y-2 md:space-y-0 gap-2 justify-between">
-              <MostUsedCategory
-                categories={categories || []}
-                className=""
-              />
-              <HighestValueCategory
-                categories={categories || []}
-                className=""
-              />
-            </div>
-            <CategoryAnalytics
-              categories={categories || []}
-              transactions={transactions}
+    <CategoryContext.Provider value={categories || []}>
+      <TransactionContext.Provider value={transactions}>
+        <ContentContainer className="flex flex-col gap-2 min-h-screen pt-4">
+          <div className="w-full relative flex justify-between items-center">
+            <DateRangePicker
+              className="w-fit inline-block"
+              date={date!}
+              setDate={setDate}
+            />
+            <OpenCategoryButton
+              button={
+                <Button size="icon" className="p-none rounded-lg w-fit px-3 h-9">
+                  <span className="hidden md:block">Add Category</span>
+                  <Plus />
+                </Button>
+              }
             />
           </div>
-          <div className="w-full lg:w-1/4">
-            <CategoryTable categories={categories || []} />
+          <div className="w-full block lg:flex gap-2">
+            <div className="w-full lg:w-3/4 h-fit space-y-2">
+              <div className="block md:grid grid-cols-2 space-y-2 md:space-y-0 gap-2 justify-between">
+                <MostUsedCategory />
+                <HighestValueCategory />
+              </div>
+              <CategoryAnalytics />
+            </div>
+            <div className="w-full lg:w-1/4">
+              <CategoryTable categories={categories || []} />
+            </div>
           </div>
-        </div>
-
-      </ContentContainer>
-    </TransactionContext.Provider>
+        </ContentContainer>
+      </TransactionContext.Provider>
+    </CategoryContext.Provider>
   );
 }
 
-interface CategoryAnalyticsProps {
-  categories: Category[]
-  transactions: Transaction[] | null | undefined
-  className?: string
-}
-
 export const CategoryAnalytics = ({
-  categories,
-  transactions,
   className
-}: CategoryAnalyticsProps) => {
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const transactions = useTransactionContext();
+  const categories = useCategoryContext();
+
   const chartData = useMemo((): ChartDataPoint[] => {
     if (!transactions || !categories) return [];
 
