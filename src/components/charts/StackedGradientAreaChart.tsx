@@ -119,7 +119,9 @@ export const StackedGradientAreaChart = ({
               }
             />
             {areaComponents}
-            {showLegend && <ChartLegend content={<ChartLegendContent />} />}
+            {showLegend && <ChartLegend
+              className="flex flex-wrap justify-center"
+              content={<ChartLegendContent />} />}
           </AreaChart>
         </ChartContainer>
       </CardContent>
