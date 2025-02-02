@@ -10,13 +10,12 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { cn } from '@/lib/utils';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Transaction } from '@/lib/db/db.model';
-import { CategoryService } from '@/services/category.service';
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
 import { useTransactionContext } from '@/hooks/use-transaction-context';
 import { useSelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
+import { useCategoryContext } from '@/hooks/use-category-context';
 
 const totalTransactionChartConfig = {
   expense: {
@@ -133,15 +132,35 @@ const TotalTransactionRadioChart = ({ className }: BaseRadioChartSummaryProps) =
 const IncomeTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
   const [incomeTransactions, setIncomeTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const transactions = useTransactionContext();
-  const cts = useLiveQuery(async () => await CategoryService.getAllCategories())
+  const cts = useCategoryContext();
 
-  const incomeTransactionChartData = cts ? cts.map((category) => {
-    return {
+  const incomeTransactionChartData = React.useMemo(() => {
+    if (!cts || !incomeTransactions) return [];
+
+    // Process categorized transactions
+    const categorizedData = cts.map((category) => ({
       category: category.name,
-      value: incomeTransactions?.filter(tx => tx.categoryId === category.id).reduce((acc, tx) => acc + tx.amount, 0) || 0,
+      value: incomeTransactions
+        .filter(tx => tx.categoryId === category.id)
+        .reduce((acc, tx) => acc + tx.amount, 0),
       fill: category.color,
+    }));
+
+    // Process uncategorized transactions
+    const uncategorizedValue = incomeTransactions
+      .filter(tx => !tx.categoryId)
+      .reduce((acc, tx) => acc + tx.amount, 0);
+
+    if (uncategorizedValue > 0) {
+      categorizedData.push({
+        category: "Uncategorized",
+        value: uncategorizedValue,
+        fill: "hsl(var(--muted))",
+      });
     }
-  }) : [];
+
+    return categorizedData;
+  }, [cts, incomeTransactions]);
 
   const incomeTransactionChartConfig = cts ? cts.reduce((acc, category) => {
     acc[category.name] = {
@@ -236,15 +255,35 @@ const IncomeTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
 const ExpenseTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
   const [expenseTransactions, setExpenseTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const transactions = useTransactionContext();
-  const cts = useLiveQuery(async () => await CategoryService.getAllCategories())
+  const cts = useCategoryContext();
 
-  const expenseTransactionChartData = cts ? cts.map((category) => {
-    return {
+  const expenseTransactionChartData = React.useMemo(() => {
+    if (!cts || !expenseTransactions) return [];
+
+    // Process categorized transactions
+    const categorizedData = cts.map((category) => ({
       category: category.name,
-      value: expenseTransactions?.filter(tx => tx.categoryId === category.id).reduce((acc, tx) => acc + tx.amount, 0) || 0,
+      value: expenseTransactions
+        .filter(tx => tx.categoryId === category.id)
+        .reduce((acc, tx) => acc + Math.abs(tx.amount), 0),
       fill: category.color,
+    }));
+
+    // Process uncategorized transactions
+    const uncategorizedValue = expenseTransactions
+      .filter(tx => !tx.categoryId)
+      .reduce((acc, tx) => acc + Math.abs(tx.amount), 0);
+
+    if (uncategorizedValue > 0) {
+      categorizedData.push({
+        category: "Uncategorized",
+        value: uncategorizedValue,
+        fill: "hsl(var(--muted))",
+      });
     }
-  }) : [];
+
+    return categorizedData;
+  }, [cts, expenseTransactions]);
 
   const expenseTransactionChartConfig = cts ? cts.reduce((acc, category) => {
     acc[category.name] = {
