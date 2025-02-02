@@ -24,6 +24,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { DeleteCategoryButton, EditCategoryButton, OpenCategoryButton } from '@/components/category/CategoryButtons';
 import { useDialog } from '@/hooks/use-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 interface TransactionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   accountId: number;
@@ -36,6 +37,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
   const [category, setCategory] = React.useState<Category | undefined>(undefined);
 
   const [modal, setModal] = React.useState(false);
+  const { toast } = useToast();
   const editCategory = { ...useDialog() };
   editCategory.dismiss = () => closeModal();
 
@@ -69,26 +71,51 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
   });
 
   const onSubmit = async (values: z.infer<typeof nullableTransactionSchema>) => {
-    if (modal === true) return;
+    try {
+      if (modal === true) return;
 
-    const transaction: Transaction = transactionSchema.parse({
-      id: values.id,
-      name: values.name,
-      amount: (Math.round(values.amount * 100) / 100),
-      date: values.date,
-      type: values.type,
-      frequency: GetFrequency(values.frequency),
-      status: values.status,
-      accountId: values.accountId,
-      categoryId: values.categoryId === null ? undefined : values.categoryId,
-      transactionId: values.transactionId,
-    });
+      const transaction: Transaction = transactionSchema.parse({
+        id: values.id,
+        name: values.name,
+        amount: (Math.round(values.amount * 100) / 100),
+        date: values.date,
+        type: values.type,
+        frequency: GetFrequency(values.frequency),
+        status: values.status,
+        accountId: values.accountId,
+        categoryId: values.categoryId === null ? undefined : values.categoryId,
+        transactionId: values.transactionId,
+      });
 
-    if (existingTransaction && existingTransaction.id !== undefined)
-      await TransactionService.updateTransaction(transaction);
-    else
-      await TransactionService.createTransaction(transaction);
+      if (existingTransaction && existingTransaction.id !== undefined) {
+        await TransactionService.updateTransaction(transaction);
+        toast({
+          variant: "default",
+          title: "Transaction Edited",
+          description: `Transaction ${values.name} has been edited successfully.`,
+        });
+      }
+      else {
+        await TransactionService.createTransaction(transaction);
+        toast({
+          variant: "default",
+          title: "Transaction Created",
+          description: `Transaction ${values.name} has been created. ${transaction.frequency === Frequency.OneTime ? "" : "Dependent transactions will also be created."}`,
+        });
+      }
+    } catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string")
+        result = e;
+      else if (e instanceof Error)
+        result = e.message;
 
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result,
+      });
+    }
     onSave();
   }
 
