@@ -33,7 +33,7 @@ const Page = () => {
         <TransactionTable id={accountId} setTransactionId={setTransactionId} />
       </div>
       <TransactionDetails id={transactionId}
-        className={`col-span-0 hidden ${transactionId !== -1 ? "lg:col-span-1 lg:block" : "lg:col-span-0"} h-[30vh] mt-4 border rounded sticky top-0`} />
+        className={`col-span-0 hidden ${transactionId !== -1 ? "lg:col-span-1 lg:block" : "lg:col-span-0"} h-[45vh] mt-4 border rounded sticky top-0`} />
     </ContentContainer>
   );
 }
