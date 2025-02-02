@@ -1,5 +1,6 @@
-"use client"
+'use client';
 
+import React from "react"
 import { Pie, PieChart as RechartsComponent } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
@@ -37,7 +38,7 @@ export const PieChart = ({
   title,
   description,
   loading = false,
-  showLegend = false,
+  showLegend = true,
   ...props
 }: PieChartProps) => {
   if (loading) {

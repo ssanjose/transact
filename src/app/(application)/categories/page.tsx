@@ -120,7 +120,7 @@ export const CategoryAnalytics = ({
       if (!category.id) return config;
       return {
         ...config,
-        [category.id]: {
+        [category.name]: {
           label: category.name,
           color: category.color || '#000000'
         }
@@ -133,7 +133,6 @@ export const CategoryAnalytics = ({
       <PieChart
         data={chartData}
         config={chartConfig}
-        showLegend={false}
         title="Transactions by Category"
         description="Distribution of transactions (income & expenses) across categories"
       />
