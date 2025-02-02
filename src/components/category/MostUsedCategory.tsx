@@ -3,15 +3,11 @@
 import * as React from "react"
 import { useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Category, Transaction } from "@/lib/db/db.model"
+import { Category } from "@/lib/db/db.model"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTransactionContext } from "@/hooks/use-transaction-context"
-
-interface TopCategoriesProps {
-  categories: Category[]
-  className?: string
-}
+import { useCategoryContext } from "@/hooks/use-category-context";
 
 interface Metric {
   category: Category
@@ -19,10 +15,10 @@ interface Metric {
 }
 
 const MostUsedCategory = ({
-  categories,
   className
-}: TopCategoriesProps) => {
+}: React.HTMLAttributes<HTMLDivElement>) => {
   const transactions = useTransactionContext()
+  const categories = useCategoryContext()
 
   const topByCount = useMemo(() => {
     if (!transactions || !categories) return []
