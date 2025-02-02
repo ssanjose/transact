@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Category } from '@/lib/db/db.model';
 import { CategoryService } from '@/services/category.service';
 import { ColorPicker, ColorPickerHex, ColorPickerInput } from '@/components/ui/color-picker';
+import { useToast } from '@/hooks/use-toast';
 
 interface CategoryFormProps {
   className?: string;
@@ -20,6 +21,7 @@ interface CategoryFormProps {
 }
 
 const CategoryForm = ({ className, onSave, existingCategory }: CategoryFormProps) => {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof categorySchema>>({
     resolver: zodResolver(categorySchema),
     mode: "onChange",
@@ -32,18 +34,43 @@ const CategoryForm = ({ className, onSave, existingCategory }: CategoryFormProps
   });
 
   const onSubmit = async (values: z.infer<typeof categorySchema>) => {
-    const category = {
-      name: values.name,
-      color: values.color,
-    };
+    try {
+      const category = {
+        name: values.name,
+        color: values.color,
+      };
 
-    if (existingCategory && existingCategory.id !== undefined)
-      await CategoryService.updateCategory(existingCategory
-        .id, category);
-    else {
-      await CategoryService.createCategory(category);
+      if (existingCategory && existingCategory.id !== undefined) {
+        await CategoryService.updateCategory(existingCategory.id, category);
+        toast({
+          variant: "default",
+          title: "Category Edited",
+          description: `Category ${values.name} has been edited successfully.`,
+        });
+      }
+      else {
+        await CategoryService.createCategory(category);
+        toast({
+          variant: "default",
+          title: "Category Created",
+          description: `Category ${values.name} has been created.`,
+        });
+      }
     }
-
+    catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string") {
+        result = e;
+      }
+      else if (e instanceof Error) {
+        result = e.message;
+      }
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result,
+      });
+    }
     onSave();
   }
 
