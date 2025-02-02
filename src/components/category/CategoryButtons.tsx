@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CategoryService } from '@/services/category.service';
 import { Sleep } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface CategoryButtonProps {
   button?: React.ReactElement;
@@ -101,6 +102,7 @@ const EditCategoryButton = ({ button, dialogProps, title, description, existingC
 
 const DeleteCategoryButton = ({ id, button, title, description, name, dialogProps, visible }: DeleteCategoryButtonProps) => {
   const deleteCategoryDialog = dialogProps ? dialogProps() : useDialog();
+  const { toast } = useToast();
   const buttonChildren = button || (
     <Button variant="link" size="icon" className="p-none w-min">
       <span>Delete Category</span>
@@ -108,17 +110,36 @@ const DeleteCategoryButton = ({ id, button, title, description, name, dialogProp
   );
 
   const handleDelete = async (id?: number) => {
-    const deleteCategory = async () => {
-      if (id === -1)
-        return;
+    try {
+      const deleteCategory = async () => {
+        if (id === -1) return;
 
-      if (id!)
+        if (!id) throw new Error("Category ID is required");
+
         await CategoryService.deleteCategory(id);
-      await Sleep(500);
-    }
+        await Sleep(500);
+        toast({
+          variant: "destructive",
+          title: "Category Deleted",
+          description: `Category ${name} has been deleted successfully`,
+          duration: 4000,
+        });
+      }
+      deleteCategory();
+      deleteCategoryDialog.dismiss();
+    } catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string")
+        result = e;
+      else if (e instanceof Error)
+        result = e.message;
 
-    deleteCategory();
-    deleteCategoryDialog.dismiss();
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result,
+      });
+    }
   }
 
   return (
