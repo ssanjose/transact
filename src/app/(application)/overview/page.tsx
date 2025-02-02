@@ -14,6 +14,10 @@ import { Transaction } from '@/lib/db/db.model';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 import { TransactionContext } from '@/hooks/use-transaction-context';
 import { AccountList } from '@/components/overview/AccountTable';
+import TransactionTrend from '@/components/transaction/TransactionTrend';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { CategoryService } from '@/services/category.service';
+import { CategoryContext } from '@/hooks/use-category-context';
 
 const Home = () => {
   // useEffect(() => {
@@ -77,6 +81,7 @@ const Home = () => {
 const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const [selectedDateRange, setSelectedDateRange] = React.useState<SelectedDateRange>(SelectedDateRange.DAY);
   const [transactions, setTransactions] = React.useState<Transaction[] | null | undefined>(null);
+  const categories = useLiveQuery(() => CategoryService.getAllCategories());
 
   useEffect(() => {
     let isMounted = true;
@@ -91,34 +96,36 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
   return (
     <SelectedDateRangeContext.Provider value={selectedDateRange}>
       <TransactionContext.Provider value={transactions}>
-        <div className={cn("flex flex-col gap-2 mt-4 relative", className)}>
-          <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
-          <SelectDateRange selectedDateRange={selectedDateRange} setSelectedDateRange={setSelectedDateRange}
-            className="self-start border p-1.5 px-2.5 bg-background text-foreground rounded-xl shadow-xl absolute top-[-0.5rem] left-[-0.5rem]"
-          />
-          <div className="w-full md:w-full h-full flex flex-col md:flex-row max-h-none md:max-h-72 gap-4 *>*:bg-background">
-            <Card className="flex justify-items-center items-center w-full">
-              <TotalTransactionRadioChart />
-            </Card>
-            <Card className="flex items-center w-full">
-              <IncomeTransactionChart />
-            </Card>
-            <Card className="flex items-center w-full">
-              <ExpenseTransactionChart />
-            </Card>
+        <CategoryContext.Provider value={categories || []}>
+          <div className={cn("flex flex-col gap-2 mt-4 relative", className)}>
+            <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
+            <SelectDateRange selectedDateRange={selectedDateRange} setSelectedDateRange={setSelectedDateRange}
+              className="self-start border p-1.5 px-2.5 bg-background text-foreground rounded-xl shadow-xl absolute top-[-0.5rem] left-[-0.5rem]"
+            />
+            <div className="w-full md:w-full h-full flex flex-col md:flex-row max-h-none md:max-h-72 gap-4 *>*:bg-background">
+              <Card className="flex justify-items-center items-center w-full">
+                <TotalTransactionRadioChart />
+              </Card>
+              <Card className="flex items-center w-full">
+                <IncomeTransactionChart />
+              </Card>
+              <Card className="flex items-center w-full">
+                <ExpenseTransactionChart />
+              </Card>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Card className="w-full min-h-24">
+                <TransactionTrend />
+              </Card>
+              <Card className="w-full min-h-24">
+                <h1>Income</h1>
+              </Card>
+              <Card className="w-full min-h-24">
+                <h1>Expenses</h1>
+              </Card>
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Card className="w-full min-h-24">
-              <h1>Total</h1>
-            </Card>
-            <Card className="w-full min-h-24">
-              <h1>Income</h1>
-            </Card>
-            <Card className="w-full min-h-24">
-              <h1>Expenses</h1>
-            </Card>
-          </div>
-        </div>
+        </CategoryContext.Provider>
       </TransactionContext.Provider>
     </SelectedDateRangeContext.Provider>
   )
