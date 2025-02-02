@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 
 import { Inter } from 'next/font/google';
 import { appLinks } from '@/config/site';
+import { useToast } from '../../hooks/use-toast';
 const inter = Inter({ subsets: ["latin"] });
 
 interface AccountFormProps {
@@ -25,6 +26,7 @@ interface AccountFormProps {
 
 const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) => {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof accountSchema>>({
     resolver: zodResolver(accountSchema),
     mode: "onChange",
@@ -41,10 +43,21 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
       balance: (Math.round(values.balance * 100) / 100),
     };
 
-    if (existingAccount && existingAccount.id !== undefined)
+    if (existingAccount && existingAccount.id !== undefined) {
       await AccountService.updateAccount(existingAccount.id, account);
+      toast({
+        variant: "default",
+        title: "Account Edited",
+        description: `Account ${values.name} has been edited successfully.`,
+      });
+    }
     else {
       let newAccId = await AccountService.createAccount(account);
+      toast({
+        variant: "default",
+        title: "Account Created",
+        description: `Account ${values.name} has been created.`,
+      });
       router.push(`${appLinks.account}/${newAccId}`);
     }
     onSave();
