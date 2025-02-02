@@ -21,6 +21,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { AccountService } from '@/services/account.service';
 import { Sleep } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface AccountButtonProps {
   button?: React.ReactNode;
@@ -106,6 +107,7 @@ const EditAccountButton = ({ button, dialogProps, title, description, existingAc
  */
 const DeleteAccountButton = ({ id, button, title, description }: DeleteAccountButtonProps) => {
   const router = useRouter();
+  const { toast } = useToast();
   const buttonChildren = button || (
     <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" disabled={!id}>
       <span>Delete Account</span>
@@ -113,13 +115,34 @@ const DeleteAccountButton = ({ id, button, title, description }: DeleteAccountBu
   );
 
   const handleDelete = async (id?: number) => {
-    const getTransaction = async () => {
-      if (id!)
-        await AccountService.deleteAccount(id);
-      await Sleep(500);
+    try {
+      const getTransaction = async () => {
+        if (id!) {
+          await AccountService.deleteAccount(id);
+        }
+        await Sleep(500);
+        toast({
+          variant: "destructive",
+          title: "Account Deleted",
+          description: `Account has been deleted successfully.`,
+          duration: 4000,
+        });
+      }
+      getTransaction();
+      router.push('/overview');
+    } catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string")
+        result = e;
+      else if (e instanceof Error)
+        result = e.message;
+
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result,
+      });
     }
-    getTransaction();
-    router.push('/overview');
   }
 
   return (
