@@ -126,7 +126,6 @@ const DeleteCategoryButton = ({ id, button, title, description, name, dialogProp
         });
       }
       deleteCategory();
-      deleteCategoryDialog.dismiss();
     } catch (e) {
       let result = (e as Error).message;
       if (typeof e === "string")
@@ -138,8 +137,10 @@ const DeleteCategoryButton = ({ id, button, title, description, name, dialogProp
         variant: "destructive",
         title: "Error",
         description: result,
+        duration: 4000,
       });
     }
+    deleteCategoryDialog.dismiss();
   }
 
   return (
