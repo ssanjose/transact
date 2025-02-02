@@ -58,8 +58,10 @@ Requirements:
         ✔ Users can view a pie chart of their total amount of transactions made for the previous day, previous week, previous month, and entire year @done(24-12-27 02:54)
 
       Category:
-        ☐ Users can view a pie chart of their total amount of transactions made for each Category
-        ☐ Users can view a pie chart of their total amount of transactions made for each Category for the previous day, previous week, previous month, and entire year
+        ✔ Users can view a pie chart of their total count of transactions made for each Category @done(25-02-02 06:46)
+        ✔ Users can view a pie chart of their total amount of transactions made for each Category @done(25-02-02 06:46)
+        ✔ Users can view the top category by count of transactions made with the category @done(25-02-02 06:49)
+        ✔ Users can view the highest amount a transaction has been made for the top category @done(25-02-02 06:49)
 
     Offline:
       Progressive Web App:
