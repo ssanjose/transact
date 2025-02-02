@@ -7,11 +7,7 @@ import { Category } from "@/lib/db/db.model"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTransactionContext } from "@/hooks/use-transaction-context"
-
-interface TopCategoriesProps {
-  categories: Category[]
-  className?: string
-}
+import { useCategoryContext } from "@/hooks/use-category-context";
 
 interface Metric {
   category: Category
@@ -19,10 +15,10 @@ interface Metric {
 }
 
 const HighestValueCategory = ({
-  categories,
   className
-}: TopCategoriesProps) => {
+}: React.HTMLAttributes<HTMLDivElement>) => {
   const transactions = useTransactionContext()
+  const categories = useCategoryContext()
 
   const topByAmount = useMemo(() => {
     if (!transactions || !categories) return []
