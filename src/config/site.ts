@@ -1,6 +1,5 @@
 import { SiteConfig } from "@/lib/types/site";
 
-
 export const siteConfig: SiteConfig = {
   name: "Transact",
   author: "Kurt San Jose",
@@ -33,3 +32,12 @@ export const siteConfig: SiteConfig = {
     { href: "/overview", text: "Overview" },
   ]
 }
+
+// path links to be excluded from the main navigation
+export const appLinks = {
+  account: "/account",
+}
+
+export const excludePaths = [
+  "analysis",
+]
