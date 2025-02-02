@@ -141,6 +141,7 @@ const DeleteAccountButton = ({ id, button, title, description }: DeleteAccountBu
         variant: "destructive",
         title: "Error",
         description: result,
+        duration: 4000,
       });
     }
   }

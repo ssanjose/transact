@@ -114,6 +114,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
         variant: "destructive",
         title: "Error",
         description: result,
+        duration: 4000,
       });
     }
     onSave();

@@ -134,6 +134,7 @@ const DeleteTransactionButton = ({ id, button, title, description, name, dialogP
           variant: "destructive",
           title: "Transaction Deleted",
           description: `Transaction has been deleted successfully. Dependent transactions have also been deleted.`,
+          duration: 4000,
         });
       }
       deleteTransaction();
@@ -148,6 +149,7 @@ const DeleteTransactionButton = ({ id, button, title, description, name, dialogP
         variant: "destructive",
         title: "Error",
         description: result,
+        duration: 4000,
       });
     }
     deleteTransactionDialog.dismiss();
