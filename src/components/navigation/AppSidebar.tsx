@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Inbox, LayoutDashboard, Settings } from "lucide-react"
+import { ChevronDown, Inbox, LayoutDashboard, Settings } from "lucide-react"
 
 import {
   Sidebar,
@@ -18,11 +18,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link";
-import { FaChartLine, FaTag } from 'react-icons/fa';
+import { FaChartLine, FaCog, FaTag } from 'react-icons/fa';
 import { siteConfig } from '@/config/site';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { ThemeModeToggle } from '@/components/theming/ThemeModeToggle';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,8 +35,8 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Transactions",
-    url: "/transactions",
+    title: "Accounts",
+    url: "/account",
     icon: Inbox,
   },
   {
@@ -55,6 +56,11 @@ const analytics = [
     title: "Dashboard",
     url: "/analysis/dashboard",
     icon: FaChartLine,
+  },
+  {
+    title: "Settings",
+    url: "/analysis/settings",
+    icon: FaCog,
   },
 ]
 
@@ -92,26 +98,33 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            Analysis
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {analytics.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url
-                    } onClick={() => setOpenMobile(false)}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>
+                Analysis
+                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {analytics.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <Link href={item.url
+                        } onClick={() => setOpenMobile(false)}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
