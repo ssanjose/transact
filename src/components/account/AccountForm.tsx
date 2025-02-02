@@ -14,6 +14,7 @@ import { Account } from '@/lib/db/db.model';
 import { useRouter } from 'next/navigation';
 
 import { Inter } from 'next/font/google';
+import { appLinks } from '@/config/site';
 const inter = Inter({ subsets: ["latin"] });
 
 interface AccountFormProps {
@@ -44,9 +45,8 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
       await AccountService.updateAccount(existingAccount.id, account);
     else {
       let newAccId = await AccountService.createAccount(account);
-      router.push(`/transaction/${newAccId}`);
+      router.push(`${appLinks.account}/${newAccId}`);
     }
-
     onSave();
   }
 
