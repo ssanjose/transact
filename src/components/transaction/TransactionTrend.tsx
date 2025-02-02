@@ -23,6 +23,11 @@ const chartConfig: AreaChartConfig = {
   },
 }
 
+/**
+ * TransactionTrend component
+ * @param className className for the component
+ * @returns JSX.Element
+ */
 const TransactionTrend = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const transactions = useTransactionContext();
 
@@ -54,7 +59,7 @@ const TransactionTrend = ({ className }: React.HTMLAttributes<HTMLDivElement>) =
       config={chartConfig}
       className={className}
       title="Transaction Trend"
-      description="Daily income and expenses"
+      description="Income and Expenses"
     />
   )
 }
