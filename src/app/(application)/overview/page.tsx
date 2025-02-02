@@ -18,6 +18,7 @@ import TransactionTrend from '@/components/transaction/TransactionTrend';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CategoryService } from '@/services/category.service';
 import { CategoryContext } from '@/hooks/use-category-context';
+import IncomeTransactionTrend from '@/components/transaction/IncomeTransactionTrend';
 
 const Home = () => {
   // useEffect(() => {
@@ -118,7 +119,7 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
                 <TransactionTrend />
               </Card>
               <Card className="w-full min-h-24">
-                <h1>Income</h1>
+                <IncomeTransactionTrend />
               </Card>
               <Card className="w-full min-h-24">
                 <h1>Expenses</h1>
