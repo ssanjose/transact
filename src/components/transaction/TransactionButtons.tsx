@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { Transaction } from '@/lib/db/db.model';
+import { useToast } from '@/hooks/use-toast';
 
 interface TransactionButtonProps {
   button?: React.ReactNode;
@@ -114,6 +115,7 @@ const EditTransactionButton = ({
 
 const DeleteTransactionButton = ({ id, button, title, description, name, dialogProps, visible }: DeleteTransactionButtonProps) => {
   const deleteTransactionDialog = dialogProps ? dialogProps() : useDialog();
+  const { toast } = useToast();
   const buttonChildren = button || (
     <Button variant="link" size="icon" className="p-none w-min">
       <span>Delete Transaction</span>
@@ -121,16 +123,33 @@ const DeleteTransactionButton = ({ id, button, title, description, name, dialogP
   );
 
   const handleDelete = async (id?: number) => {
-    const deleteTransaction = async () => {
-      if (id === -1)
-        return;
+    try {
+      const deleteTransaction = async () => {
+        if (id === -1)
+          return;
 
-      if (id!)
-        await TransactionService.deleteTransaction(id);
-      await Sleep(500);
+        if (id!) await TransactionService.deleteTransaction(id);
+        await Sleep(500);
+        toast({
+          variant: "destructive",
+          title: "Transaction Deleted",
+          description: `Transaction has been deleted successfully. Dependent transactions have also been deleted.`,
+        });
+      }
+      deleteTransaction();
+    } catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string")
+        result = e;
+      else if (e instanceof Error)
+        result = e.message;
+
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result,
+      });
     }
-
-    deleteTransaction();
     deleteTransactionDialog.dismiss();
   }
 
