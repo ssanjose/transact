@@ -8,15 +8,19 @@ import {
   TableFooter,
   TableRow,
 } from "@/components/ui/table"
-import { AccountService } from '../../services/account.service';
-import { Account } from '../../lib/db/db.model';
-import { Skeleton } from '../ui/skeleton';
-import { formatCurrency } from '../../lib/format/formatCurrency';
+import { AccountService } from '@/services/account.service';
+import { Account } from '@/lib/db/db.model';
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatCurrency } from '@/lib/format/formatCurrency';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { buttonVariants } from '../ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { SquarePen } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { appLinks } from '@/config/site';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { OpenAccountButton } from '@/components/account/AccountButtons';
+import { cn } from '@/lib/utils';
 
 const AccountTable = () => {
   const accounts = useLiveQuery(() => AccountService.getAllAccounts());
@@ -32,12 +36,12 @@ const AccountTable = () => {
           <TableRow
             key={account.id}
             className="cursor-pointer hover:bg-accent"
-            onClick={() => router.push(`/transaction/${account.id}`)}
+            onClick={() => router.push(`${appLinks.account}/${account.id}`)}
           >
             <TableCell>{account.name}</TableCell>
             <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00)}</TableCell>
             <TableCell className="w-1/6 text-right">
-              <Link className={buttonVariants({ variant: "link" })} href={`/transaction/${account.id}`} onClick={(e) => e.stopPropagation()}>
+              <Link className={buttonVariants({ variant: "link" })} href={`${appLinks.account}/${account.id}`} onClick={(e) => e.stopPropagation()}>
                 <SquarePen />
               </Link>
             </TableCell>
@@ -77,6 +81,22 @@ export const AccountTableSkeleton = () => {
       </TableBody>
     </Table>
   );
+}
+
+export const AccountList = ({ className }: { className?: string }) => {
+  return (
+    <Accordion type="single" collapsible className={cn("gap-2", className)} defaultValue="item-1">
+      <AccordionItem value="item-1" className="border-none">
+        <AccordionTrigger className="border-b">Accounts</AccordionTrigger>
+        <AccordionContent>
+          <AccountTable />
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2" className="w-fit border-none">
+        <OpenAccountButton />
+      </AccordionItem>
+    </Accordion >
+  )
 }
 
 export default AccountTable;
