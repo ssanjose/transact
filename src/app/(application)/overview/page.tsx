@@ -14,11 +14,12 @@ import { Transaction } from '@/lib/db/db.model';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 import { TransactionContext } from '@/hooks/use-transaction-context';
 import { AccountList } from '@/components/overview/AccountTable';
-import TransactionTrend from '@/components/transaction/TransactionTrend';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CategoryService } from '@/services/category.service';
 import { CategoryContext } from '@/hooks/use-category-context';
+import TransactionTrend from '@/components/transaction/TransactionTrend';
 import IncomeTransactionTrend from '@/components/transaction/IncomeTransactionTrend';
+import ExpenseTransactionTrend from '@/components/transaction/ExpenseTransactionTrend';
 
 const Home = () => {
   // useEffect(() => {
@@ -115,15 +116,9 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
               </Card>
             </div>
             <div className="flex flex-col gap-2">
-              <Card className="w-full min-h-24">
-                <TransactionTrend />
-              </Card>
-              <Card className="w-full min-h-24">
-                <IncomeTransactionTrend />
-              </Card>
-              <Card className="w-full min-h-24">
-                <h1>Expenses</h1>
-              </Card>
+              <TransactionTrend className="w-full min-h-24" />
+              <IncomeTransactionTrend className="w-full min-h-24" />
+              <ExpenseTransactionTrend className="w-full min-h-24" />
             </div>
           </div>
         </CategoryContext.Provider>
