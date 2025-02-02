@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 
 import { Inter } from 'next/font/google';
 import { appLinks } from '@/config/site';
-import { useToast } from '../../hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 const inter = Inter({ subsets: ["latin"] });
 
 interface AccountFormProps {
@@ -38,27 +38,42 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
   });
 
   const onSubmit = async (values: z.infer<typeof accountSchema>) => {
-    const account = {
-      name: values.name,
-      balance: (Math.round(values.balance * 100) / 100),
-    };
+    try {
+      const account = {
+        name: values.name,
+        balance: (Math.round(values.balance * 100) / 100),
+      };
 
-    if (existingAccount && existingAccount.id !== undefined) {
-      await AccountService.updateAccount(existingAccount.id, account);
-      toast({
-        variant: "default",
-        title: "Account Edited",
-        description: `Account ${values.name} has been edited successfully.`,
-      });
+      if (existingAccount && existingAccount.id !== undefined) {
+        await AccountService.updateAccount(existingAccount.id, account);
+        toast({
+          variant: "default",
+          title: "Account Edited",
+          description: `Account ${values.name} has been edited successfully.`,
+        });
+      }
+      else {
+        let newAccId = await AccountService.createAccount(account);
+        toast({
+          variant: "default",
+          title: "Account Created",
+          description: `Account ${values.name} has been created.`,
+        });
+        router.push(`${appLinks.account}/${newAccId}`);
+      }
     }
-    else {
-      let newAccId = await AccountService.createAccount(account);
+    catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string")
+        result = e;
+      else if (e instanceof Error)
+        result = e.message;
+
       toast({
-        variant: "default",
-        title: "Account Created",
-        description: `Account ${values.name} has been created.`,
+        variant: "destructive",
+        title: "Error",
+        description: result,
       });
-      router.push(`${appLinks.account}/${newAccId}`);
     }
     onSave();
   }
