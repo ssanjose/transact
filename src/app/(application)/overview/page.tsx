@@ -1,19 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import AccountTable from '@/components/overview/AccountTable';
 import { cn } from '@/lib/utils';
 import { SectionTitle } from '@/components/shared/Headers';
 import { Card } from '@/components/ui/card';
 import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
 import { ExpenseTransactionChart, IncomeTransactionChart, TotalTransactionRadioChart } from '@/components/overview/TransactionChartSummary';
-import { OpenAccountButton } from '@/components/account/AccountButtons';
 import { SelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
 import SelectDateRange from '@/components/overview/SelectDateRange';
 import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
@@ -21,8 +13,45 @@ import ContentContainer from '@/components/common/ContentContainer';
 import { Transaction } from '@/lib/db/db.model';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 import { TransactionContext } from '@/hooks/use-transaction-context';
+import { AccountList } from '@/components/overview/AccountTable';
 
 const Home = () => {
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout;
+  //   if ('serviceWorker' in navigator) {
+  //     navigator.serviceWorker.register('/analyticsWorker.js', {
+  //       scope: '/',
+  //     }).then(reg => {
+  //       console.log('Service worker registered', reg)
+
+  //       reg.active?.addEventListener('message', e => {
+  //         console.log('Message from worker', e);
+  //       });
+
+  //       return () => {
+  //         clearInterval(interval);
+  //         reg.active?.removeEventListener('message', e => {
+  //           console.log(e)
+  //         });
+  //       }
+  //     }).catch(err => {
+  //       console.error('Service worker registration failed', err)
+  //     });
+
+  //     navigator.serviceWorker.ready.then(reg => {
+  //       reg.active?.postMessage('yo wassup');
+
+  //       interval = setInterval(() => {
+  //         reg.active?.postMessage("Hello, worker!");
+  //         // worker?.postMessage({ bitches: 'hell no' })
+  //         console.log('Sent message to worker', reg.active)
+  //       }, 20000);
+  //     });
+
+  //     console.log('Service worker ready', navigator.serviceWorker.controller)
+  //   }
+  // }, []);
+
   return (
     <ContentContainer className="flex flex-col gap-2 min-h-screen">
       <div className="flex flex-start justify-between flex relative top-0 px-2 pt-2 sm:px-2">
@@ -45,7 +74,7 @@ const Home = () => {
   );
 }
 
-const TransactionsOverview = ({ className }: { className?: string }) => {
+const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const [selectedDateRange, setSelectedDateRange] = React.useState<SelectedDateRange>(SelectedDateRange.DAY);
   const [transactions, setTransactions] = React.useState<Transaction[] | null | undefined>(null);
 
@@ -92,22 +121,6 @@ const TransactionsOverview = ({ className }: { className?: string }) => {
         </div>
       </TransactionContext.Provider>
     </SelectedDateRangeContext.Provider>
-  )
-}
-
-const AccountList = ({ className }: { className?: string }) => {
-  return (
-    <Accordion type="single" collapsible className={cn("gap-2", className)} defaultValue="item-1">
-      <AccordionItem value="item-1" className="border-none">
-        <AccordionTrigger className="border-b">Accounts</AccordionTrigger>
-        <AccordionContent>
-          <AccountTable />
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-2" className="w-fit border-none">
-        <OpenAccountButton />
-      </AccordionItem>
-    </Accordion >
   )
 }
 
