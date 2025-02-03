@@ -20,59 +20,32 @@ import { CategoryContext } from '@/hooks/use-category-context';
 import TransactionTrend from '@/components/transaction/TransactionTrend';
 import IncomeTransactionTrend from '@/components/transaction/IncomeTransactionTrend';
 import ExpenseTransactionTrend from '@/components/transaction/ExpenseTransactionTrend';
+import useSettings from '@/hooks/use-settings';
 
 const Home = () => {
+  const { settings } = useSettings();
+
   // useEffect(() => {
-  //   let interval: NodeJS.Timeout;
   //   if ('serviceWorker' in navigator) {
   //     navigator.serviceWorker.register('/analyticsWorker.js', {
   //       scope: '/',
   //     }).then(reg => {
   //       console.log('Service worker registered', reg)
-
-  //       reg.active?.addEventListener('message', e => {
-  //         console.log('Message from worker', e);
-  //       });
-
-  //       return () => {
-  //         clearInterval(interval);
-  //         reg.active?.removeEventListener('message', e => {
-  //           console.log(e)
-  //         });
-  //       }
   //     }).catch(err => {
   //       console.error('Service worker registration failed', err)
   //     });
-
-  //     navigator.serviceWorker.ready.then(reg => {
-  //       reg.active?.postMessage('yo wassup');
-
-  //       interval = setInterval(() => {
-  //         reg.active?.postMessage("Hello, worker!");
-  //         // worker?.postMessage({ bitches: 'hell no' })
-  //         console.log('Sent message to worker', reg.active)
-  //       }, 20000);
-  //     });
-
-  //     console.log('Service worker ready', navigator.serviceWorker.controller)
   //   }
   // }, []);
 
   return (
     <ContentContainer className="flex flex-col gap-2 min-h-screen">
-      <div className="flex flex-start justify-between flex relative top-0 px-2 pt-2 sm:px-2">
-        <div className="sm:pb-2 w-full">
-          <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            Overview
-          </h1>
-        </div>
-      </div>
+      <br />
       <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 gap-4">
-        <Card className="flex flex-col items-center h-fit w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
+        <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full min-w-md" />
         </Card>
         <div className="flex w-full md:w-1/2">
-          <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={3} />
+          <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
         </div>
       </div>
       <TransactionsOverview className="h-fit min-h-72 mx-2 p-4 rounded-xl bg-card-overview" />
