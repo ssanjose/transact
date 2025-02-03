@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronDown, Inbox, LayoutDashboard, Settings } from "lucide-react"
+import { ChevronDown, Inbox, LayoutDashboard, Settings, Tag } from "lucide-react"
 
 import {
   Sidebar,
@@ -18,7 +18,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link";
-import { FaChartLine, FaCog, FaTag } from 'react-icons/fa';
+import { FaChartLine, FaCog } from 'react-icons/fa';
 import { siteConfig } from '@/config/site';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
@@ -42,7 +42,7 @@ const items = [
   {
     title: "Categories",
     url: "/categories",
-    icon: FaTag,
+    icon: Tag,
   },
   {
     title: "Settings",
