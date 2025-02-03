@@ -47,16 +47,7 @@ const HighestValueCategory = ({
 
   if (!transactions || !categories)
     return (
-      <div className={cn("grid gap-4", className)}>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-4 w-[140px]" />
-            <Skeleton className="h-3 w-[100px]" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-8 w-[120px]" />
-          </CardContent>
-        </Card>
+      <div className={cn("", className)}>
         <Card>
           <CardHeader>
             <Skeleton className="h-4 w-[140px]" />
