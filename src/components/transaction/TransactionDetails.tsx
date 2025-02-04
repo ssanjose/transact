@@ -8,14 +8,15 @@ import { Loader2 } from 'lucide-react';
 
 import { Inter } from 'next/font/google';
 import { format } from 'date-fns';
-import { formatCurrency } from '../../lib/format/formatCurrency';
+import { formatCurrency } from '@/lib/format/formatCurrency';
+import Image from 'next/image';
 const inter = Inter({ subsets: ["latin"] });
 
 const DetailsImage = ({ className, transaction }: { className?: string, transaction: Transaction }) => {
   return (
-    <div className={cn("overflow-hidden relative", className)}>
-      <div className="absolute z-10 bottom-0 left-0 text-black px-2 p-1">
-        <h2 className="text-xl font-bold truncate">
+    <div className={cn("overflow-hidden relative flex items-end", className)}>
+      <div className="z-10 h-fit text-black px-2 p-1">
+        <h2 className="text-xl font-bold truncate w-64">
           {transaction.name} ({transaction.id})
         </h2>
         <p className="text-sm font-light">
@@ -24,10 +25,12 @@ const DetailsImage = ({ className, transaction }: { className?: string, transact
           }
         </p>
       </div>
-      <img
+      <Image
         src="/pexels-voitkevich-6214459.jpg"
         alt="transaction"
-        className={cn("w-full")}
+        width={500}
+        height={500}
+        className="w-full absolute bottom-0 left-0"
       />
     </div>
   )
