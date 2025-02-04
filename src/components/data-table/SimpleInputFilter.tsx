@@ -9,17 +9,13 @@ interface SimpleInputFilterProps<TData> {
 }
 
 const SimpleInputFilter = <TData,>({ table }: SimpleInputFilterProps<TData>) => {
-  const resetStates = (value: string) => {
-    table.resetColumnFilters();
-  };
-
   return (
     <div className="flex items-center">
       <Input
         placeholder="Filter names..."
         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
         onChange={(event) => {
-          resetStates(event.target.value);
+          table.resetColumnFilters();
           table.getColumn("name")?.setFilterValue(event.target.value)
         }}
         className="h-8 max-w-sm"
