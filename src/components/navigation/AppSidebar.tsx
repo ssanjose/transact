@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronDown, Inbox, LayoutDashboard, Settings, Tag } from "lucide-react"
+import { ChevronDown, Inbox, LayoutDashboard, Tag } from "lucide-react"
 
 import {
   Sidebar,
@@ -43,11 +43,6 @@ const items = [
     title: "Categories",
     url: "/categories",
     icon: Tag,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
   },
 ]
 
