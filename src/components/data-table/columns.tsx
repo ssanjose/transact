@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { DataTableColumnHeader } from "@/components/data-table/ColumnHeader";
 
 declare module '@tanstack/react-table' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableMeta<TData extends RowData> {
     setId: (id: number) => void,
     removeId: () => void,
