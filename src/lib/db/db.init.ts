@@ -21,15 +21,18 @@ FinanceTrackerDatabase.on("populate", function (db: Tx) {
 
 // ---------------------- Hooks ----------------------
 // Transaction Hooks
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 FinanceTrackerDatabase.transactions.hook("creating", (primaryKey, obj, transaction) => {
   console.log("Creating transaction", obj.name);
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 FinanceTrackerDatabase.transactions.hook("deleting", (primaryKey, transaction) => {
   console.log("Deleting transaction", transaction.name);
 });
 
 // Account Hooks
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 FinanceTrackerDatabase.accounts.hook("creating", function (primaryKey, account, transaction) {
   account.startingBalance = account.balance;
   account.createdAt = new Date();
@@ -44,10 +47,11 @@ FinanceTrackerDatabase.accounts.hook("deleting", async (primaryKey, transaction)
   console.log("Deleting account", primaryKey, transaction.name);
   if (!primaryKey)
     return;
-  let deletedItems = await FinanceTrackerDatabase.transactions.where("accountId").equals(primaryKey).delete();
+  const deletedItems = await FinanceTrackerDatabase.transactions.where("accountId").equals(primaryKey).delete();
   console.log("Deleted", deletedItems.valueOf(), "related transactions");
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 FinanceTrackerDatabase.accounts.hook("updating", function (mods, primaryKey, account, transaction) {
   this.onsuccess = function () {
     console.log("Updating account", account.name);

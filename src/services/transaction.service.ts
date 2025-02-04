@@ -11,10 +11,10 @@ import { AccountService } from '@/services/account.service';
  */
 function createTransaction(transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
-    let txId = await FinanceTrackerDatabase.transactions.add(transaction);
+    const txId = await FinanceTrackerDatabase.transactions.add(transaction);
     let childTransactions: Transaction[] = [];
 
-    let persistedTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId)));
+    const persistedTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId)));
     childTransactions = generateChildTransactions(persistedTransaction);
     await FinanceTrackerDatabase.transactions.bulkAdd(childTransactions);
     await AccountService.applyTransactionsToAccount(persistedTransaction.accountId);
@@ -29,7 +29,7 @@ function createTransaction(transaction: Transaction): Promise<void> {
  */
 function getTransaction(id: number) {
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
-    let transaction = await FinanceTrackerDatabase.transactions.get(id)
+    const transaction = await FinanceTrackerDatabase.transactions.get(id)
 
     checkIfExists(transaction);
     return transaction;
@@ -121,7 +121,7 @@ function deleteTransaction(transactionId: number): Promise<void> {
     FinanceTrackerDatabase.accounts,
     FinanceTrackerDatabase.transactions,
     async () => {
-      let transaction = await FinanceTrackerDatabase.transactions.get(transactionId);
+      const transaction = await FinanceTrackerDatabase.transactions.get(transactionId);
       if (!transaction)
         throw new Error(`Transaction with ID ${transactionId} not found`);
 
@@ -167,18 +167,19 @@ function getTransactionsByAccount(accountId?: number): Promise<Transaction[]> {
  */
 async function convertToUpdateChanges(transactions: Transaction[], parentTransaction: Transaction): Promise<{ key: number, changes: Partial<Transaction> }[]> {
   function findChanges(oldTransaction: Transaction, newTransaction: Transaction): Partial<Transaction> {
-    let changes = {
+    const changes = {
       name: newTransaction.name !== oldTransaction.name ? newTransaction.name : null,
       amount: newTransaction.amount !== oldTransaction.amount ? newTransaction.amount : null,
       type: newTransaction.type !== oldTransaction.type ? newTransaction.type : null,
       accountId: newTransaction.accountId !== oldTransaction.accountId ? newTransaction.accountId : null,
       categoryId: newTransaction.categoryId !== oldTransaction.categoryId ? newTransaction.categoryId : null,
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return Object.fromEntries(Object.entries(changes).filter(([_, v]) => v !== null));
   }
 
   return transactions.map((transaction) => {
-    let id = checkIfExists(transaction.id);
+    const id = checkIfExists(transaction.id);
     let oldTransaction = transactions.find((change) => change?.id === id);
     oldTransaction = checkIfExists(oldTransaction);
 
@@ -280,7 +281,7 @@ function generateChildTransactions(transaction: Transaction): Transaction[] {
   const childTransactions: Transaction[] = [];
   const startDate = new Date(transaction.date);
   const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1); // End of the month
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
 
   switch (transaction.frequency) {
     case Frequency.OneTime:
@@ -322,7 +323,7 @@ interface DateRangeProps {
  */
 function getTransactionsByDate({ lowerBound, upperBound, sorted, sortedDirection }: DateRangeProps) {
   return FinanceTrackerDatabase.transaction("r", FinanceTrackerDatabase.transactions, async () => {
-    let transactionCollection = await FinanceTrackerDatabase.transactions
+    const transactionCollection = await FinanceTrackerDatabase.transactions
       .where('date')
       .between(lowerBound, upperBound);
 
@@ -346,9 +347,9 @@ function getTransactionsByDate({ lowerBound, upperBound, sorted, sortedDirection
  */
 function commitTransactions(ids: number[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    let transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
+    const transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
 
-    let toBeCommitted = transactions.map((transaction, idx) => {
+    const toBeCommitted = transactions.map((transaction, idx) => {
       if (!transaction || ids[idx] !== transaction.id!)
         throw new Error('One or more transactions not found');
 
@@ -374,9 +375,9 @@ function commitTransactions(ids: number[]): Promise<void> {
  */
 function unCommitTransactions(ids: number[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    let transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
+    const transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
 
-    let toBeUncommitted = transactions.map((transaction, idx) => {
+    const toBeUncommitted = transactions.map((transaction, idx) => {
       if (!transaction || ids[idx] !== transaction.id)
         throw new Error('One or more transactions not found');
 

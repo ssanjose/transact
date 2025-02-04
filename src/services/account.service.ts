@@ -87,7 +87,7 @@ function applyTransactionsToAccount(id?: number): Promise<void> {
       let sum = 0;
       const transactions = await FinanceTrackerDatabase.transactions.where('accountId').equals(account.id!).toArray();
       let balance = account.balance;
-      let transactionsToCommit: number[] = [];
+      const transactionsToCommit: number[] = [];
 
       for (const transaction of transactions) {
         if (transaction.status === 'pending' && transaction.date <= new Date()) {

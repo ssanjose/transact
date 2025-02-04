@@ -64,7 +64,6 @@ export const DrawerDialog = ({
   dialog,
   noX,
 }: DrawerDialogProps) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const { dialogProps, triggerProps } = dialog;
 
   const defaultTriggerButton = (

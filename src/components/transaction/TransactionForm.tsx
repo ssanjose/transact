@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Category, Frequency, FrequencyOptions, Transaction, TransactionType } from '@/lib/db/db.model';
@@ -133,7 +133,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                 <Input {...field} type="text" />
               </FormControl>
               <FormMessage />
-              {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Title e.g. 'Insurance', 'Quick Shopping'.</FormDescription>}
+              {!existingTransaction && <FormDescription className="text-muted-foreground font-normal">Title e.g. &apos;Insurance&apos;, &apos;Quick Shopping&apos;.</FormDescription>}
             </FormItem>
           } />
         <FormField
@@ -302,6 +302,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="ghost" className="size-5 p-0 text-right self-end z-10"
                                     onClick={(e) => {
+                                      e.preventDefault();
                                       setCategory(category);
                                     }}
                                   >
@@ -312,7 +313,8 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuItem
-                                    onSelect={(e) => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
                                       setModal(true);
                                       editCategory.trigger();
                                     }}
@@ -321,6 +323,7 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     onClick={(e) => {
+                                      e.preventDefault();
                                       setModal(true);
                                       deleteCategory.trigger();
                                     }}

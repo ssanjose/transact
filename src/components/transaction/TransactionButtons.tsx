@@ -48,7 +48,8 @@ interface DeleteTransactionButtonProps extends TransactionButtonProps {
  * @param {number} accountId - The account id
  */
 const OpenTransactionButton = ({ button, accountId, dialogProps }: OpenTransactionButtonProps) => {
-  const openTransactionDialog = dialogProps ? dialogProps() : useDialog();
+  const dialog = useDialog();
+  const openTransactionDialog = dialogProps ? dialogProps() : dialog;
   const buttonChildren = button || (
     <Button size="icon" className="px-2 py-0 w-min text-xs leading-tight h-7 sm:p-2 sm:text-sm sm:leading-3 sm:h-8">
       <span>Add Transaction</span>
@@ -76,7 +77,8 @@ const EditTransactionButton = ({
   existingTransaction,
   visible,
 }: EditTransactionButtonProps) => {
-  const editTransactionDialog = dialogProps ? dialogProps() : useDialog();
+  const dialog = useDialog();
+  const editTransactionDialog = dialogProps ? dialogProps() : dialog;
   const buttonChildren = button || (
     <Button variant="ghost" size="icon" className={`px-2 w-full flex justify-start ${visible ? "block" : "hidden"}`} >
       <span>Edit a Transaction</span>
@@ -107,14 +109,15 @@ const EditTransactionButton = ({
     >
       <TransactionForm
         onSave={editTransactionDialog.dismiss}
-        accountId={existingTransaction?.accountId!}
+        accountId={existingTransaction?.accountId || -1}
         existingTransaction={existingTransaction} />
     </DrawerDialog>
   )
 }
 
 const DeleteTransactionButton = ({ id, button, title, description, name, dialogProps, visible }: DeleteTransactionButtonProps) => {
-  const deleteTransactionDialog = dialogProps ? dialogProps() : useDialog();
+  const dialog = useDialog();
+  const deleteTransactionDialog = dialogProps ? dialogProps() : dialog;
   const { toast } = useToast();
   const buttonChildren = button || (
     <Button variant="link" size="icon" className="p-none w-min">

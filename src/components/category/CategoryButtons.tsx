@@ -46,7 +46,8 @@ interface DeleteCategoryButtonProps extends CategoryButtonProps {
  * @param {typeof useDialog} dialogProps - The dialog props
  */
 const OpenCategoryButton = ({ button, dialogProps }: CategoryButtonProps) => {
-  const openCategoryDialog = useDialog();
+  const dialog = useDialog();
+  const openCategoryDialog = dialogProps ? dialogProps() : dialog;
   const buttonChildren = button || (
     <Button variant="link" size="icon" className="p-none rounded-none w-fit px-3 h-9 fixed top-0 right-0">
       <Plus />
@@ -58,7 +59,7 @@ const OpenCategoryButton = ({ button, dialogProps }: CategoryButtonProps) => {
       triggerButton={buttonChildren}
       title="Create a new Category"
       description=""
-      dialog={dialogProps ? dialogProps() : openCategoryDialog}
+      dialog={openCategoryDialog}
       footer={null}
       noX
     >
@@ -77,7 +78,8 @@ const OpenCategoryButton = ({ button, dialogProps }: CategoryButtonProps) => {
  * @returns {React.ReactElement}
  */
 const EditCategoryButton = ({ button, dialogProps, title, description, existingCategory, visible }: EditCategoryButtonProps) => {
-  const editCategoryDialog = useDialog();
+  const dialog = useDialog();
+  const editCategoryDialog = dialogProps ? dialogProps() : dialog;
   const buttonChildren = button || (
     <Button variant="ghost" size="icon" className={`px-2 w-full flex justify-start ${visible ? "block" : "hidden"}`}>
       <span>Edit a Category</span>
@@ -89,7 +91,7 @@ const EditCategoryButton = ({ button, dialogProps, title, description, existingC
       triggerButton={buttonChildren}
       title={title ? title : ""}
       description={description ? description : ""}
-      dialog={dialogProps ? dialogProps() : editCategoryDialog}
+      dialog={editCategoryDialog}
       footer={null}
       noX
     >
@@ -101,8 +103,8 @@ const EditCategoryButton = ({ button, dialogProps, title, description, existingC
 }
 
 const DeleteCategoryButton = ({ id, button, title, description, name, dialogProps, visible }: DeleteCategoryButtonProps) => {
-  const defaultDialog = useDialog();
-  const deleteCategoryDialog = dialogProps ? dialogProps() : defaultDialog;
+  const dialog = useDialog();
+  const deleteCategoryDialog = dialogProps ? dialogProps() : dialog;
   const { toast } = useToast();
   const buttonChildren = button || (
     <Button variant="link" size="icon" className="p-none w-min">

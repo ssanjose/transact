@@ -50,14 +50,14 @@ function getNumberOfTransactionsByDate({ selectedDateRange }: { selectedDateRang
     if (selectedDateRange === undefined || selectedDateRange === SelectedDateRange.DAY || selectedDateRange === SelectedDateRange.WEEK)
       throw new Error('Invalid date range for this method');
 
-    let transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
+    const transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
 
-    let transactionsByDate: TransactionsByDateProps[] = [];
+    const transactionsByDate: TransactionsByDateProps[] = [];
     transactions.forEach((transaction) => {
-      let date = selectedDateRange === SelectedDateRange.YEAR ?
+      const date = selectedDateRange === SelectedDateRange.YEAR ?
         transaction.date.toLocaleString('default', { month: 'long' }) :
         format(transaction.date, 'yyyy-MM-dd');
-      let index = selectedDateRange === SelectedDateRange.YEAR ?
+      const index = selectedDateRange === SelectedDateRange.YEAR ?
         transactionsByDate.findIndex((transactions) => transactions.month === date) :
         transactionsByDate.findIndex((transactions) => transactions.date === date);
 
@@ -91,14 +91,14 @@ function getNumberOfIncomeAndExpenseTransactionsByDate({ selectedDateRange }: { 
     if (selectedDateRange === undefined || selectedDateRange === SelectedDateRange.DAY || selectedDateRange === SelectedDateRange.WEEK)
       throw new Error('Invalid date range for this method');
 
-    let transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
+    const transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
 
-    let incomeAndExpenseTransactionsByDate: IncomeAndExpenseTransactionsByDateProps[] = [];
+    const incomeAndExpenseTransactionsByDate: IncomeAndExpenseTransactionsByDateProps[] = [];
     transactions.forEach((transaction) => {
-      let date = selectedDateRange === SelectedDateRange.YEAR ?
+      const date = selectedDateRange === SelectedDateRange.YEAR ?
         transaction.date.toLocaleString('default', { month: 'long' }) :
         format(transaction.date, 'yyyy-MM-dd');
-      let index = selectedDateRange === SelectedDateRange.YEAR ?
+      const index = selectedDateRange === SelectedDateRange.YEAR ?
         incomeAndExpenseTransactionsByDate.findIndex((transactions) => transactions.month === date) :
         incomeAndExpenseTransactionsByDate.findIndex((transactions) => transactions.date === date);
 
