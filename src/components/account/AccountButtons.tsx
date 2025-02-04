@@ -46,7 +46,7 @@ interface DeleteAccountButtonProps extends AccountButtonProps {
  * @param {string} description - The description of the dialog
  */
 const OpenAccountButton = ({ button, dialogProps, title, description }: AccountButtonProps) => {
-  const openAccountDialog = dialogProps ? dialogProps() : useDialog();
+  const openAccountDialog = useDialog();
   const buttonChildren = button || (
     <Button variant="link" size="icon" className="p-none w-min">
       <span>Create a new Account</span>
@@ -59,7 +59,7 @@ const OpenAccountButton = ({ button, dialogProps, title, description }: AccountB
       triggerButton={buttonChildren}
       title={title ? title : "Create a new Account"}
       description={description ? description : "You cannot adjust the balance of an account after it has been created."}
-      dialog={openAccountDialog}
+      dialog={dialogProps ? dialogProps() : openAccountDialog}
       footer={null}
       noX
     >
@@ -77,7 +77,7 @@ const OpenAccountButton = ({ button, dialogProps, title, description }: AccountB
  * @param {Account} existingAccount - The existing account to edit
  */
 const EditAccountButton = ({ button, dialogProps, title, description, existingAccount }: EditAccountButtonProps) => {
-  const editAccountDialog = dialogProps ? dialogProps() : useDialog();
+  const editAccountDialog = useDialog();
   const buttonChildren = button || (
     <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" >
       <span>Edit an Account</span>
@@ -89,7 +89,7 @@ const EditAccountButton = ({ button, dialogProps, title, description, existingAc
       triggerButton={buttonChildren}
       title={title ? title : "Edit an Account"}
       description={description ? description : "You cannot adjust the balance of an account after it has been created."}
-      dialog={editAccountDialog}
+      dialog={dialogProps ? dialogProps() : editAccountDialog}
       footer={null}
       noX
     >
