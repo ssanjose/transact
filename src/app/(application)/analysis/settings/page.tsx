@@ -198,6 +198,10 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
             e.preventDefault()
             form.reset()
           }}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={(e) => {
+            e.preventDefault()
+            resetSettings()
+          }}>Reset</Button>
         </div>
       </form>
     </Form>
