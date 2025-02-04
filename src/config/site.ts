@@ -3,7 +3,7 @@ import { SiteConfig } from "@/lib/types/site";
 export const siteConfig: SiteConfig = {
   name: "Transact",
   author: "Kurt San Jose",
-  description: "A simple finance tracking app",
+  description: "A simple finance tracking app to monitor your income, and expenses with little effort. Visualize your transactions with beautiful charts! ",
   keywords: [
     "Next.js",
     "React",
