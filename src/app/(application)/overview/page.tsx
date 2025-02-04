@@ -21,21 +21,24 @@ import TransactionTrend from '@/components/transaction/TransactionTrend';
 import IncomeTransactionTrend from '@/components/transaction/IncomeTransactionTrend';
 import ExpenseTransactionTrend from '@/components/transaction/ExpenseTransactionTrend';
 import useSettings from '@/hooks/use-settings';
+import { AccountService } from '@/services/account.service';
 
 const Home = () => {
   const { settings } = useSettings();
 
-  // useEffect(() => {
-  //   if ('serviceWorker' in navigator) {
-  //     navigator.serviceWorker.register('/analyticsWorker.js', {
-  //       scope: '/',
-  //     }).then(reg => {
-  //       console.log('Service worker registered', reg)
-  //     }).catch(err => {
-  //       console.error('Service worker registration failed', err)
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/serviceWorker.js', {
+        scope: '/',
+      }).then(reg => {
+        console.log('Service worker registered', reg)
+      }).catch(err => {
+        console.error('Service worker registration failed', err)
+      });
+    }
+
+    AccountService.applyTransactionsToAccount();
+  }, []);
 
   return (
     <ContentContainer className="flex flex-col gap-2 min-h-screen">
