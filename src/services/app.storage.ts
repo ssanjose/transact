@@ -5,6 +5,9 @@ const SETTINGS_STORAGE_KEY = 'app_settings';
 export const SettingsStorage = {
   getSettings(): AppSettings {
     try {
+      if (typeof window === 'undefined') {
+        return DEFAULT_SETTINGS;
+      }
       const settings = localStorage.getItem(SETTINGS_STORAGE_KEY);
       return settings ? JSON.parse(settings) : DEFAULT_SETTINGS;
     } catch (error) {
