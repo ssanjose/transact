@@ -1,24 +1,23 @@
 'use client';
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import ContentContainer from "@/components/common/ContentContainer";
 import { DateRange } from "react-day-picker";
 import { addMonths } from "date-fns";
 import { Transaction } from "@/lib/db/db.model";
 import { TransactionService } from "@/services/transaction.service";
 import { CategoryService } from "@/services/category.service";
-import { TransactionContext, useTransactionContext } from "@/hooks/use-transaction-context";
+import { TransactionContext } from "@/hooks/use-transaction-context";
 import { useLiveQuery } from "dexie-react-hooks";
 import DateRangePicker from "@/components/analytics/DateRangePicker";
 import CategoryTable from "@/components/category/CategoryTable";
-import { ChartDataPoint, PieChart, PieChartConfig } from "@/components/charts/PieChart"
-import { cn } from "@/lib/utils";
 import MostUsedCategory from "@/components/category/MostUsedCategory"
 import HighestValueCategory from "@/components/category/HighestValueCategory";
 import { OpenCategoryButton } from "@/components/category/CategoryButtons";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { CategoryContext, useCategoryContext } from "@/hooks/use-category-context";
+import { CategoryContext } from "@/hooks/use-category-context";
+import CategoryPieChart from "@/components/category/CategoryPie";
 
 export default function CategoryPage() {
   const [date, setDate] = React.useState<DateRange>({
@@ -70,7 +69,7 @@ export default function CategoryPage() {
                 <MostUsedCategory />
                 <HighestValueCategory />
               </div>
-              <CategoryAnalytics />
+              <CategoryPieChart />
             </div>
             <div className="w-full lg:w-1/4">
               <CategoryTable categories={categories || []} />
@@ -80,62 +79,4 @@ export default function CategoryPage() {
       </TransactionContext.Provider>
     </CategoryContext.Provider>
   );
-}
-
-export const CategoryAnalytics = ({
-  className
-}: React.HTMLAttributes<HTMLDivElement>) => {
-  const transactions = useTransactionContext();
-  const categories = useCategoryContext();
-
-  const chartData = useMemo((): ChartDataPoint[] => {
-    if (!transactions || !categories) return [];
-
-    const categoryMap = new Map(categories.map(cat => [cat.id, cat]));
-    const transactionsByCategory = new Map<number, number>();
-
-    transactions.forEach(tx => {
-      if (!tx.categoryId) return;
-      const current = transactionsByCategory.get(tx.categoryId) || 0;
-      transactionsByCategory.set(tx.categoryId, current + Math.abs(tx.amount));
-    });
-
-    return Array.from(transactionsByCategory.entries())
-      .map(([categoryId, total]) => {
-        const category = categoryMap.get(categoryId);
-        if (!category) return null;
-        return {
-          label: category.name,
-          value: total,
-          fill: category.color || '#000000'
-        } as ChartDataPoint;
-      })
-      .filter((item): item is ChartDataPoint => item !== null);
-  }, [transactions, categories]);
-
-  const chartConfig = useMemo((): PieChartConfig => {
-    if (!categories) return {};
-
-    return categories.reduce((config, category) => {
-      if (!category.id) return config;
-      return {
-        ...config,
-        [category.name]: {
-          label: category.name,
-          color: category.color || '#000000'
-        }
-      };
-    }, {});
-  }, [categories]);
-
-  return (
-    <div className={cn("grid", className)}>
-      <PieChart
-        data={chartData}
-        config={chartConfig}
-        title="Transactions by Category"
-        description="Distribution of transactions (income & expenses) across categories"
-      />
-    </div>
-  )
 }
