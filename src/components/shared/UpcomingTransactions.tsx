@@ -7,10 +7,10 @@ import { separateByDateFormat, SeparatedTransaction } from '@/lib/analysis/separ
 import { Card } from '@/components/ui/card';
 import { TransactionService } from '@/services/transaction.service';
 import { useLiveQuery } from 'dexie-react-hooks';
-import HeaderText from '../common/HeaderText';
+import HeaderText from '@/components/common/HeaderText';
 
 import { Inter } from 'next/font/google';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 const inter = Inter({ subsets: ["latin"] });
 
 /**
@@ -39,7 +39,7 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
     let isMounted = true;
 
     (async () => {
-      let fTxs = await separateByDateFormat(transactions);
+      const fTxs = await separateByDateFormat(transactions);
       if (isMounted) setFormattedTransactions(fTxs);
     })();
 

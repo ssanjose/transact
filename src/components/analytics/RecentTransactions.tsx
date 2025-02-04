@@ -39,7 +39,7 @@ const RecentTransactions = ({ className, accountId, limit = 3 }: {
     let isMounted = true;
 
     (async () => {
-      let fTxs = await separateByDateFormat(transactions);
+      const fTxs = await separateByDateFormat(transactions);
       if (isMounted) setFormattedTransactions(fTxs);
     })();
 
