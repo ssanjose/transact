@@ -4,7 +4,7 @@ import React, { useEffect, useMemo } from "react";
 import ContentContainer from "@/components/common/ContentContainer";
 import { DateRange } from "react-day-picker";
 import { addMonths } from "date-fns";
-import { Category, Transaction } from "@/lib/db/db.model";
+import { Transaction } from "@/lib/db/db.model";
 import { TransactionService } from "@/services/transaction.service";
 import { CategoryService } from "@/services/category.service";
 import { TransactionContext, useTransactionContext } from "@/hooks/use-transaction-context";
