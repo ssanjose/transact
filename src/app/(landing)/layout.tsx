@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { cookies } from "next/headers";
 import "../globals.css";
 import ThemeProvider from "@/components/theming/ThemeProvider";
 import { siteConfig } from "@/config/site";
@@ -40,8 +39,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
