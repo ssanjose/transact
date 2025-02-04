@@ -53,7 +53,7 @@ const AccountForm = ({ className, onSave, existingAccount }: AccountFormProps) =
         });
       }
       else {
-        let newAccId = await AccountService.createAccount(account);
+        const newAccId = await AccountService.createAccount(account);
         toast({
           variant: "default",
           title: "Account Created",
