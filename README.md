@@ -1,5 +1,7 @@
 <h1 align="center">
   <br />
+  <img alt="Transact" title="Transact" src="./public/favicon.svg" />
+  <br />
   Transact (WIP)
   <br />
 </h1>
