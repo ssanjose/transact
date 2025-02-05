@@ -40,4 +40,6 @@ yarn-error.log*
 next-env.d.ts
 
 # Compiled worker files
-/public/*worker.js
+**/public/workbox-*.js
+**/public/sw.js
+**/public/worker-*.js
