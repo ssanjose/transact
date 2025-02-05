@@ -2,22 +2,14 @@
 
 declare let self: ServiceWorkerGlobalScope;
 
-import { AccountService } from "./services/account.service";
+import { AccountService } from "../services/account.service";
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    Promise.resolve().then(() => {
-      console.log('Service Worker Installed');
-    })
-  );
+  console.log('Service Worker Installed', e);
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    Promise.resolve().then(() => {
-      console.log('Service Worker Activated');
-      return AccountService.applyTransactionsToAccount();
-    })
-  );
+  console.log('Service Worker Activated', e);
+  return AccountService.applyTransactionsToAccount();
 });
 self.addEventListener('message', e => {
   const data = e.data.split(" ");
