@@ -5,7 +5,7 @@ import "../globals.css";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/navigation/AppSidebar";
 import ThemeProvider from "@/components/theming/ThemeProvider";
-import { siteConfig } from "@/config/site";
+import { MetadataConfig } from "@/config/site";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import Breadcrumbs from "@/components/navigation/Breadcrumb";
@@ -22,22 +22,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url.base),
-  title: {
-    default: siteConfig.name,
-    template: `%s | ${siteConfig.name}`
-  },
-  description: siteConfig.description,
-  keywords: siteConfig.keywords,
-  authors: [
-    {
-      name: siteConfig.author,
-      url: siteConfig.url.author
-    },
-  ],
-  creator: siteConfig.author,
-};
+export const metadata: Metadata = MetadataConfig;
 
 export default async function RootLayout({
   children,

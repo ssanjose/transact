@@ -11,6 +11,7 @@ export type SiteConfig = {
     github: string;
     linkedin?: string;
   },
+  ogImage: string;
   navLinks?: {
     href: string;
     text: string;
