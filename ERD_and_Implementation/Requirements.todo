@@ -40,7 +40,7 @@ Requirements:
       Theming:
         ✔ Users can toggle between dark and light mode @done(24-12-27 02:57)
       
-        Navigation:
+      Navigation:
         ✔ Users can navigate to the Home page @done(25-01-27 22:23)
         ✔ Users can navigate to the Overview page @done(24-12-27 02:58)
         ✔ Users can navigate to the Accounts page @done(24-12-27 02:58)
@@ -49,10 +49,14 @@ Requirements:
         ✔ Users can navigate to the Settings page @done(24-12-27 02:58)
 
       Settings:
+        ✔ Users can set their settings for the app @done(25-02-05 00:30)
+        ✔ Users can set their settings for the dashboard @done(25-02-05 00:30)
+        ✔ Users can set their settings for the notifications @done(25-02-05 00:30)
+
         ☐ Users can reset all application data with a button in the settings page
         ☐ Users can reset all saved data with a button in the settings page
-        ☐ Users can reset their settings with a button in the settings page
-        ☐ Users can reset their dashboard settings with a button in the dashboard settings page        
+        ✔ Users can reset their settings with a button in the settings page @done(25-02-04 23:48)
+        ✔ Users can reset their dashboard settings with a button in the dashboard settings page @done(25-02-04 23:48)
 
   Complex Features:
     Analysis-&-Visualization:
