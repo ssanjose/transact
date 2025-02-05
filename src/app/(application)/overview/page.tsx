@@ -28,13 +28,14 @@ const Home = () => {
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/serviceWorker.js', {
-        scope: '/',
+      navigator.serviceWorker.register('/sw.js', {
+        scope: '/'
       }).then(reg => {
         console.log('Service worker registered', reg)
-      }).catch(err => {
-        console.error('Service worker registration failed', err)
-      });
+      })
+        .catch(err => {
+          console.error('Service worker registration failed', err)
+        });
     }
 
     AccountService.applyTransactionsToAccount();

@@ -1,7 +1,7 @@
-import { Frequency, Transaction } from '@/lib/db/db.model';
-import FinanceTrackerDatabase from '@/lib/db/db.init';
-import { checkIfExists } from '@/lib/utils';
-import { AccountService } from '@/services/account.service';
+import { Frequency, Transaction } from '../lib/db/db.model';
+import FinanceTrackerDatabase from '../lib/db/db.init';
+import { checkIfExists } from '../lib/utils';
+import { AccountService } from './account.service';
 
 /**
  * Creates a transaction and its corresponding child Transactions based on frequency and datetime.

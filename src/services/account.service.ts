@@ -1,6 +1,6 @@
-import { Account } from '@/lib/db/db.model';
-import FinanceTrackerDatabase from '@/lib/db/db.init';
-import { TransactionService } from '@/services/transaction.service';
+import { Account } from '../lib/db/db.model';
+import FinanceTrackerDatabase from '../lib/db/db.init';
+import { TransactionService } from './transaction.service';
 
 /**
  * Creates a new account.
