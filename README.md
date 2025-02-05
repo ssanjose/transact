@@ -75,6 +75,7 @@ transact/
 - [System Architecture](./docs/design/system_architecture.md)
 - [Coding Conventions](./docs/conventions/coding_conventions.md)
 - [Style Guide](./docs/style/style_guide.md)
+- [Testing Guide](./docs/conventions/testing.md)
 
 ## Core Process
 ### Data Flow
