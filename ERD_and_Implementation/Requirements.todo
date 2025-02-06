@@ -76,13 +76,13 @@ Requirements:
 
     Offline:
       Progressive Web App:
-        ☐ Users can use the app offline by downloading it as a PWA
+        ✔ Users can use the app offline by downloading it as a PWA @done(25-02-05 23:29)
         ☐ App will check for periodic updates when online
         ☐ App will notify the user when a new update is available
         ☐ App will update the user's PWA when they visit the website
 
     Automatic Processing (SW & WW):
-      ☐ App will automatically process Transactions that are due on the current date and send a notification to the user
+      ✔ App will automatically process Transactions that are due on the current date @done(25-02-05 23:39)
       ☐ In the case of a Transaction change, fire up analysis modules for recalculation
       ☐ When a user creates a transaction, the workers will analyze the transaction, adding every transaction that hasn't passed and are close to their commit date to the commit queue, doing periodic checks to watch and automatically process transactions when they reach their commit date
       
