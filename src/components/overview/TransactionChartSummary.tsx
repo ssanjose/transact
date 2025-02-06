@@ -12,9 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Transaction } from '@/lib/db/db.model';
 import { formatCurrency } from '@/lib/format/formatCurrency';
-import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
 import { useTransactionContext } from '@/hooks/use-transaction-context';
-import { useSelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
 import { useCategoryContext } from '@/hooks/use-category-context';
 
 const totalTransactionChartConfig = {
@@ -33,18 +31,6 @@ interface BaseRadioChartSummaryProps {
   className?: string;
 }
 
-const DayString = (selectedDateRange: SelectedDateRange | undefined) => {
-  if (selectedDateRange === SelectedDateRange.DAY) {
-    return " today";
-  } else if (selectedDateRange === SelectedDateRange.WEEK) {
-    return " this past week";
-  } else if (selectedDateRange === SelectedDateRange.MONTH) {
-    return " this month";
-  } else {
-    return " this year";
-  }
-}
-
 /**
  * Display a radial bar chart of total transactions, with a breakdown of income and expenses
  * @param className The class name to apply to the chart
@@ -53,7 +39,6 @@ const DayString = (selectedDateRange: SelectedDateRange | undefined) => {
  */
 const TotalTransactionRadioChart = ({ className }: BaseRadioChartSummaryProps) => {
   const transactions = useTransactionContext();
-  const selectedDateRange = useSelectedDateRangeContext();
 
   const [expenseData, incomeData] = transactions?.reduce((acc, tx) => {
     if (tx.type === 0) acc[0] += 1
@@ -96,7 +81,7 @@ const TotalTransactionRadioChart = ({ className }: BaseRadioChartSummaryProps) =
                       y={(viewBox.cy || 0) + 16}
                       className="fill-muted-foreground"
                     >
-                      Transactions {DayString(selectedDateRange)}
+                      Transactions
                     </tspan>
                   </text>
                 )
