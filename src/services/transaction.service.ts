@@ -242,34 +242,6 @@ function deleteOutOfBoundTransactions(transactions: Transaction[]): Promise<void
   });
 }
 
-/**
- * Finds the upcoming transactions for the given account ID and limit.
- *
- * @param {number} accountId - The ID of an account. If not provided, all transactions are considered.
- * @param {number} limit - The maximum number of transactions to return.
- * @returns {Promise<Transaction[]>} - A promise that resolves to an array of Transactions.
- */
-function findUpcomingTransactions(accountId?: number, limit?: number): Promise<Transaction[]> {
-  const today = new Date();
-  const twoDaysFromNow = new Date();
-  twoDaysFromNow.setDate(today.getDate() + 2);
-
-  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
-    let transactions: Transaction[] = [];
-    if (accountId)
-      transactions = await FinanceTrackerDatabase.transactions
-        .where({ accountId: accountId })
-        .and((transaction) => transaction.date >= today && transaction.date <= twoDaysFromNow)
-        .sortBy('date');
-    else
-      transactions = await getTransactionsByDate({ lowerBound: today, upperBound: twoDaysFromNow, sorted: true, sortedDirection: 'asc' });
-
-    transactions = transactions.slice(0, limit);
-
-    return transactions;
-  });
-}
-
 // helper functions
 /**
  * Generates child Transactions based on the transaction's frequency and datetime.
@@ -402,7 +374,6 @@ export const TransactionService = {
   updateTransaction,
   deleteTransaction,
   getTransactionsByAccount,
-  findUpcomingTransactions,
   getTransactionsByDate,
   commitTransactions,
   unCommitTransactions,
