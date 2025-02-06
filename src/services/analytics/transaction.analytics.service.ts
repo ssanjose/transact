@@ -106,21 +106,21 @@ function getNumberOfIncomeAndExpenseTransactionsByDate({ selectedDateRange }: { 
         if (selectedDateRange === SelectedDateRange.YEAR)
           incomeAndExpenseTransactionsByDate.push({
             month: date,
-            income: transaction.type === TransactionType.Income ? 1 : 0,
-            expense: transaction.type === TransactionType.Expense ? 1 : 0,
+            incomeTransactions: transaction.type === TransactionType.Income ? 1 : 0,
+            expenseTransactions: transaction.type === TransactionType.Expense ? 1 : 0,
           });
         else
           incomeAndExpenseTransactionsByDate.push({
             date: date,
-            income: transaction.type === TransactionType.Income ? 1 : 0,
-            expense: transaction.type === TransactionType.Expense ? 1 : 0,
+            incomeTransactions: transaction.type === TransactionType.Income ? 1 : 0,
+            expenseTransactions: transaction.type === TransactionType.Expense ? 1 : 0,
           });
         return;
       }
       if (transaction.type === TransactionType.Income)
-        incomeAndExpenseTransactionsByDate[index].income++;
+        incomeAndExpenseTransactionsByDate[index].incomeTransactions++;
       else
-        incomeAndExpenseTransactionsByDate[index].expense++;
+        incomeAndExpenseTransactionsByDate[index].expenseTransactions++;
     });
 
     return incomeAndExpenseTransactionsByDate;

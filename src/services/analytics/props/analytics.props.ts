@@ -10,8 +10,8 @@ type TransactionsByDateProps = BaseDateProps & {
 }
 
 type IncomeAndExpenseTransactionsByDateProps = BaseDateProps & {
-  income: number,
-  expense: number,
+  incomeTransactions: number,
+  expenseTransactions: number,
 }
 
 // ------------------- AccountAmountByDateProps -------------------
