@@ -21,7 +21,6 @@ import TransactionTrend from '@/components/transaction/TransactionTrend';
 import IncomeTransactionTrend from '@/components/transaction/IncomeTransactionTrend';
 import ExpenseTransactionTrend from '@/components/transaction/ExpenseTransactionTrend';
 import useSettings from '@/hooks/use-settings';
-import { AccountService } from '@/services/account.service';
 
 const Home = () => {
   const { settings } = useSettings();
@@ -32,13 +31,17 @@ const Home = () => {
         scope: '/'
       }).then(reg => {
         console.log('Service worker registered', reg)
-      })
-        .catch(err => {
-          console.error('Service worker registration failed', err)
-        });
-    }
+      }).catch(err => {
+        console.error('Service worker registration failed', err)
+      });
 
-    AccountService.applyTransactionsToAccount();
+      navigator.serviceWorker.ready.then(reg => {
+        console.log('Service worker ready', reg.active)
+        reg.active?.postMessage({ action: 'COMMIT_TRANSACTIONS' });
+      }).catch(err => {
+        console.error('On-Ready Message failed', err)
+      });
+    }
   }, []);
 
   return (
