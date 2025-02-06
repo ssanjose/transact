@@ -5,7 +5,7 @@ import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/component
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import { separateByDateFormat, SeparatedTransaction } from '@/lib/analysis/separateByDateFormat';
 import { Card } from '@/components/ui/card';
-import { TransactionService } from '@/services/transaction.service';
+import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 import { useLiveQuery } from 'dexie-react-hooks';
 import HeaderText from '@/components/common/HeaderText';
 
@@ -31,7 +31,7 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
   accountId?: number | undefined,
   limit?: number,
 }) => {
-  const transactions = useLiveQuery(() => TransactionService.findUpcomingTransactions(accountId, limit));
+  const transactions = useLiveQuery(() => TransactionAnalyticsService.findUpcomingTransactions(accountId, limit));
   const [formattedTransactions, setFormattedTransactions] = React.useState<SeparatedTransaction[] | undefined>(undefined);
 
   useEffect(() => {
