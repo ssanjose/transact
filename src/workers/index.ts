@@ -11,13 +11,15 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', async (e) => {
   console.log('Service Worker Activated', e);
 });
-self.addEventListener('message', async (event: ExtendableMessageEvent) => {
+
+// Listen for messages from the client
+// Action handler
+self.addEventListener('message', (event: ExtendableMessageEvent) => {
   const message: SWMessageType = event.data;
   switch (message.action) {
     case 'COMMIT_TRANSACTIONS':
-      await AccountService.applyTransactionsToAccount();
+      (async () => await AccountService.applyTransactionsToAccount())();
       break;
-    // ... other cases
     default:
       break;
   }
