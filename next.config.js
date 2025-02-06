@@ -29,4 +29,7 @@ module.exports = withPWA({
   pwa: {
     runtimeCaching,
   },
+  experimental: {
+    optimizeCss: true,
+  }
 });
