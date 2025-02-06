@@ -8,9 +8,9 @@
 
 <div>
   <p align="center">
-    Feature on Progress: Service Worker transaction commit tracking.
+    Feature on Progress: Service Worker analysis calculation.
   </p>
-  <p align="center">Features left before pre-release: Dashboard, Settings</p>
+  <p align="center">Features left before pre-release: Dashboard, Settings, Accesibility & Performance Improvements</p>
 </div>
 
 <p align="center">
