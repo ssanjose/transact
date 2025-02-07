@@ -2,8 +2,7 @@
 
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/common/ContentContainer';
-import { Card } from '@/components/ui/card';
-import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
+import UpcomingTransactions from '@/components/analytics/UpcomingTransactions';
 import RecentTransactions from '@/components/analytics/RecentTransactions';
 import { cn } from '@/lib/utils';
 import DateRangePicker from '@/components/analytics/DateRangePicker';

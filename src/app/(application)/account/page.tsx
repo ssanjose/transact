@@ -4,7 +4,7 @@ import React from 'react';
 import ContentContainer from '@/components/common/ContentContainer';
 import { Card } from '@/components/ui/card';
 import { AccountList } from '@/components/overview/AccountTable';
-import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
+import UpcomingTransactions from '@/components/analytics/UpcomingTransactions';
 import RecentTransactions from '@/components/analytics/RecentTransactions';
 import useSettings from '@/hooks/use-settings';
 import { ScrollArea } from '@/components/ui/scroll-area';

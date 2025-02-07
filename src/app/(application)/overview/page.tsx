@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { SectionTitle } from '@/components/shared/Headers';
 import { Card } from '@/components/ui/card';
-import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
+import UpcomingTransactions from '@/components/analytics/UpcomingTransactions';
 import { IncomeTransactionChart, ExpenseTransactionChart, TotalTransactionRadioChart } from '@/components/overview/TransactionChartSummary';
 import { SelectedDateRangeContext, useSelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
 import SelectDateRange from '@/components/overview/SelectDateRange';
@@ -50,7 +50,7 @@ const Home = () => {
       <br />
       <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 gap-4">
         <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
-          <AccountList className="w-full min-w-md" />
+          <AccountList className="w-full" />
         </Card>
         <div className="flex w-full md:w-1/2">
           <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
