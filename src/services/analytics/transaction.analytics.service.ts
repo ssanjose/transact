@@ -44,7 +44,7 @@ function getTransactionAmountByDateRange({
  * @param dateRange Date range to calculate
  * @returns IncomeAndExpenseTransactionAmountProps[]
  */
-function getIncomeAndExpenseTransactionAmountByDateRange({
+function getIncomeExpenseTransactionAmountByDateRange({
   transactions,
   dateRange
 }: { transactions: Transaction[], dateRange: DateRange }): IncomeExpenseTransactionAmountProps[] {
@@ -225,7 +225,7 @@ function findRecentTransactions(accountId?: number, limit?: number): Promise<Tra
 
 export const TransactionAnalyticsService = {
   getTransactionAmountByDateRange,
-  getIncomeAndExpenseTransactionAmountByDateRange,
+  getIncomeExpenseTransactionAmountByDateRange,
   getNumberOfTransactions,
   getNumberOfIncomeExpenseTransactions,
   getTransactionsBySelectedDateRange,
