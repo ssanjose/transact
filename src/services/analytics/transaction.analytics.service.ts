@@ -1,23 +1,93 @@
 import { format } from "date-fns";
 import FinanceTrackerDatabase from "@/lib/db/db.init";
 import { Transaction, TransactionType } from "@/lib/db/db.model";
-import { TransactionNumberProps, IncomeAndExpenseTransactionNumberProps } from "@/services/analytics/props/analytics.props";
+import { TransactionNumberProps, IncomeAndExpenseTransactionNumberProps, TransactionAmountProps, IncomeAndExpenseTransactionAmountProps } from "@/services/analytics/props/analytics.props";
 import { SelectedDateRange } from "@/services/analytics/props/date-range.props";
-import { TransactionService } from "../transaction.service";
+import { TransactionService } from "@/services/transaction.service";
+import { generateDateRange } from "@/lib/analysis/generateDateRange";
+import { DateRange } from "react-day-picker";
+
+/**
+ * Gets the net amount (income - expenses) for each date within a range
+ * @param transactions Transactions to calculate
+ * @param dateRange Date range to calculate
+ */
+function getTransactionAmountByDateRange({
+  transactions,
+  dateRange
+}: { transactions: Transaction[], dateRange: DateRange }): TransactionAmountProps[] {
+  // adds padding to the dates where there are no transactions
+  const dates = generateDateRange(dateRange.from!, dateRange.to!);
+
+  const amountsByDate = new Map<string, number>();
+  dates.forEach(date => amountsByDate.set(date, 0));
+
+  transactions.forEach(transaction => {
+    const date = format(transaction.date, 'yyyy-MM-dd');
+    const currentAmount = amountsByDate.get(date)!;
+    const transactionAmount = transaction.type === TransactionType.Income
+      ? transaction.amount
+      : -transaction.amount;
+
+    amountsByDate.set(date, currentAmount + transactionAmount);
+  });
+
+  return dates.map(date => ({
+    date,
+    amount: amountsByDate.get(date)!
+  }));
+}
+
+/**
+ * Gets separated income and expense amounts for each date within a range
+ * @param transactions Transactions to calculate
+ * @param dateRange Date range to calculate
+ * @returns IncomeAndExpenseTransactionAmountProps[]
+ */
+function getIncomeAndExpenseTransactionAmountByDateRange({
+  transactions,
+  dateRange
+}: { transactions: Transaction[], dateRange: DateRange }): IncomeAndExpenseTransactionAmountProps[] {
+  // adds padding to the dates where there are no transactions
+  const dates = generateDateRange(dateRange.from!, dateRange.to!);
+
+  const incomeByDate = new Map<string, number>();
+  const expenseByDate = new Map<string, number>();
+  dates.forEach(date => {
+    incomeByDate.set(date, 0);
+    expenseByDate.set(date, 0);
+  });
+
+  // calculate income and expense amounts for each date
+  transactions.forEach(transaction => {
+    const date = format(transaction.date, 'yyyy-MM-dd');
+    if (transaction.type === TransactionType.Income) {
+      incomeByDate.set(date, incomeByDate.get(date)! + transaction.amount);
+    } else {
+      expenseByDate.set(date, expenseByDate.get(date)! + transaction.amount);
+    }
+  });
+
+  return dates.map(date => ({
+    date,
+    incomeAmount: incomeByDate.get(date)!,
+    expenseAmount: expenseByDate.get(date)!
+  }));
+}
 
 /**
  * Get transactions by date range
- * @param {SelectedDateRange} dateRange - The selected date range
+ * @param {SelectedDateRange} selectedDateRange - The selected date range
  * @returns {Promise<Transaction[]>} - The transactions within the date range
  */
-function getTransactionsByDateRange({ dateRange }: { dateRange: SelectedDateRange }) {
+function getTransactionsBySelectedDateRange({ selectedDateRange }: { selectedDateRange: SelectedDateRange }) {
   return FinanceTrackerDatabase.transaction("r", FinanceTrackerDatabase.transactions, async () => {
     const currentDate = new Date();
 
     let lowerBound: Date;
     let upperBound: Date;
 
-    switch (dateRange) {
+    switch (selectedDateRange) {
       case SelectedDateRange.DAY:
         lowerBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
         upperBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
@@ -50,7 +120,7 @@ function getNumberOfTransactionsByDate({ selectedDateRange }: { selectedDateRang
     if (selectedDateRange === undefined || selectedDateRange === SelectedDateRange.DAY || selectedDateRange === SelectedDateRange.WEEK)
       throw new Error('Invalid date range for this method');
 
-    const transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
+    const transactions = await getTransactionsBySelectedDateRange({ selectedDateRange: selectedDateRange });
 
     const transactionsByDate: TransactionNumberProps[] = [];
     transactions.forEach((transaction) => {
@@ -91,7 +161,7 @@ function getNumberOfIncomeAndExpenseTransactionsByDate({ selectedDateRange }: { 
     if (selectedDateRange === undefined || selectedDateRange === SelectedDateRange.DAY || selectedDateRange === SelectedDateRange.WEEK)
       throw new Error('Invalid date range for this method');
 
-    const transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
+    const transactions = await getTransactionsBySelectedDateRange({ selectedDateRange: selectedDateRange });
 
     const incomeAndExpenseTransactionsByDate: IncomeAndExpenseTransactionNumberProps[] = [];
     transactions.forEach((transaction) => {
@@ -185,7 +255,9 @@ function findRecentTransactions(accountId?: number, limit?: number): Promise<Tra
 }
 
 export const TransactionAnalyticsService = {
-  getTransactionsByDateRange,
+  getTransactionAmountByDateRange,
+  getIncomeAndExpenseTransactionAmountByDateRange,
+  getTransactionsBySelectedDateRange,
   getNumberOfTransactionsByDate,
   getNumberOfIncomeAndExpenseTransactionsByDate,
   findUpcomingTransactions,
