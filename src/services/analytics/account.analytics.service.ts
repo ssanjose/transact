@@ -1,84 +1,5 @@
-import { format } from "date-fns";
 import FinanceTrackerDatabase from "@/lib/db/db.init";
-import { AccountAmountProps, IncomeAndExpenseAccountAmountProps } from "@/services/analytics/props/analytics.props";
-import { TransactionService } from "@/services/transaction.service";
-import { Account, TransactionType } from "@/lib/db/db.model";
-
-/**
- * Gets the amount of the account within a date range
- * @param lowerBound Start date
- * @param upperBound End date
- * @returns Array of {date, amount} objects
- * @example getAccountAmountByDateRange({ lowerBound: new Date('2021-01-01'), upperBound: new Date('2021-01-31') })
- * @returns [{ date: '2021-01-01', amount: 100.00 }, { date: '2021-01-02', amount: 121.21 }]
- */
-function getAccountAmountByDateRange({ lowerBound, upperBound }: { lowerBound: Date; upperBound: Date }) {
-  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
-    const transactions = await TransactionService.getTransactionsByDate({
-      lowerBound,
-      upperBound,
-      sorted: true,
-      sortedDirection: 'asc'
-    });
-
-    const accountAmountByDate: AccountAmountProps[] = [];
-
-    transactions.forEach((transaction) => {
-      const date = format(transaction.date, 'yyyy-MM-dd');
-      const accountAmountIndex = accountAmountByDate.findIndex((idx) => idx.date === date);
-
-      if (accountAmountIndex === -1) {
-        accountAmountByDate.push({
-          date,
-          amount: transaction.amount,
-        });
-      } else {
-        accountAmountByDate[accountAmountIndex].amount += transaction.amount;
-      }
-    });
-
-    return accountAmountByDate;
-  });
-}
-
-/**
- * Gets the income and expense amounts within a date range
- * @param lowerBound Start date
- * @param upperBound End date
- * @returns Array of {date, incomeAmount, expenseAmount} objects
- */
-function getIncomeAndExpenseAmountByDateRange({ lowerBound, upperBound }: { lowerBound: Date; upperBound: Date }) {
-  return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
-    const transactions = await TransactionService.getTransactionsByDate({
-      lowerBound,
-      upperBound,
-      sorted: true,
-      sortedDirection: 'asc'
-    });
-
-    const incomeAndExpenseAmountByDate: IncomeAndExpenseAccountAmountProps[] = [];
-
-    transactions.forEach((transaction) => {
-      const date = format(transaction.date, 'yyyy-MM-dd');
-      const accountAmountIndex = incomeAndExpenseAmountByDate.findIndex((idx) => idx.date === date);
-
-      if (accountAmountIndex === -1) {
-        incomeAndExpenseAmountByDate.push({
-          date,
-          incomeAmount: transaction.type === TransactionType.Income ? transaction.amount : 0,
-          expenseAmount: transaction.type === TransactionType.Expense ? transaction.amount : 0,
-        });
-      } else {
-        if (transaction.type === TransactionType.Income)
-          incomeAndExpenseAmountByDate[accountAmountIndex].incomeAmount += transaction.amount;
-        else
-          incomeAndExpenseAmountByDate[accountAmountIndex].expenseAmount += transaction.amount;
-      }
-    });
-
-    return incomeAndExpenseAmountByDate;
-  });
-}
+import { Account } from "@/lib/db/db.model";
 
 /**
  * Gets the account with the highest balance
@@ -180,8 +101,6 @@ function calculateGrowthRate(account: Account): number {
 }
 
 export const AccountAnalyticsService = {
-  getAccountAmountByDateRange,
-  getIncomeAndExpenseAmountByDateRange,
   getHighestValuedAccount,
   getMostUsedAccount,
   getBiggestGrowthAccount,
