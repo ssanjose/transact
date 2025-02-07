@@ -68,7 +68,7 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
   useEffect(() => {
     let isMounted = true;
     (async () => {
-      const data = await TransactionAnalyticsService.getTransactionsByDateRange({ dateRange: selectedDateRange });
+      const data = await TransactionAnalyticsService.getTransactionsBySelectedDateRange({ selectedDateRange: selectedDateRange });
       if (isMounted) setTransactions(data);
     })();
 
