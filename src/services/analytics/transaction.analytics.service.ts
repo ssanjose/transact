@@ -6,7 +6,7 @@ import { SelectedDateRange } from "@/services/analytics/props/date-range.props";
 import { TransactionService } from "@/services/transaction.service";
 import { generateDateRange } from "@/lib/analysis/generateDateRange";
 import { DateRange } from "react-day-picker";
-import { getDateRangeFromSelectedRange } from "@/lib/analysis/GetDateRangeFromSelectedRange";
+import { getDateRangeFromSelectedRange } from "@/lib/analysis/getDateRangeFromSelectedRange";
 
 /**
  * Gets the net amount (income - expenses) for each date within a range
