@@ -9,7 +9,7 @@ type TransactionNumberProps = BaseDateProps & {
   transactions: number,
 }
 
-type IncomeAndExpenseTransactionNumberProps = BaseDateProps & {
+type IncomeExpenseTransactionNumberProps = BaseDateProps & {
   incomeTransactions: number,
   expenseTransactions: number,
 }
@@ -18,14 +18,14 @@ type TransactionAmountProps = BaseDateProps & {
   amount: number,
 }
 
-type IncomeAndExpenseTransactionAmountProps = BaseDateProps & {
+type IncomeExpenseTransactionAmountProps = BaseDateProps & {
   incomeAmount: number,
   expenseAmount: number,
 }
 
 export {
   type TransactionNumberProps,
-  type IncomeAndExpenseTransactionNumberProps,
+  type IncomeExpenseTransactionNumberProps,
   type TransactionAmountProps,
-  type IncomeAndExpenseTransactionAmountProps,
+  type IncomeExpenseTransactionAmountProps,
 }
