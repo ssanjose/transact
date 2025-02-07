@@ -16,6 +16,8 @@ import { TransactionContext } from '@/hooks/use-transaction-context';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CategoryService } from '@/services/category.service';
 import { CategoryContext } from '@/hooks/use-category-context';
+import useSettings from '@/hooks/use-settings';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Page = () => {
   const [date, setDate] = React.useState<DateRange>({
@@ -57,7 +59,7 @@ const Page = () => {
                 <ExpenseTransactionChart className="w-full" />
               </div>
             </div>
-            <TransactionsOverview className="w-full lg:col-span-1" />
+            <TransactionCarousel className="w-full lg:col-span-1" />
           </div>
         </ContentContainer>
       </TransactionContext.Provider>
@@ -65,16 +67,16 @@ const Page = () => {
   );
 }
 
-const TransactionsOverview = ({ className }: { className?: string }) => {
+const TransactionCarousel = ({ className }: { className?: string }) => {
+  const { settings } = useSettings();
+
   return (
-    <div className={cn("flex flex-col gap-4 relative", className)}>
-      <Card className="w-full">
-        <UpcomingTransactions className="p-4 pb-0 border rounded-xl bg-card-overview" limit={3} />
-      </Card>
-      <Card className="w-full">
-        <RecentTransactions className="p-4 pb-0 border rounded-xl bg-card-overview" limit={3} />
-      </Card>
-    </div>
+    <ScrollArea className={cn("w-full h-[300px] overflow-x-auto", className)}>
+      <div className="space-y-4">
+        <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
+        <RecentTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.recentTransactionLimit} />
+      </div>
+    </ScrollArea>
   )
 }
 
