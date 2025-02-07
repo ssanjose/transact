@@ -6,10 +6,4 @@ enum SelectedDateRange {
 }
 const SelectedDateRangeOptions = Object.values(SelectedDateRange).filter((value) => typeof value === "string");
 
-enum DateArrangement {
-  DATE,
-  MONTH,
-  YEAR,
-}
-
-export { SelectedDateRange, SelectedDateRangeOptions, DateArrangement };
+export { SelectedDateRange, SelectedDateRangeOptions };
