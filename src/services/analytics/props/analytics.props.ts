@@ -1,7 +1,5 @@
 type BaseDateProps = {
-  year?: string,
-  month?: string,
-  date?: string,
+  date: string,
 }
 
 // ------------------- TransactionProps -------------------
