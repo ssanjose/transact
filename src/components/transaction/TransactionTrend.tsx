@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import StackedGradientAreaChart, { AreaChartConfig } from '@/components/charts/StackedGradientAreaChart';
-import { useTransactionContext } from '@/hooks/use-transaction-context';
+import { IncomeExpenseTransactionAmountProps } from '@/services/analytics/props/analytics.props';
 
 const chartConfig: AreaChartConfig = {
-  income: {
+  incomeAmount: {
     label: 'Income',
     color: 'hsl(var(--number-positive)',
     gradient: {
@@ -13,7 +13,7 @@ const chartConfig: AreaChartConfig = {
       endOpacity: 0.1,
     },
   },
-  expense: {
+  expenseAmount: {
     label: 'Expense',
     color: 'hsl(var(--number-negative)',
     gradient: {
@@ -28,31 +28,10 @@ const chartConfig: AreaChartConfig = {
  * @param className className for the component
  * @returns JSX.Element
  */
-const TransactionTrend = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
-  const transactions = useTransactionContext();
-
-  const data = useMemo(() => {
-    if (!transactions) return [];
-
-    const dailyTotals = transactions.reduce((acc, tx) => {
-      const date = tx.date.toISOString().split('T')[0];
-      const amount = Math.abs(tx.amount);
-
-      if (tx.type === 1)
-        acc[date] = { ...acc[date], income: (acc[date]?.income || 0) + amount };
-      else
-        acc[date] = { ...acc[date], expense: (acc[date]?.expense || 0) + amount };
-
-      return acc;
-    }, {} as Record<string, { income?: number; expense?: number }>);
-
-    return Object.entries(dailyTotals).map(([date, { income = 0, expense = 0 }]) => ({
-      date,
-      income,
-      expense,
-    }));
-  }, [transactions]);
-
+const TransactionTrend = ({
+  className,
+  data
+}: { className?: string, data: IncomeExpenseTransactionAmountProps[] }) => {
   return (
     <StackedGradientAreaChart
       data={data}
