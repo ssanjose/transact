@@ -6,6 +6,7 @@ import { SelectedDateRange } from "@/services/analytics/props/date-range.props";
 import { TransactionService } from "@/services/transaction.service";
 import { generateDateRange } from "@/lib/analysis/generateDateRange";
 import { DateRange } from "react-day-picker";
+import { getDateRangeFromSelectedRange } from "@/lib/analysis/GetDateRangeFromSelectedRange";
 
 /**
  * Gets the net amount (income - expenses) for each date within a range
@@ -138,31 +139,14 @@ function getNumberOfIncomeExpenseTransactions({
  */
 function getTransactionsBySelectedDateRange({ selectedDateRange }: { selectedDateRange: SelectedDateRange }) {
   return FinanceTrackerDatabase.transaction("r", FinanceTrackerDatabase.transactions, async () => {
-    const currentDate = new Date();
+    const dateRange = getDateRangeFromSelectedRange(selectedDateRange);
+    const transactions = await TransactionService.getTransactionsByDate({
+      lowerBound: dateRange.from!,
+      upperBound: dateRange.to!,
+      sorted: true
+    });
 
-    let lowerBound: Date;
-    let upperBound: Date;
-
-    switch (selectedDateRange) {
-      case SelectedDateRange.DAY:
-        lowerBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
-        upperBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
-        break;
-      case SelectedDateRange.WEEK:
-        lowerBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
-        upperBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay() + 6);
-        break;
-      case SelectedDateRange.MONTH:
-        lowerBound = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        upperBound = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-        break;
-      default:
-        lowerBound = new Date(currentDate.getFullYear(), 0, 1);
-        upperBound = new Date(currentDate.getFullYear(), 11, 31);
-        break;
-    }
-
-    return TransactionService.getTransactionsByDate({ lowerBound: lowerBound, upperBound: upperBound, sorted: true });
+    return transactions;
   });
 }
 
