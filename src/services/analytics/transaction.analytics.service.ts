@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import FinanceTrackerDatabase from "@/lib/db/db.init";
 import { Transaction, TransactionType } from "@/lib/db/db.model";
-import { IncomeAndExpenseTransactionsByDateProps, TransactionsByDateProps } from "@/services/analytics/props/analytics.props";
+import { TransactionNumberProps, IncomeAndExpenseTransactionNumberProps } from "@/services/analytics/props/analytics.props";
 import { SelectedDateRange } from "@/services/analytics/props/date-range.props";
 import { TransactionService } from "../transaction.service";
 
@@ -52,7 +52,7 @@ function getNumberOfTransactionsByDate({ selectedDateRange }: { selectedDateRang
 
     const transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
 
-    const transactionsByDate: TransactionsByDateProps[] = [];
+    const transactionsByDate: TransactionNumberProps[] = [];
     transactions.forEach((transaction) => {
       const date = selectedDateRange === SelectedDateRange.YEAR ?
         transaction.date.toLocaleString('default', { month: 'long' }) :
@@ -93,7 +93,7 @@ function getNumberOfIncomeAndExpenseTransactionsByDate({ selectedDateRange }: { 
 
     const transactions = await getTransactionsByDateRange({ dateRange: selectedDateRange });
 
-    const incomeAndExpenseTransactionsByDate: IncomeAndExpenseTransactionsByDateProps[] = [];
+    const incomeAndExpenseTransactionsByDate: IncomeAndExpenseTransactionNumberProps[] = [];
     transactions.forEach((transaction) => {
       const date = selectedDateRange === SelectedDateRange.YEAR ?
         transaction.date.toLocaleString('default', { month: 'long' }) :

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import FinanceTrackerDatabase from "@/lib/db/db.init";
-import { AmountProps, IncomeAndExpenseAmountProps } from "@/services/analytics/props/analytics.props";
+import { AccountAmountProps, IncomeAndExpenseAccountAmountProps } from "@/services/analytics/props/analytics.props";
 import { TransactionService } from "@/services/transaction.service";
 import { Account, TransactionType } from "@/lib/db/db.model";
 
@@ -21,7 +21,7 @@ function getAccountAmountByDateRange({ lowerBound, upperBound }: { lowerBound: D
       sortedDirection: 'asc'
     });
 
-    const accountAmountByDate: AmountProps[] = [];
+    const accountAmountByDate: AccountAmountProps[] = [];
 
     transactions.forEach((transaction) => {
       const date = format(transaction.date, 'yyyy-MM-dd');
@@ -56,7 +56,7 @@ function getIncomeAndExpenseAmountByDateRange({ lowerBound, upperBound }: { lowe
       sortedDirection: 'asc'
     });
 
-    const incomeAndExpenseAmountByDate: IncomeAndExpenseAmountProps[] = [];
+    const incomeAndExpenseAmountByDate: IncomeAndExpenseAccountAmountProps[] = [];
 
     transactions.forEach((transaction) => {
       const date = format(transaction.date, 'yyyy-MM-dd');
