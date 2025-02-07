@@ -5,22 +5,23 @@ import { cn } from '@/lib/utils';
 import { SectionTitle } from '@/components/shared/Headers';
 import { Card } from '@/components/ui/card';
 import UpcomingTransactions from '@/components/shared/UpcomingTransactions';
-import { ExpenseTransactionChart, IncomeTransactionChart, TotalTransactionRadioChart } from '@/components/overview/TransactionChartSummary';
-import { SelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
+import { IncomeTransactionChart, ExpenseTransactionChart, TotalTransactionRadioChart } from '@/components/overview/TransactionChartSummary';
+import { SelectedDateRangeContext, useSelectedDateRangeContext } from '@/hooks/use-selecteddaterange-context';
 import SelectDateRange from '@/components/overview/SelectDateRange';
 import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
 import ContentContainer from '@/components/common/ContentContainer';
-import { Transaction } from '@/lib/db/db.model';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
-import { TransactionContext } from '@/hooks/use-transaction-context';
 import { AccountList } from '@/components/overview/AccountTable';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CategoryService } from '@/services/category.service';
+import { TransactionContext, useTransactionContext } from '@/hooks/use-transaction-context';
 import { CategoryContext } from '@/hooks/use-category-context';
 import TransactionTrend from '@/components/transaction/TransactionTrend';
 import IncomeTransactionTrend from '@/components/transaction/IncomeTransactionTrend';
 import ExpenseTransactionTrend from '@/components/transaction/ExpenseTransactionTrend';
 import useSettings from '@/hooks/use-settings';
+import { getDateRangeFromSelectedRange } from '@/lib/analysis/getDateRangeFromSelectedRange';
+import { Transaction } from '@/lib/db/db.model';
 
 const Home = () => {
   const { settings } = useSettings();
@@ -68,8 +69,8 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
   useEffect(() => {
     let isMounted = true;
     (async () => {
-      const data = await TransactionAnalyticsService.getTransactionsBySelectedDateRange({ selectedDateRange: selectedDateRange });
-      if (isMounted) setTransactions(data);
+      const transactions = await TransactionAnalyticsService.getTransactionsBySelectedDateRange({ selectedDateRange: selectedDateRange });
+      if (isMounted) setTransactions(transactions);
     })();
 
     return () => { isMounted = false; }
@@ -95,16 +96,36 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
                 <ExpenseTransactionChart />
               </Card>
             </div>
-            <div className="flex flex-col gap-2">
-              <TransactionTrend className="w-full min-h-24" />
-              <IncomeTransactionTrend className="w-full min-h-24" />
-              <ExpenseTransactionTrend className="w-full min-h-24" />
-            </div>
+            <Trends />
           </div>
         </CategoryContext.Provider>
       </TransactionContext.Provider>
     </SelectedDateRangeContext.Provider>
   )
 }
+
+const Trends = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
+  const transactions = useTransactionContext();
+  const selectedDateRange = useSelectedDateRangeContext();
+
+  const analyzedTransactions = React.useMemo(() => {
+    const dateRange = getDateRangeFromSelectedRange(selectedDateRange);
+    return TransactionAnalyticsService.getIncomeExpenseTransactionAmountByDateRange({ transactions: transactions || [], dateRange });
+  }, [transactions]);
+
+  return (
+    <div className={cn("flex flex-col gap-2", className)}>
+      <TransactionTrend className="w-full min-h-24"
+        data={analyzedTransactions}
+      />
+      <IncomeTransactionTrend className="w-full min-h-24"
+        data={analyzedTransactions}
+      />
+      <ExpenseTransactionTrend className="w-full min-h-24"
+        data={analyzedTransactions}
+      />
+    </div>
+  )
+};
 
 export default Home;
