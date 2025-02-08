@@ -34,7 +34,7 @@ Requirements:
         ✔ Users can delete a Category @done(25-01-26 02:11)
         ✔ Users can view all Categories in the category page @done(25-02-01 04:15)
         ✔ Users can view all Categories in Transaction form @done(24-12-27 02:50)
-        ☐ Users can view the Transactions of a single Category
+        ✘ Users can view the Transactions of a single Category @cancelled(25-02-07 22:31)
 
     Application:
       Theming:
@@ -61,7 +61,11 @@ Requirements:
   Complex Features:
     Analysis-&-Visualization:
       Account:
-        ☐ Users can view a pie chart of their total balance by Account
+        ✔ Users can view a trend chart of one of their Account's balance over time @done(25-02-07 22:29)
+        ✔ Users can view a trend chart of their total balance by Account @done(25-02-07 22:30)
+        ✔ Users can view a trend chart of their total balance separated by income and expense @done(25-02-07 22:30)
+        ✔ Users can view a trend chart of their total income over time @done(25-02-07 22:30)
+        ✔ Users can view a trend chart of their total expense over time @done(25-02-07 22:30)
 
       Transaction:
         ✔ Users can view a pie chart of their transactions by type income for the previous day, previous week, previous month, and entire year @done(24-12-27 02:53)
@@ -83,8 +87,8 @@ Requirements:
 
     Automatic Processing (SW & WW):
       ✔ App will automatically process Transactions that are due on the current date @done(25-02-05 23:39)
-      ☐ In the case of a Transaction change, fire up analysis modules for recalculation
-      ☐ When a user creates a transaction, the workers will analyze the transaction, adding every transaction that hasn't passed and are close to their commit date to the commit queue, doing periodic checks to watch and automatically process transactions when they reach their commit date
+      ✘ In the case of a Transaction change, fire up analysis modules for recalculation @cancelled(25-02-07 22:30)
+      ✔ When a user creates a transaction, the app will analyze the transaction, adding every transaction that hasn't passed and are close to their commit date to the commit queue, doing periodic checks to watch and automatically process transactions when they reach their commit date @done(25-02-07 22:31)
       
     Data Storage:
       ☐ Users can save their monthly data to a local file
