@@ -68,12 +68,13 @@ const TransactionDetails = ({ id, className }: { id: number, className?: string 
         <>
           {transaction ? (
             <>
-              <DetailsImage className="w-full h-1/2" transaction={transaction} />
-              <div className="h-1/2 p-2 bg-card-overview/30 text-foreground">
+              <DetailsImage className="w-full h-2/5" transaction={transaction} />
+              <div className="h-3/5 p-2 bg-card-overview/30 text-foreground">
                 <DetailsText tL="Category: " tR={transaction.categoryId?.toString() || "None"} />
                 <DetailsText tL="Type: " tR={TransactionType[transaction.type]} />
                 <DetailsText tL="Frequency: " tR={Frequency[transaction.frequency]} />
                 <DetailsText tL="Amount:" tR={formatCurrency(transaction.amount)} />
+                <DetailsText tL="Status:" tR={transaction.status} />
               </div>
             </>
           ) : (
@@ -89,7 +90,7 @@ const DetailsText = ({ className, tL, tR }: { className?: string, tL: string, tR
   return (
     <p className={cn("flex justify-between items-center text-sm", className)}>
       <span className="font-light">{tL}</span>
-      <span className="font-semibold">{tR}</span>
+      <span className="font-semibold capitalize">{tR}</span>
     </p>
   )
 }
