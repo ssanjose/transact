@@ -24,18 +24,24 @@ function getAccountTrend(accounts: Account[], transactions: Transaction[]): Acco
   };
   const paddedDates = generateDateRange(dateRange.from, dateRange.to);
 
+  const transactionsByDate = new Map<string, Transaction[]>();
+  transactions.forEach(transaction => {
+    const date = format(transaction.date, 'yyyy-MM-dd');
+    if (!transactionsByDate.has(date)) {
+      transactionsByDate.set(date, []);
+    }
+    transactionsByDate.get(date)!.push(transaction);
+  });
+
   // Initialize total with starting balances
   const runningTotals = new Map<number, number>();
   accounts.forEach(account => {
     runningTotals.set(account.id!, account.startingBalance!);
   });
 
-  // Calculate cumulative totals for each date
+  // Calculate cumulative totals for each date - O(n^2) -> O(n)
   return paddedDates.map(date => {
-    // Add transactions for this date to running totals
-    const dayTransactions = transactions.filter(tx =>
-      format(tx.date, 'yyyy-MM-dd') === date
-    );
+    const dayTransactions = transactionsByDate.get(date) || [];
 
     dayTransactions.forEach(tx => {
       const currentTotal = runningTotals.get(tx.accountId)!;
@@ -43,13 +49,10 @@ function getAccountTrend(accounts: Account[], transactions: Transaction[]): Acco
       runningTotals.set(tx.accountId, currentTotal + amount);
     });
 
-    // Sum all account totals for this date
-    const totalAmount = Array.from(runningTotals.values())
-      .reduce((sum, amount) => sum + amount, 0);
-
     return {
       date,
-      accountAmount: totalAmount
+      accountAmount: Array.from(runningTotals.values())
+        .reduce((sum, amount) => sum + amount, 0)
     };
   });
 }
