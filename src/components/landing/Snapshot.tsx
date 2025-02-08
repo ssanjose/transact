@@ -41,6 +41,13 @@ const images = [
     height: "800",
     className: "",
   },
+  {
+    src: "/transact_specific_account_view.jpg",
+    alt: "Transact Landing",
+    width: "1000",
+    height: "800",
+    className: "",
+  },
 ]
 
 const Images = () => {
