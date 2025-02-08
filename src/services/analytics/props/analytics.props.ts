@@ -21,9 +21,16 @@ type IncomeExpenseTransactionAmountProps = BaseDateProps & {
   expenseAmount: number,
 }
 
+// ------------------- AccountProps -------------------
+type AccountTotalAmountProps = BaseDateProps & {
+  accountAmount: number,
+}
+
 export {
   type TransactionNumberProps,
   type IncomeExpenseTransactionNumberProps,
   type TransactionAmountProps,
   type IncomeExpenseTransactionAmountProps,
+
+  type AccountTotalAmountProps,
 }
