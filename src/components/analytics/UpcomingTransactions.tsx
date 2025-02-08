@@ -47,8 +47,8 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
   }, [transactions]);
 
   return (
-    <Table className="w-full caption-top" containerClassName={cn("no-scrollbar p-2", className, inter.className)}>
-      <TableCaption className="mt-0 mb-2">
+    <Table className="w-full caption-top" containerClassName={cn("no-scrollbar", className, inter.className)}>
+      <TableCaption className="mt-0">
         <HeaderText mainHeading="Upcoming" subHeading="Transactions" className="uppercase" />
       </TableCaption>
       <TableBody>
@@ -74,10 +74,10 @@ const UpcomingTransactions = ({ className, accountId, limit = 3 }: {
 const UpcomingTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
   return (tx ?
     <TableRow className={`h-fit hover:bg-transaparent border-0`}>
-      <TableCell className="flex flex-col gap-1 rounded mb-4 p-0">
+      <TableCell className="flex flex-col gap-1 rounded p-0">
         <div className="flex justify-between items-center">
-          <h3 className="text-muted-foreground text-xs font-semibold tracking-tight">{tx.key}</h3>
-          <p className={`text-lg tracking-tight ${tx.total < 0 ? 'text-number-negative' : 'text-number-positive'}`}>{formatCurrency(tx.total)}</p>
+          <h3 className="text-muted-foreground text-xs font-light tracking-tight">{tx.key}</h3>
+          <p className={`text-base md:text-lg tracking-tight ${tx.total < 0 ? 'text-number-negative' : 'text-number-positive'}`}>{formatCurrency(tx.total)}</p>
         </div>
         {tx.transactions.map((transaction, index) => (
           <Card className="bg-background rounded p-2" key={index}>
