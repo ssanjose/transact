@@ -6,7 +6,7 @@ import { AccountTotalAmountProps } from '@/services/analytics/props/analytics.pr
 
 const chartConfig: AreaChartConfig = {
   accountAmount: {
-    label: 'All Accounts',
+    label: 'Amount',
     color: 'hsl(var(--chart-1)',
     gradient: {
       startOpacity: 0.8,
@@ -17,15 +17,18 @@ const chartConfig: AreaChartConfig = {
 
 const AccountTrend = ({
   className,
-  data
-}: { className?: string, data: AccountTotalAmountProps[] }) => {
+  data,
+  title,
+  description
+}: { className?: string, data: AccountTotalAmountProps[], title: string, description: string }) => {
   return (
     <StackedGradientAreaChart
       data={data}
       config={chartConfig}
       className={className}
-      title="Account Trend"
-      description="Total Amount for All Accounts"
+      title={title}
+      description={description}
+      showLegend={false}
     />
   )
 }
