@@ -8,9 +8,9 @@
 
 <div>
   <p align="center">
-    Feature on Progress: Service Worker analysis calculation.
+    Feature on Progress: Dashboard & Settings
   </p>
-  <p align="center">Features left before pre-release: Dashboard, Settings, Accesibility & Performance Improvements</p>
+  <p align="center">Features left before pre-release: Accesibility & Performance Improvements</p>
 </div>
 
 <p align="center">
