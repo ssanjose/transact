@@ -35,7 +35,7 @@ const Page = () => {
           </div>
           <AccountMenu account={account} />
         </div>
-        <SpecificAccountTrend account={account} />
+        <SpecificAccountTrend account={account} className="py-1" />
         <TransactionTable id={accountId} setTransactionId={setTransactionId} />
       </div>
       <TransactionDetails id={transactionId}
