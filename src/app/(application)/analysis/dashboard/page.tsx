@@ -17,6 +17,7 @@ import { CategoryService } from '@/services/category.service';
 import { CategoryContext } from '@/hooks/use-category-context';
 import useSettings from '@/hooks/use-settings';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollAreaScrollbar } from '@radix-ui/react-scroll-area';
 
 const Page = () => {
   const [date, setDate] = React.useState<DateRange>({
@@ -58,7 +59,7 @@ const Page = () => {
                 <ExpenseTransactionChart className="w-full" />
               </div>
             </div>
-            <TransactionCarousel className="w-full lg:col-span-1" />
+            <TransactionCarousel />
           </div>
         </ContentContainer>
       </TransactionContext.Provider>
@@ -66,15 +67,16 @@ const Page = () => {
   );
 }
 
-const TransactionCarousel = ({ className }: { className?: string }) => {
+const TransactionCarousel = () => {
   const { settings } = useSettings();
 
   return (
-    <ScrollArea className={cn("w-full h-[300px] overflow-x-auto", className)}>
-      <div className="space-y-4">
-        <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
-        <RecentTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.recentTransactionLimit} />
+    <ScrollArea className="relative w-96 sm:w-full">
+      <div className="flex w-max space-x-4">
+        <UpcomingTransactions className="p-3 md:p-4 w-[80%] h-fit pb-1 border rounded-xl bg-card-overview shrink-0" limit={settings.upcomingTransactionLimit} />
+        <RecentTransactions className="p-3 md:p-4 w-[80%] h-fit pb-1 border rounded-xl bg-card-overview shrink-0" limit={settings.recentTransactionLimit} />
       </div>
+      <ScrollAreaScrollbar orientation="horizontal" />
     </ScrollArea>
   )
 }

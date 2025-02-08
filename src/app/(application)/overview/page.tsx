@@ -53,7 +53,7 @@ const Home = () => {
           <AccountList className="w-full" />
         </Card>
         <div className="flex w-full md:w-1/2">
-          <UpcomingTransactions className="p-4 pb-1 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
+          <UpcomingTransactions className="p-3 md:p-4 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
         </div>
       </div>
       <TransactionsOverview className="h-fit min-h-72 mx-2 p-4 rounded-xl bg-card-overview" />
