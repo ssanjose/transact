@@ -59,7 +59,7 @@ const AllAccountsTrend = ({ className }: React.HTMLAttributes<HTMLDivElement>) =
 
   return (
     <div className={cn("", className)}>
-      <AccountTrend data={data} />
+      <AccountTrend data={data} title="Total Accounts" description="Total Amount for All Accounts" />
     </div>
   )
 }
