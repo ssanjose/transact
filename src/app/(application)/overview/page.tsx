@@ -108,21 +108,21 @@ const Trends = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const transactions = useTransactionContext();
   const selectedDateRange = useSelectedDateRangeContext();
 
-  const analyzedTransactions = React.useMemo(() => {
+  const incomeExpenseTransactionAmount = React.useMemo(() => {
     const dateRange = getDateRangeFromSelectedRange(selectedDateRange);
-    return TransactionAnalyticsService.getIncomeExpenseTransactionAmountByDateRange({ transactions: transactions || [], dateRange });
+    return TransactionAnalyticsService.getIncomeExpenseTransactionAmount({ transactions: transactions || [], dateRange });
   }, [transactions]);
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <TransactionTrend className="w-full min-h-24"
-        data={analyzedTransactions}
+        data={incomeExpenseTransactionAmount}
       />
       <IncomeTransactionTrend className="w-full min-h-24"
-        data={analyzedTransactions}
+        data={incomeExpenseTransactionAmount}
       />
       <ExpenseTransactionTrend className="w-full min-h-24"
-        data={analyzedTransactions}
+        data={incomeExpenseTransactionAmount}
       />
     </div>
   )
