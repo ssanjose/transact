@@ -150,13 +150,19 @@ function deleteTransaction(transactionId: number): Promise<void> {
 }
 
 /**
- * Retrieves all transactions for a specific account.
+ * Retrieves all transactions for a specific account. If no account ID is provided, all transactions are retrieved.
  *
  * @param {number} accountId - The ID of the account.
  * @returns {Promise<Transaction[]>} - A promise that resolves to an array of transactions for the account.
  */
 function getTransactionsByAccount(accountId?: number): Promise<Transaction[]> {
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
+    let transactions: Transaction[];
+
+    if (!accountId) {
+      transactions = await FinanceTrackerDatabase.transactions.toArray();
+      return transactions;
+    }
     return FinanceTrackerDatabase.transactions.where({ accountId }).toArray();
   });
 }
