@@ -1,5 +1,58 @@
 import FinanceTrackerDatabase from "@/lib/db/db.init";
-import { Account } from "@/lib/db/db.model";
+import { Account, Transaction, TransactionType } from "@/lib/db/db.model";
+import { AccountTotalAmountProps } from "@/services/analytics/props/analytics.props"
+import { generateDateRange } from "@/lib/analysis/generateDateRange";
+import { format } from "date-fns";
+
+/**
+ * Gets the total amount for each account on each date
+ * @param accounts Accounts to calculate
+ * @param transactions Transactions to calculate
+ * @returns AccountTotalAmountProps[]
+ * @example
+ * ```typescript
+ * const accounts = await FinanceTrackerDatabase.accounts.toArray();
+ * const transactions = await FinanceTrackerDatabase.transactions.toArray();
+ * const accountTrend = getAccountTrend(accounts, transactions);
+ * ```
+ */
+function getAccountTrend(accounts: Account[], transactions: Transaction[]): AccountTotalAmountProps[] {
+  const dates = transactions.map(t => t.date);
+  const dateRange = {
+    from: new Date(Math.min(...dates.map(d => d.getTime()))),
+    to: new Date(Math.max(...dates.map(d => d.getTime())))
+  };
+  const paddedDates = generateDateRange(dateRange.from, dateRange.to);
+
+  // Initialize total with starting balances
+  const runningTotals = new Map<number, number>();
+  accounts.forEach(account => {
+    runningTotals.set(account.id!, account.startingBalance!);
+  });
+
+  // Calculate cumulative totals for each date
+  return paddedDates.map(date => {
+    // Add transactions for this date to running totals
+    const dayTransactions = transactions.filter(tx =>
+      format(tx.date, 'yyyy-MM-dd') === date
+    );
+
+    dayTransactions.forEach(tx => {
+      const currentTotal = runningTotals.get(tx.accountId)!;
+      const amount = tx.type === TransactionType.Income ? tx.amount : -tx.amount;
+      runningTotals.set(tx.accountId, currentTotal + amount);
+    });
+
+    // Sum all account totals for this date
+    const totalAmount = Array.from(runningTotals.values())
+      .reduce((sum, amount) => sum + amount, 0);
+
+    return {
+      date,
+      accountAmount: totalAmount
+    };
+  });
+}
 
 /**
  * Gets the account with the highest balance
@@ -101,6 +154,7 @@ function calculateGrowthRate(account: Account): number {
 }
 
 export const AccountAnalyticsService = {
+  getAccountTrend,
   getHighestValuedAccount,
   getMostUsedAccount,
   getBiggestGrowthAccount,
