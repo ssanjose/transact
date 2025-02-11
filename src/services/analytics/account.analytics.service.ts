@@ -1,4 +1,3 @@
-import FinanceTrackerDatabase from "@/lib/db/db.init";
 import { Account, Transaction, TransactionType } from "@/lib/db/db.model";
 import { AccountTotalAmountProps, TimeSeriesData } from "@/services/analytics/props/analytics.props"
 import { generateDateRange } from "@/lib/analysis/generateDateRange";
@@ -183,6 +182,7 @@ function squeezeTimeSeriesData<T extends TimeSeriesData>(data: T[], targetPoints
     Object.keys(template).forEach(key => {
       if (typeof template[key] === 'number') {
         const sum = chunk.reduce((acc, item) => acc + (item[key] as number), 0);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (template as any)[key] = sum / chunk.length;
       }
     });

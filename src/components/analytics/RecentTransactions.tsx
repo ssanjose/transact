@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import { separateByDateFormat, SeparatedTransaction } from '@/lib/analysis/separateByDateFormat';
-import { Card } from '@/components/ui/card';
 import { useLiveQuery } from 'dexie-react-hooks';
 import HeaderText from '@/components/common/HeaderText';
 import { cn } from '@/lib/utils';
