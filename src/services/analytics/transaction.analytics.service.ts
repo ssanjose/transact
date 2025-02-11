@@ -207,6 +207,26 @@ function findRecentTransactions(accountId?: number, limit?: number): Promise<Tra
   });
 }
 
+// helper functions
+/**
+ * Calculates growth rate between two numbers
+ * For zero starting value:
+ * - Returns 1 (100%) for positive end value
+ * - Returns -1 (-100%) for negative end value
+ * - Returns 0 (0%) for zero end value
+ * For non-zero starting value:
+ * - Returns (end - start) / |start|
+ * @param start Starting value
+ * @param end Ending value
+ * @returns Growth rate as decimal (e.g., 0.25 = 25% growth)
+ */
+function calculateGrowthRate(start: number, end: number): number {
+  if (start === 0) {
+    return end > 0 ? 1 : end < 0 ? -1 : 0;
+  }
+  return (end - start) / Math.abs(start);
+}
+
 export const TransactionAnalyticsService = {
   getTransactionAmount,
   getIncomeExpenseTransactionAmount,
@@ -215,4 +235,5 @@ export const TransactionAnalyticsService = {
   getTransactionsBySelectedDateRange,
   findUpcomingTransactions,
   findRecentTransactions,
+  calculateGrowthRate,
 };
