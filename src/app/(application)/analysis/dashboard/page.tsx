@@ -17,15 +17,21 @@ import { AccountAnalyticsService } from '@/services/analytics/account.analytics.
 import { AccountService } from '@/services/account.service';
 import DashboardAccountTrend from '@/components/analytics/DashboardAccountTrend';
 import SummaryCard from '@/components/common/SummaryCard';
+import TransactionAmountTrend from '@/components/analytics/TransactionAmountTrend';
 
 const getAnalyzedData = (accounts: Account[], transactions: Transaction[], dateRange: DateRange) => {
   const accountTrend = AccountAnalyticsService.getAccountTrend(accounts, transactions);
+  const transactionTrend = AccountAnalyticsService.squeezeTimeSeriesData(
+    TransactionAnalyticsService.getTransactionAmount({ transactions, dateRange }),
+    12
+  );
+
   const incomeExpense = TransactionAnalyticsService.getIncomeExpenseTransactionAmount({ transactions, dateRange });
   const highestValuedAccount = AccountAnalyticsService.getHighestValuedAccount(accounts);
   const mostUsedAccount = AccountAnalyticsService.getMostUsedAccount(accounts, transactions);
   const biggestGrowthAccount = AccountAnalyticsService.getBiggestGrowthAccount(accounts);
 
-  const squeezedAccountTrend = AccountAnalyticsService.squeezeTimeSeriesData(accountTrend, 7);
+  const squeezedAccountTrend = AccountAnalyticsService.squeezeTimeSeriesData(accountTrend, 12);
 
   const accountTrendGrowthRate = TransactionAnalyticsService.calculateGrowthRate(
     squeezedAccountTrend[0]?.accountAmount,
@@ -34,6 +40,7 @@ const getAnalyzedData = (accounts: Account[], transactions: Transaction[], dateR
 
   return {
     accountTrend,
+    transactionTrend,
     incomeExpense,
     highestValuedAccount,
     mostUsedAccount,
@@ -82,11 +89,16 @@ const Page = () => {
             date={date!}
             setDate={setDate}
           />
-          <div className="block lg:grid lg:grid-cols-3 pb-0 px-0 gap-2 w-full">
-            <div className="w-full flex flex-col gap-2 lg:col-span-2 relative">
-              <div className="w-full block lg:grid lg:grid-cols-3 gap-2">
+          <div className="block lg:grid lg:grid-cols-3 pb-0 px-0 gap-4 w-full">
+            <div className="w-full flex flex-col gap-4 lg:col-span-2 relative">
+              <div className="w-full block lg:grid lg:grid-cols-3 gap-4">
                 {analyzedData && <AccountDataCards data={analyzedData} />}
               </div>
+              {analyzedData &&
+                <TransactionAmountTrend
+                  data={analyzedData.transactionTrend || []}
+                />
+              }
             </div>
             <div className="w-full lg:col-span-1">
               {analyzedData &&
