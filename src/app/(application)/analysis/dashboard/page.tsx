@@ -2,12 +2,9 @@
 
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/common/ContentContainer';
-import UpcomingTransactions from '@/components/analytics/UpcomingTransactions';
-import RecentTransactions from '@/components/analytics/RecentTransactions';
-import { cn } from '@/lib/utils';
 import DateRangePicker from '@/components/analytics/DateRangePicker';
 import { addMonths } from 'date-fns';
-import { Transaction } from '@/lib/db/db.model';
+import { Account, Transaction } from '@/lib/db/db.model';
 import { TransactionService } from '@/services/transaction.service';
 import { ExpenseTransactionChart, IncomeTransactionChart } from '@/components/overview/TransactionChartSummary';
 import { DateRange } from 'react-day-picker';
@@ -15,9 +12,36 @@ import { TransactionContext } from '@/hooks/use-transaction-context';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CategoryService } from '@/services/category.service';
 import { CategoryContext } from '@/hooks/use-category-context';
-import useSettings from '@/hooks/use-settings';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { ScrollAreaScrollbar } from '@radix-ui/react-scroll-area';
+import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
+import { AccountAnalyticsService } from '@/services/analytics/account.analytics.service';
+import { AccountService } from '@/services/account.service';
+import DashboardAccountTrend from '@/components/analytics/DashboardAccountTrend';
+import SummaryCard from '@/components/common/SummaryCard';
+
+const getAnalyzedData = (accounts: Account[], transactions: Transaction[], dateRange: DateRange) => {
+  const accountTrend = AccountAnalyticsService.getAccountTrend(accounts, transactions);
+  const incomeExpense = TransactionAnalyticsService.getIncomeExpenseTransactionAmount({ transactions, dateRange });
+  const highestValuedAccount = AccountAnalyticsService.getHighestValuedAccount(accounts);
+  const mostUsedAccount = AccountAnalyticsService.getMostUsedAccount(accounts, transactions);
+  const biggestGrowthAccount = AccountAnalyticsService.getBiggestGrowthAccount(accounts);
+
+  const squeezedAccountTrend = AccountAnalyticsService.squeezeTimeSeriesData(accountTrend, 7);
+
+  const accountTrendGrowthRate = TransactionAnalyticsService.calculateGrowthRate(
+    squeezedAccountTrend[0]?.accountAmount,
+    squeezedAccountTrend[squeezedAccountTrend.length - 1]?.accountAmount
+  )
+
+  return {
+    accountTrend,
+    incomeExpense,
+    highestValuedAccount,
+    mostUsedAccount,
+    biggestGrowthAccount,
+    squeezedAccountTrend,
+    accountTrendGrowthRate,
+  };
+}
 
 const Page = () => {
   const [date, setDate] = React.useState<DateRange>({
@@ -25,7 +49,9 @@ const Page = () => {
     to: new Date(),
   });
   const [transactions, setTransactions] = React.useState<Transaction[] | null | undefined>(null);
+  const accounts = useLiveQuery(() => AccountService.getAllAccounts());
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
+  const [analyzedData, setAnalyzedData] = React.useState<ReturnType<typeof getAnalyzedData> | null | undefined>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -44,22 +70,34 @@ const Page = () => {
     return () => { isMounted = false; }
   }, [date])
 
+  useEffect(() => {
+    setAnalyzedData(getAnalyzedData(accounts || [], transactions || [], date));
+  }, [transactions])
+
   return (
     <CategoryContext.Provider value={categories || []}>
       <TransactionContext.Provider value={transactions}>
-        <ContentContainer className="flex flex-col gap-2 min-h-screen pt-4">
-          <div className="block lg:grid lg:grid-cols-3 pb-0 px-2 sm:px-2 gap-4 w-full">
-            <div className="w-full lg:col-span-2 relative">
-              <DateRangePicker className="w-fit block lg:absolute top-0 right-0"
-                date={date!}
-                setDate={setDate}
-              />
-              <div className="w-full block lg:grid lg:grid-cols-2 gap-2 mt-10">
-                <IncomeTransactionChart className="w-full" />
-                <ExpenseTransactionChart className="w-full" />
+        <ContentContainer className="flex flex-col gap-2 min-h-screen">
+          <DateRangePicker className="w-fit self-end"
+            date={date!}
+            setDate={setDate}
+          />
+          <div className="block lg:grid lg:grid-cols-3 pb-0 px-0 gap-2 w-full">
+            <div className="w-full flex flex-col gap-2 lg:col-span-2 relative">
+              <div className="w-full block lg:grid lg:grid-cols-3 gap-2">
+                {analyzedData && <AccountDataCards data={analyzedData} />}
               </div>
             </div>
-            <TransactionCarousel />
+            <div className="w-full lg:col-span-1">
+              {analyzedData &&
+                <DashboardAccountTrend
+                  data={analyzedData.squeezedAccountTrend || []}
+                  gR={analyzedData.accountTrendGrowthRate || 0}
+                />
+              }
+              <IncomeTransactionChart className="h-fit" />
+              <ExpenseTransactionChart className="h-fit" />
+            </div>
           </div>
         </ContentContainer>
       </TransactionContext.Provider>
@@ -67,18 +105,32 @@ const Page = () => {
   );
 }
 
-const TransactionCarousel = () => {
-  const { settings } = useSettings();
+const AccountDataCards = ({ data }: { data: ReturnType<typeof getAnalyzedData> }) => {
+
+  if (!data) return null;
 
   return (
-    <ScrollArea className="relative w-96 sm:w-full">
-      <div className="flex w-max space-x-4">
-        <UpcomingTransactions className="p-3 md:p-4 w-[80%] h-fit pb-1 border rounded-xl bg-card-overview shrink-0" limit={settings.upcomingTransactionLimit} />
-        <RecentTransactions className="p-3 md:p-4 w-[80%] h-fit pb-1 border rounded-xl bg-card-overview shrink-0" limit={settings.recentTransactionLimit} />
-      </div>
-      <ScrollAreaScrollbar orientation="horizontal" />
-    </ScrollArea>
+    <>
+      <SummaryCard
+        title="Highest Valued Account"
+        subHeading="By balance"
+        description={data?.highestValuedAccount?.name || "No Account"}
+        className="grid"
+      />
+      <SummaryCard
+        title="Most Used Account"
+        subHeading="By number of transactions"
+        description={data?.mostUsedAccount?.name || "No Account"}
+        className="grid"
+      />
+      <SummaryCard
+        title="Highest Growth Account"
+        subHeading="By monthly starting balance"
+        description={data?.biggestGrowthAccount?.name || "No Account"}
+        className="grid"
+      />
+    </>
   )
-}
+};
 
 export default Page;
