@@ -73,23 +73,20 @@ const RecentTransactions = ({ className, accountId, limit = 3 }: {
 
 const RecentTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
   return (tx ?
-    <TableRow className={`h-fit hover:bg-transaparent border-0`}>
-      <TableCell className="flex flex-col gap-1 rounded p-0">
-        <div className="flex justify-between items-center">
-          <h3 className="text-muted-foreground text-xs font-light tracking-tight">{tx.key}</h3>
-          <p className={`text-base md:text-lg tracking-tight ${tx.total < 0 ? 'text-number-negative' : 'text-number-positive'}`}>{formatCurrency(tx.total)}</p>
-        </div>
+    <TableRow className={`h-fit hover:bg-transparent border-0`}>
+      <TableCell className="flex flex-col rounded my-2 p-0">
+        <h3 className="text-muted-foreground text-xs font-light tracking-tight">{tx.key}</h3>
         {tx.transactions.map((transaction, index) => (
-          <Card className="bg-background rounded p-2" key={index}>
+          <div className="bg-inherit rounded mb-2 last:mb-0" key={index}>
             <div className="flex justify-between items-center">
               <h4 className="text-accent-foreground text-sm font-semibold tracking-tight">{transaction.name}</h4>
-              <p>{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount)}</p>
+              <p className="font-semibold text-base">{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount)}</p>
             </div>
             <div className="flex justify-between items-center">
               <p className="text-muted-foreground text-xs">{transaction.account?.name}</p>
-              <p className="text-muted-foreground text-xs">{transaction.category?.name}</p>
+              <p className="text-muted-foreground text-xs">{transaction.category?.name || "Uncategorized"}</p>
             </div>
-          </Card>
+          </div>
         ))}
       </TableCell>
     </TableRow>
