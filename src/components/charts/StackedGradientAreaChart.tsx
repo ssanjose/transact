@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
@@ -26,9 +26,10 @@ export interface AreaChartConfig {
 interface StackedGradientAreaChartProps extends Omit<React.HTMLProps<HTMLDivElement>, 'data'> {
   data: AreaChartDataPoint[];
   config: AreaChartConfig;
-  title: string;
+  title?: string;
   description?: string;
   loading?: boolean;
+  showHeader?: boolean;
   showLegend?: boolean;
 }
 
@@ -39,6 +40,7 @@ export const StackedGradientAreaChart = ({
   title,
   description,
   loading = false,
+  showHeader = true,
   showLegend = true,
   ...props
 }: StackedGradientAreaChartProps) => {
@@ -74,14 +76,16 @@ export const StackedGradientAreaChart = ({
 
   if (!loading) {
     return (
-      <Card className={className} {...props}>
-        <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-          <div className="grid flex-1 gap-1 text-center sm:text-left">
-            <CardTitle>{title}</CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
-          </div>
-        </CardHeader>
-        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <Card {...props} className={className}>
+        {showHeader && (
+          <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
+            <div className="grid flex-1 gap-1 text-center sm:text-left">
+              {title && <CardTitle>{title}</CardTitle>}
+              {description && <CardDescription>{description}</CardDescription>}
+            </div>
+          </CardHeader>
+        )}
+        <CardContent className="px-2 pt-4 sm:px-4">
           <ChartContainer
             config={config}
             className="aspect-auto h-[250px] w-full"
@@ -104,6 +108,13 @@ export const StackedGradientAreaChart = ({
                     day: "numeric",
                   })
                 }}
+              />
+              <YAxis
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `$${value}`}
               />
               <ChartTooltip
                 cursor={false}
@@ -138,7 +149,7 @@ export const StackedGradientAreaChart = ({
           {description && <CardDescription>{description}</CardDescription>}
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="px-2 pt-4 sm:px-4">
         <ChartContainer
           config={config}
           className="aspect-auto h-[250px] w-full"
