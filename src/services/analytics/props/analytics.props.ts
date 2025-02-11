@@ -26,6 +26,11 @@ type AccountTotalAmountProps = BaseDateProps & {
   accountAmount: number,
 }
 
+// ------------------- TimeSeriesData -------------------
+type TimeSeriesData = BaseDateProps & {
+  [key: string]: number | string;
+}
+
 export {
   type TransactionNumberProps,
   type IncomeExpenseTransactionNumberProps,
@@ -33,4 +38,6 @@ export {
   type IncomeExpenseTransactionAmountProps,
 
   type AccountTotalAmountProps,
+
+  type TimeSeriesData,
 }
