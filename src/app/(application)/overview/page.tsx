@@ -52,9 +52,9 @@ const Home = () => {
         <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full" />
         </Card>
-        <div className="flex w-full md:w-1/2">
-          <UpcomingTransactions className="p-3 md:p-4 border rounded-xl bg-card-overview" limit={settings.upcomingTransactionLimit} />
-        </div>
+        <Card className="flex w-full md:w-1/2">
+          <UpcomingTransactions className="p-3 md:p-4 border-0 bg-card-overview rounded-xl" limit={settings.upcomingTransactionLimit} />
+        </Card>
       </div>
       <TransactionsOverview className="h-fit min-h-72 mx-2 p-4 rounded-xl bg-card-overview" />
     </ContentContainer>
