@@ -22,6 +22,7 @@ import ExpenseTransactionTrend from '@/components/transaction/ExpenseTransaction
 import useSettings from '@/hooks/use-settings';
 import { getDateRangeFromSelectedRange } from '@/lib/analysis/getDateRangeFromSelectedRange';
 import { Transaction } from '@/lib/db/db.model';
+import { AccountAnalyticsService } from '@/services/analytics/account.analytics.service';
 
 const Home = () => {
   const { settings } = useSettings();
@@ -62,7 +63,7 @@ const Home = () => {
 }
 
 const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
-  const [selectedDateRange, setSelectedDateRange] = React.useState<SelectedDateRange>(SelectedDateRange.DAY);
+  const [selectedDateRange, setSelectedDateRange] = React.useState<SelectedDateRange>(SelectedDateRange.MONTH);
   const [transactions, setTransactions] = React.useState<Transaction[] | null | undefined>(null);
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
 
@@ -110,7 +111,8 @@ const Trends = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
 
   const incomeExpenseTransactionAmount = React.useMemo(() => {
     const dateRange = getDateRangeFromSelectedRange(selectedDateRange);
-    return TransactionAnalyticsService.getIncomeExpenseTransactionAmount({ transactions: transactions || [], dateRange });
+    const trend = TransactionAnalyticsService.getIncomeExpenseTransactionAmount({ transactions: transactions || [], dateRange });
+    return AccountAnalyticsService.squeezeTimeSeriesData(trend, 20);
   }, [transactions]);
 
   return (
