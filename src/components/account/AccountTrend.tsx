@@ -19,8 +19,9 @@ const AccountTrend = ({
   className,
   data,
   title,
-  description
-}: { className?: string, data: AccountTotalAmountProps[], title: string, description: string }) => {
+  description,
+  showHeader,
+}: { className?: string, data: AccountTotalAmountProps[], title?: string, description?: string, showHeader?: boolean }) => {
   return (
     <StackedGradientAreaChart
       data={data}
@@ -29,6 +30,7 @@ const AccountTrend = ({
       title={title}
       description={description}
       showLegend={false}
+      showHeader={showHeader}
     />
   )
 }

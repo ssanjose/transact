@@ -25,7 +25,7 @@ const Page = () => {
   return (
     <ContentContainer className="grid grid-cols-4 gap-2">
       <div className={`col-span-4 ${transactionId !== -1 ? "" : "lg:col-span-4"} lg:col-span-3 w-full px-0 sm:p-2 pt-2`}>
-        <div className="flex flex-start justify-between px-2 sm:p-0 sm:pb-2 border-b">
+        <div className="flex flex-start justify-between px-2 sm:p-0 sm:pb-2">
           <div className="w-full flex justify-between items-center">
             <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight mr-2">
               {account.name}
@@ -68,8 +68,7 @@ const SpecificAccountTrend = ({
     <div className={cn("", className)}>
       <AccountTrend
         data={data}
-        title={`Account ${account.name}`}
-        description={`Total Amount for ${account.name}`}
+        showHeader={false}
       />
     </div>
   );
