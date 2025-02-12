@@ -18,15 +18,13 @@ const chartConfig = {
 }
 
 const TransactionAmountTrend = ({ data }: { data: TransactionAmountProps[] }) => {
-  console.log(data);
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Overview</CardTitle>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6">
-        <ChartContainer config={chartConfig} className="mt-2 h-[25vh] lg:h-[50vh] w-full">
+        <ChartContainer config={chartConfig} className="mt-2 h-[20vh] lg:h-[50vh] w-full">
           <BarChart
             accessibilityLayer
             data={data}
