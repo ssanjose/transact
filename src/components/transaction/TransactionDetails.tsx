@@ -4,17 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { TransactionService } from '@/services/transaction.service';
 import { Frequency, Transaction, TransactionType } from '@/lib/db/db.model';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
 
 import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ["latin"] });
+
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import Image from 'next/image';
-const inter = Inter({ subsets: ["latin"] });
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const DetailsImage = ({ className, transaction }: { className?: string, transaction: Transaction }) => {
   return (
-    <div className={cn("overflow-hidden relative flex items-end", className)}>
+    <div className={cn("overflow-hidden relative flex items-end rounded-t-xl", className)}>
       <div className="z-10 h-fit text-black px-2 p-1">
         <h2 className="text-xl font-bold truncate w-64">
           {transaction.name} ({transaction.id})
@@ -56,33 +58,55 @@ const TransactionDetails = ({ id, className }: { id: number, className?: string 
     return () => clearTimeout(timeout);
   }, [id]);
 
-  return (
-    <div className={cn("h-fit", className, inter.className)}>
-      {loading ?
-        (transaction &&
-          <div className="flex justify-center items-center h-full">
-            <Loader2 className="animate-spin h-12 w-12" />
+  if (loading || !transaction) {
+    return (
+      <Card className={cn("", className, inter.className)}>
+        <div className="overflow-hidden relative flex items-end rounded-t-xl w-full h-2/5">
+          <Image
+            src="/pexels-voitkevich-6214459.jpg"
+            alt="transaction"
+            width={500}
+            height={500}
+            className="w-full absolute bottom-0 left-0"
+          />
+        </div>
+        <div className="h-3/5 flex flex-col gap-2 w-full p-2 bg-card-overview/30 text-foreground">
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-2/5 h-3.5" />
+            <Skeleton className="w-[15%] h-3.5" />
           </div>
-        )
-        :
-        <>
-          {transaction ? (
-            <>
-              <DetailsImage className="w-full h-2/5" transaction={transaction} />
-              <div className="h-3/5 p-2 bg-card-overview/30 text-foreground">
-                <DetailsText tL="Category: " tR={transaction.categoryId?.toString() || "None"} />
-                <DetailsText tL="Type: " tR={TransactionType[transaction.type]} />
-                <DetailsText tL="Frequency: " tR={Frequency[transaction.frequency]} />
-                <DetailsText tL="Amount:" tR={formatCurrency(transaction.amount)} />
-                <DetailsText tL="Status:" tR={transaction.status} />
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
-        </>
-      }
-    </div>
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-[20%] h-3.5" />
+            <Skeleton className="w-[25%] h-3.5" />
+          </div>
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-[30%] h-3.5" />
+            <Skeleton className="w-[35%] h-3.5" />
+          </div>
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-[25%] h-3.5" />
+            <Skeleton className="w-1/5 h-3.5" />
+          </div>
+          <div className="flex justify-between items-center">
+            <Skeleton className="w-1/5 h-3.5" />
+            <Skeleton className="w-2/5 h-3.5" />
+          </div>
+        </div>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className={cn("h-fit", className, inter.className)}>
+      <DetailsImage className="w-full h-2/5" transaction={transaction} />
+      <div className="h-3/5 p-2 bg-card-overview/30 text-foreground">
+        <DetailsText tL="Category: " tR={transaction.categoryId?.toString() || "None"} />
+        <DetailsText tL="Type: " tR={TransactionType[transaction.type]} />
+        <DetailsText tL="Frequency: " tR={Frequency[transaction.frequency]} />
+        <DetailsText tL="Amount:" tR={formatCurrency(transaction.amount)} />
+        <DetailsText tL="Status:" tR={transaction.status} />
+      </div>
+    </Card>
   )
 }
 
