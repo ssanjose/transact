@@ -161,7 +161,7 @@ const Page = () => {
 
 const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> }) => {
 
-  if (!data)
+  if (!data || !data.highestValuedAccount || !data.mostUsedAccount || !data.biggestGrowthAccount || !data.smallestGrowthAccount)
     return (
       <>
         <Card>
@@ -246,14 +246,18 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
           <svg
             viewBox="0 0 24 24"
             fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
             xmlns="http://www.w3.org/2000/svg"
             transform="matrix(1, 0, 0, 1, 0, 0)"
             className="h-4 w-4 text-muted-foreground"
           >
-            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+            <g id="SVGRepo_bgCarrier"></g>
+            <g id="SVGRepo_tracerCarrier"></g>
             <g id="SVGRepo_iconCarrier">
-              <path d="M3 16.5L9 10L13 16L21 6.5" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+              <path d="M3 16.5L9 10L13 16L21 6.5"></path>
             </g>
           </svg>
         }
@@ -268,14 +272,18 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
           <svg
             viewBox="0 0 24 24"
             fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
             xmlns="http://www.w3.org/2000/svg"
             transform="matrix(-1, 0, 0, 1, 0, 0)"
             className="h-4 w-4 text-muted-foreground"
           >
-            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+            <g id="SVGRepo_bgCarrier"></g>
+            <g id="SVGRepo_tracerCarrier"></g>
             <g id="SVGRepo_iconCarrier">
-              <path d="M3 16.5L9 10L13 16L21 6.5" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+              <path d="M3 16.5L9 10L13 16L21 6.5"></path>
             </g>
           </svg>
         }
