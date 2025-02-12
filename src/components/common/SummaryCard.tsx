@@ -1,24 +1,30 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const SummaryCard = ({
   title,
   subHeading,
   description,
-  className }: { title: string, subHeading: string, description: string, className: string }) => {
+  subDescription,
+  svg,
+  className }: { title: string, subHeading: string, description: string, subDescription?: string, svg: React.ReactNode, className: string }) => {
   return (
     <Card className={cn("flex flex-col gap-2", className)}>
-      <CardHeader className="space-y-0 p-4 pb-0 lg:p-6 lg:pb-0">
-        <CardTitle className="leading-none tracking-tight text-sm">{title}</CardTitle>
-        <CardDescription className="text-xs md:text-sm tracking-tight">{subHeading}</CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 p-4 pb-0 lg:p-6 lg:pb-0">
+        <div>
+          <CardTitle className="leading-none tracking-tight text-md">{title}</CardTitle>
+          <CardDescription className="text-xs tracking-tight text-muted-foreground">{subHeading}</CardDescription>
+        </div>
+        {svg}
       </CardHeader>
-      <CardContent className="flex items-center gap-2 p-4 pt-0 lg:p-6 lg:pt-2">
-        <span className="text-base md:text-lg font-semibold">
+      <CardContent className="flex flex-col items-start p-4 pt-0 lg:p-6 lg:pt-0">
+        <span className="text-base md:text-lg font-bold">
           {description}
         </span>
+        {subDescription && <p className="text-xs text-muted-foreground">{subDescription}</p>}
       </CardContent>
     </Card>
   )
