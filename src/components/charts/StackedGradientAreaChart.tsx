@@ -88,9 +88,13 @@ export const StackedGradientAreaChart = ({
         <CardContent className="px-2 pt-4 sm:px-4">
           <ChartContainer
             config={config}
-            className="aspect-auto h-[250px] w-full"
+            className="aspect-auto h-[230px] w-full"
           >
-            <AreaChart data={data}>
+            <AreaChart data={data}
+              margin={{
+                left: -15,
+              }}
+            >
               <defs>
                 {gradientDefinitions}
               </defs>
