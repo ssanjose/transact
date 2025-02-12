@@ -37,9 +37,9 @@ const Page = () => {
         </div>
         <TransactionTable id={accountId} setTransactionId={setTransactionId} />
       </main>
-      <aside className="col-span-0 hidden lg:flex lg:flex-col lg:gap-4 lg:col-span-1 mt-4">
+      <aside className="col-span-4 block lg:flex lg:flex-col lg:gap-4 lg:col-span-1 mt-4">
         <SpecificAccountTrend account={account} />
-        <TransactionDetails id={transactionId} className={`${transactionId !== -1 ? "block" : "hidden"} h-[45vh] sticky top-4`} />
+        <TransactionDetails id={transactionId} className={`${transactionId !== -1 ? "block" : "hidden"} hidden sm:block h-[45vh] sticky top-4`} />
       </aside>
     </ContentContainer>
   );
