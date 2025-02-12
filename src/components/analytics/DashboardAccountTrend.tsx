@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Line, LineChart } from 'recharts';
 import { AccountTotalAmountProps } from '@/services/analytics/props/analytics.props';
@@ -25,12 +25,14 @@ const DashboardAccountTrend = ({ data, gR }: { data: AccountTotalAmountProps[], 
 
   return (
     <Card>
-      <CardContent className="px-2 pt-4 sm:px-6">
-        <div className="text-2xl font-bold">{title}</div>
-        <p className="text-xs text-muted-foreground">
+      <CardHeader className="pb-0 space-y-0">
+        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+        <CardDescription className="text-xs text-muted-foreground">
           {gRPercent}
-        </p>
-        <ChartContainer config={chartConfig} className="mt-2 h-[20vh] w-full">
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="px-2 pt-4 sm:px-6">
+        <ChartContainer config={chartConfig} className="mt-2 h-[20vh] lg:h-[10vh] w-full">
           <LineChart
             accessibilityLayer
             data={data}
