@@ -161,7 +161,7 @@ const Page = () => {
 
 const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> }) => {
 
-  if (!data || !data.highestValuedAccount || !data.mostUsedAccount || !data.biggestGrowthAccount || !data.smallestGrowthAccount)
+  if (!data)
     return (
       <>
         <Card>
@@ -208,8 +208,8 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
       <SummaryCard
         title={`${data.highestValuedAccount?.name || ""}`}
         subHeading="Highest Valued Account by balance"
-        description={formatCurrency(data.highestValuedAccount?.balance!) || ""}
-        subDescription={`${data.highestValuedAccountGrowthRate}% change from ${formatDate(new Date(data.highestValuedAccountTrend[0]?.date || 0))}`}
+        description={formatCurrency(data.highestValuedAccount?.balance || 0) || ""}
+        subDescription={`${data.highestValuedAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.highestValuedAccountTrend[0]?.date || 0))}`}
         className="grid"
         svg={
           <svg
@@ -239,8 +239,8 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
       <SummaryCard
         title={`${data.biggestGrowthAccount?.name || ""}`}
         subHeading="Highest Growth Account by monthly balance"
-        description={formatCurrency(data.biggestGrowthAccount?.balance!) || ""}
-        subDescription={`${data.biggestGrowthAccountGrowthRate}% change from ${formatDate(new Date(data.biggestGrowthAccountTrend[0]?.date || 0))}`}
+        description={formatCurrency(data.biggestGrowthAccount?.balance || 0) || ""}
+        subDescription={`${data.biggestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.biggestGrowthAccountTrend[0]?.date || 0))}`}
         className="grid"
         svg={
           <svg
@@ -265,8 +265,8 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
       <SummaryCard
         title={`${data.smallestGrowthAccount?.name || ""}`}
         subHeading="Lowest Growth Account by monthly balance"
-        description={formatCurrency(data.smallestGrowthAccount?.balance!) || ""}
-        subDescription={`${data.smallestGrowthAccountGrowthRate.toFixed(2)}% change from ${formatDate(new Date(data.smallestGrowthAccountTrend[0]?.date || 0))}`}
+        description={formatCurrency(data.smallestGrowthAccount?.balance || 0) || ""}
+        subDescription={`${data.smallestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.smallestGrowthAccountTrend[0]?.date || 0))}`}
         className="grid"
         svg={
           <svg
