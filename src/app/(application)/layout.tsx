@@ -10,6 +10,10 @@ import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import Breadcrumbs from "@/components/navigation/Breadcrumb";
 import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
+
+import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ["latin"] });
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -35,7 +39,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(`${geistSans.variable} ${geistMono.variable} antialiased`, inter.className)}
       >
         <ThemeProvider
           attribute="class"
