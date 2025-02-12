@@ -24,7 +24,7 @@ const Page = () => {
 
   return (
     <ContentContainer className="grid grid-cols-4 gap-2">
-      <div className={`col-span-4 ${transactionId !== -1 ? "" : "lg:col-span-4"} lg:col-span-3 w-full px-0 sm:p-2 pt-2`}>
+      <main className={`col-span-4 lg:col-span-3 w-full px-0 sm:p-2 sm:px-0 pt-2`}>
         <div className="flex flex-start justify-between px-2 sm:p-0 sm:pb-2">
           <div className="w-full flex justify-between items-center">
             <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight mr-2">
@@ -35,11 +35,12 @@ const Page = () => {
           </div>
           <AccountMenu account={account} />
         </div>
-        <SpecificAccountTrend account={account} className="py-1" />
         <TransactionTable id={accountId} setTransactionId={setTransactionId} />
-      </div>
-      <TransactionDetails id={transactionId}
-        className={`col-span-0 hidden ${transactionId !== -1 ? "lg:col-span-1 lg:block" : "lg:col-span-0"} h-[45vh] mt-4 border rounded sticky top-0`} />
+      </main>
+      <aside className="col-span-0 hidden lg:flex lg:flex-col lg:gap-4 lg:col-span-1 mt-4">
+        <SpecificAccountTrend account={account} />
+        <TransactionDetails id={transactionId} className={`${transactionId !== -1 ? "block" : "hidden"} h-[45vh] sticky top-4`} />
+      </aside>
     </ContentContainer>
   );
 }
