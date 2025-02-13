@@ -12,7 +12,7 @@ const ColorPicker = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("w-fit h-fit min-h-[200px] rounded-md border shadow-sm", className)}
+    className={cn("w-fit h-fit min-h-[200px] rounded-md border shadow-xs", className)}
     {...props}
   >
     {children}
@@ -41,7 +41,7 @@ const ColorPickerInput = React.forwardRef<
   <input
     type={type}
     className={cn(
-      "flex w-[200px] h-fit px-1 py-1 mt-0.5 bg-transparent transition-colors uppercase text-base md:text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      "flex w-[200px] h-fit px-1 py-1 mt-0.5 bg-transparent transition-colors uppercase text-base md:text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     ref={ref}

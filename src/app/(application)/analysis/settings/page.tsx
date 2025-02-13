@@ -89,7 +89,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
               control={form.control}
               name="continuousTransactions"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
                   <div className="space-y-0.5">
                     <FormLabel>Continuous transactions</FormLabel>
                     <FormDescription>
@@ -109,7 +109,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
               control={form.control}
               name="recentTransactionLimit"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm max-w-[500px]">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs max-w-[500px]">
                   <div className="space-y-0.5">
                     <FormLabel>Recent transaction limit</FormLabel>
                     <FormDescription>
@@ -129,7 +129,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
               control={form.control}
               name="upcomingTransactionLimit"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm max-w-[500px]">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs max-w-[500px]">
                   <div className="space-y-0.5">
                     <FormLabel>Upcoming transaction limit</FormLabel>
                     <FormDescription>
@@ -154,7 +154,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
               control={form.control}
               name="appUpdates"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
                   <div className="space-y-0.5">
                     <FormLabel>App updates</FormLabel>
                     <FormDescription>
@@ -174,7 +174,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
               control={form.control}
               name="transactionUpdates"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
                   <div className="space-y-0.5">
                     <FormLabel>Transaction updates</FormLabel>
                     <FormDescription>

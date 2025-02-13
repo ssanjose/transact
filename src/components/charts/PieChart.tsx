@@ -95,7 +95,7 @@ export const PieChart = ({
                   content={
                     <ChartLegendContent nameKey="label" />
                   }
-                  className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                  className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
                 />
               )
             }

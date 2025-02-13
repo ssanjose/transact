@@ -36,7 +36,7 @@ const Cards = () => {
     <div className={cn(`grid grid-cols-1 md:grid-cols-4 gap-24 md:gap-10`)}>
       {cards.map((card, i) => (
         <Card key={i}
-          className="bg-inherit flex flex-grow flex-col gap-2 text-left border-0 shadow-none"
+          className="bg-inherit flex grow flex-col gap-2 text-left border-0 shadow-none"
         >
           {<card.icon className="text-4xl size-9" />}
           <CardTitle className="text-2xl font-bold">{card.title}</CardTitle>
