@@ -56,7 +56,7 @@ const CalendarWithTime = ({ selected, onSelect, initialFocus }: CalendarWithTime
         mode="single"
         selected={selected}
         onSelect={handleDateTimeChange}
-        initialFocus={initialFocus}
+        autoFocus={initialFocus}
       />
     </>
   )
