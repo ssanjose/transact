@@ -23,7 +23,7 @@ const chartConfig = {
 const DashboardAccountTrend = ({ data, gR }: { data: AccountTotalAmountProps[], gR: number }) => {
   const { settings } = useSettings();
   const title = formatCurrency(data[data.length - 1]?.accountAmount || 0, settings.currencyFormat);
-  const gRPercent = `${(gR * 100).toFixed(2)}% increase since ${formatDate(new Date(data[0]?.date || 0))}`;
+  const gRPercent = `${(gR * 100).toFixed(2)}% increase since ${formatDate(new Date(data[0]?.date || 0), settings.dateFormat)}`;
 
   return (
     <Card>

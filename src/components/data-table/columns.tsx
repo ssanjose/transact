@@ -1,14 +1,14 @@
 "use client"
 
 import { ColumnDef, RowData } from "@tanstack/react-table"
-import { formatCurrency } from "@/lib/format/formatCurrency"
 import { FrequencyOptions, Transaction } from "@/lib/db/db.model"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { format } from "date-fns";
 import { DataTableColumnHeader } from "@/components/data-table/ColumnHeader";
 import { AppSettings } from "@/lib/types/settings";
+import { formatDate } from "@/lib/format/formatTime";
+import { formatCurrency } from "@/lib/format/formatCurrency"
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,7 +59,7 @@ export const columns = (settings: AppSettings): ColumnDef<Transaction>[] => [
       const date = row.original.date;
       return (
         <div className="text-left text-md text-nowrap">
-          {format(date, "MMMM dd, yyyy hh:mm a")}
+          {formatDate(date, `${settings.dateFormat} h:mm a`)}
         </div>
       )
     }

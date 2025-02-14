@@ -211,7 +211,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
         title={`${data.highestValuedAccount?.name || ""}`}
         subHeading="Highest Valued Account by balance"
         description={formatCurrency(data.highestValuedAccount?.balance || 0, settings.currencyFormat) || ""}
-        subDescription={`${data.highestValuedAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.highestValuedAccountTrend[0]?.date || 0))}`}
+        subDescription={`${data.highestValuedAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.highestValuedAccountTrend[0]?.date || 0), settings.dateFormat)}`}
         className="grid"
         svg={
           <svg
@@ -232,7 +232,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
         title={`${data.mostUsedAccount?.name || ""}`}
         subHeading="Most Used Account by frequency"
         description={"+" + data.mostUsedAccountTransactionCount || ""}
-        subDescription={`Transactions since ${formatDate(new Date(data.transactionsOfMostUsedAccount[data.transactionsOfMostUsedAccount.length - 1]?.date || 0))}`}
+        subDescription={`Transactions since ${formatDate(new Date(data.transactionsOfMostUsedAccount[data.transactionsOfMostUsedAccount.length - 1]?.date || 0), settings.dateFormat)}`}
         className="grid"
         svg={
           <FaMoneyBill className="h-5 w-5 text-muted-foreground" />
@@ -242,7 +242,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
         title={`${data.biggestGrowthAccount?.name || ""}`}
         subHeading="Highest Growth Account by monthly balance"
         description={formatCurrency(data.biggestGrowthAccount?.balance || 0, settings.currencyFormat) || ""}
-        subDescription={`${data.biggestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.biggestGrowthAccountTrend[0]?.date || 0))}`}
+        subDescription={`${data.biggestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.biggestGrowthAccountTrend[0]?.date || 0), settings.dateFormat)}`}
         className="grid"
         svg={
           <svg
@@ -268,7 +268,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
         title={`${data.smallestGrowthAccount?.name || ""}`}
         subHeading="Lowest Growth Account by monthly balance"
         description={formatCurrency(data.smallestGrowthAccount?.balance || 0, settings.currencyFormat) || ""}
-        subDescription={`${data.smallestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.smallestGrowthAccountTrend[0]?.date || 0))}`}
+        subDescription={`${data.smallestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.smallestGrowthAccountTrend[0]?.date || 0), settings.dateFormat)}`}
         className="grid"
         svg={
           <svg

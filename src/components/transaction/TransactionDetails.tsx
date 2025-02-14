@@ -5,17 +5,18 @@ import { TransactionService } from '@/services/transaction.service';
 import { Frequency, Transaction, TransactionType } from '@/lib/db/db.model';
 import { cn } from '@/lib/utils';
 
-import { Inter } from 'next/font/google';
-const inter = Inter({ subsets: ["latin"] });
-
-import { format } from 'date-fns';
-import { formatCurrency } from '@/lib/format/formatCurrency';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSettings from '@/hooks/use-settings';
+import { formatDate } from '@/lib/format/formatTime';
+import { formatCurrency } from '@/lib/format/formatCurrency';
+import { AppSettings } from '@/lib/types/settings';
 
-const DetailsImage = ({ className, transaction }: { className?: string, transaction: Transaction }) => {
+import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ["latin"] });
+
+const DetailsImage = ({ className, settings, transaction }: { className?: string, settings: AppSettings, transaction: Transaction }) => {
   return (
     <div className={cn("overflow-hidden relative flex items-end rounded-t-xl", className)}>
       <div className="z-10 h-fit text-black px-2 p-1">
@@ -24,7 +25,7 @@ const DetailsImage = ({ className, transaction }: { className?: string, transact
         </h2>
         <p className="text-sm font-light">
           {transaction.status === "pending" ? "Scheduled" : "Completed"} on {
-            format(transaction.date, "MMM dd,yyyy, hh:mm a")
+            formatDate(transaction.date, `${settings.dateFormat}, hh:mm a`)
           }
         </p>
       </div>
@@ -100,7 +101,7 @@ const TransactionDetails = ({ id, className }: { id: number, className?: string 
 
   return (
     <Card className={cn("h-fit", className, inter.className)}>
-      <DetailsImage className="w-full h-2/5" transaction={transaction} />
+      <DetailsImage className="w-full h-2/5" transaction={transaction} settings={settings} />
       <div className="h-3/5 p-2 bg-card-overview/30 text-foreground">
         <DetailsText tL="Category: " tR={transaction.categoryId?.toString() || "None"} />
         <DetailsText tL="Type: " tR={TransactionType[transaction.type]} />

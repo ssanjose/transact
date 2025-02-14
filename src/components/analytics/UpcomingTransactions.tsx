@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/format/formatCurrency';
+import { formatDate } from '@/lib/format/formatTime';
 import { separateByDateFormat, SeparatedTransaction } from '@/lib/analysis/separateByDateFormat';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -77,7 +78,7 @@ const UpcomingTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
   return (tx ?
     <TableRow className={`h-fit hover:bg-transparent border-0`}>
       <TableCell className="flex flex-col rounded my-2 p-0">
-        <h3 className="text-muted-foreground text-xs font-light tracking-tight">{tx.key}</h3>
+        <h3 className="text-muted-foreground text-xs font-light tracking-tight">{formatDate(new Date(tx.key || 0), settings.dateFormat)}</h3>
         {tx.transactions.map((transaction, index) => (
           <div className="bg-inherit rounded mb-2 last:mb-0" key={index}>
             <div className="flex justify-between items-center">

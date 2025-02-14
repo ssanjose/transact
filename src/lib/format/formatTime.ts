@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-
+import { AppSettings } from "@/lib/types/settings";
 
 /**
  * Formats a date to a string
@@ -12,6 +12,6 @@ import { format } from "date-fns";
  * console.log(formattedDate); // "February 11, 2025"
  * ```
  */
-export const formatDate = (date: Date): string => {
-  return format(date, "MMMM d, yyyy");
+export const formatDate = (date: Date, dateFormat: string): string => {
+  return format(date, dateFormat);
 };
