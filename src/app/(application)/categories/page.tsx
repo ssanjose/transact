@@ -63,7 +63,7 @@ export default function CategoryPage() {
               }
             />
           </div>
-          <div className="w-full block lg:flex gap-2">
+          <div className="w-full flex flex-col lg:flex-row gap-2">
             <div className="w-full lg:w-3/4 h-fit space-y-2">
               <div className="block md:grid grid-cols-2 space-y-2 md:space-y-0 gap-2 justify-between">
                 <MostUsedCategory />
