@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -65,6 +66,17 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
       transactionUpdates: settings.transactionUpdates,
     },
   })
+
+  useEffect(() => {
+    form.reset({
+      recentTransactionLimit: settings.recentTransactionLimit,
+      upcomingTransactionLimit: settings.upcomingTransactionLimit,
+      continuousTransactions: settings.continuousTransactions,
+      appUpdates: settings.appUpdate,
+      transactionUpdates: settings.transactionUpdates,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings]);
 
   function onSubmit(data: z.infer<typeof SettingSchema>) {
     toast({
@@ -194,11 +206,11 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
         </div>
         <div className="flex flex-row items-center space-x-4">
           <Button type="submit">Save</Button>
-          <Button type="reset" variant="outline" onClick={(e) => {
+          <Button type="button" variant="outline" onClick={(e) => {
             e.preventDefault()
             form.reset()
           }}>Cancel</Button>
-          <Button type="button" variant="outline" onClick={(e) => {
+          <Button type="reset" variant="outline" onClick={(e) => {
             e.preventDefault()
             resetSettings()
           }}>Reset</Button>

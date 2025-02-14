@@ -23,13 +23,15 @@ const useSettings = () => {
     setSettings(updated);
   };
 
+  const resetSettings = () => {
+    SettingsStorage.resetSettings();
+    setSettings(() => SettingsStorage.getSettings());
+  }
+
   return {
     settings,
     updateSettings,
-    resetSettings: () => {
-      SettingsStorage.resetSettings();
-      setSettings(SettingsStorage.getSettings());
-    }
+    resetSettings,
   };
 }
 
