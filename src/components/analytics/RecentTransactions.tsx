@@ -8,6 +8,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import HeaderText from '@/components/common/HeaderText';
 import { cn } from '@/lib/utils';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
+import useSettings from '@/hooks/use-settings';
 
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ["latin"] });
@@ -71,6 +72,8 @@ const RecentTransactions = ({ className, accountId, limit = 3 }: {
 }
 
 const RecentTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
+  const { settings } = useSettings();
+
   return (tx ?
     <TableRow className={`h-fit hover:bg-transparent border-0`}>
       <TableCell className="flex flex-col rounded my-2 p-0">
@@ -79,7 +82,7 @@ const RecentTransactionTableRow = ({ tx }: { tx: SeparatedTransaction }) => {
           <div className="bg-inherit rounded mb-2 last:mb-0" key={index}>
             <div className="flex justify-between items-center">
               <h4 className="text-accent-foreground text-sm font-semibold tracking-tight">{transaction.name}</h4>
-              <p className="font-semibold text-base">{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount)}</p>
+              <p className="font-semibold text-base">{transaction.type === 0 ? '-' : null}{formatCurrency(transaction.amount, settings.currencyFormat)}</p>
             </div>
             <div className="flex justify-between items-center">
               <p className="text-muted-foreground text-xs">{transaction.account?.name}</p>

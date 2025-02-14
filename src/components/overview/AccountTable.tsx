@@ -21,9 +21,11 @@ import { appLinks } from '@/config/site';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { OpenAccountButton } from '@/components/account/AccountButtons';
 import { cn } from '@/lib/utils';
+import useSettings from '@/hooks/use-settings';
 
 const AccountTable = () => {
   const accounts = useLiveQuery(() => AccountService.getAllAccounts());
+  const { settings } = useSettings();
   const router = useRouter();
   if (!accounts || accounts === undefined) {
     return <AccountTableSkeleton />
@@ -39,7 +41,7 @@ const AccountTable = () => {
             onClick={() => router.push(`${appLinks.account}/${account.id}`)}
           >
             <TableCell>{account.name}</TableCell>
-            <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00)}</TableCell>
+            <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00, settings.currencyFormat)}</TableCell>
             <TableCell className="w-1/6 text-right">
               <Link className={buttonVariants({ variant: "link" })} href={`${appLinks.account}/${account.id}`} onClick={(e) => e.stopPropagation()}>
                 <SquarePen />
@@ -60,7 +62,7 @@ const AccountTable = () => {
             <TableCell>
               Total:
             </TableCell>
-            <TableCell className="text-right"> {formatCurrency(accounts?.reduce((acc, account) => acc + (account.balance ?? 0), 0) ?? 0)} </TableCell>
+            <TableCell className="text-right"> {formatCurrency(accounts?.reduce((acc, account) => acc + (account.balance ?? 0), 0) ?? 0, settings.currencyFormat)} </TableCell>
             <TableCell />
           </TableRow>
         }

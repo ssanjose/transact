@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTransactionContext } from "@/hooks/use-transaction-context"
 import { useCategoryContext } from "@/hooks/use-category-context";
+import useSettings from "@/hooks/use-settings";
 import SummaryCard from "@/components/common/SummaryCard";
 import { formatCurrency } from "@/lib/format/formatCurrency";
 
@@ -21,6 +22,7 @@ const HighestValueCategory = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   const transactions = useTransactionContext()
   const categories = useCategoryContext()
+  const { settings } = useSettings()
 
   const topByAmount = useMemo(() => {
     if (!transactions || !categories) return []
@@ -67,7 +69,7 @@ const HighestValueCategory = ({
       title="Highest Valued Category"
       subHeading="By total amount"
       description={topByAmount ? (topByAmount as Metric).category.name : "No transactions"}
-      subDescription={topByAmount ? formatCurrency((topByAmount as Metric).amount || 0) : ""}
+      subDescription={topByAmount ? formatCurrency((topByAmount as Metric).amount || 0, settings.currencyFormat) : ""}
       className="grid"
       svg={
         <div

@@ -14,6 +14,7 @@ import { Transaction } from '@/lib/db/db.model';
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import { useTransactionContext } from '@/hooks/use-transaction-context';
 import { useCategoryContext } from '@/hooks/use-category-context';
+import useSettings from '@/hooks/use-settings';
 
 const totalTransactionChartConfig = {
   expense: {
@@ -118,6 +119,7 @@ const IncomeTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
   const [incomeTransactions, setIncomeTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const transactions = useTransactionContext();
   const cts = useCategoryContext();
+  const { settings } = useSettings();
 
   const incomeTransactionChartData = React.useMemo(() => {
     if (!cts || !incomeTransactions) return [];
@@ -209,7 +211,7 @@ const IncomeTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
                       {
                         formatCurrency(incomeTransactions?.reduce((acc, tx) => {
                           return acc + (tx.amount);
-                        }, 0) || 0)
+                        }, 0) || 0, settings.currencyFormat)
                       }
                     </tspan>
                     <tspan
@@ -241,6 +243,7 @@ const ExpenseTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
   const [expenseTransactions, setExpenseTransactions] = React.useState<Transaction[] | undefined>(undefined);
   const transactions = useTransactionContext();
   const cts = useCategoryContext();
+  const { settings } = useSettings();
 
   const expenseTransactionChartData = React.useMemo(() => {
     if (!cts || !expenseTransactions) return [];
@@ -331,7 +334,7 @@ const ExpenseTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
                       {
                         formatCurrency(expenseTransactions?.reduce((acc, tx) => {
                           return acc + (tx.amount);
-                        }, 0) || 0)
+                        }, 0) || 0, settings.currencyFormat)
                       }
                     </tspan>
                     <tspan

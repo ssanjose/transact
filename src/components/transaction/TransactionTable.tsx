@@ -22,9 +22,11 @@ import dataTableConfig from '@/config/data-table';
 import SimpleInputFilter from '@/components/data-table/SimpleInputFilter';
 import { DataTableViewOptions } from '@/components/data-table/ColumnToggle';
 import { DataTablePagination } from "@/components/data-table/PaginationControls"
+import useSettings from '@/hooks/use-settings';
 
 const TransactionTable = ({ id, setTransactionId }: { id?: number, setTransactionId: (id: number) => void }) => {
   const transactions = useLiveQuery<Transaction[], []>(() => TransactionService.getTransactionsByAccount(id), [id], []);
+  const { settings } = useSettings();
 
   const [selectedRowForAction, setSelectedRowForAction] = React.useState<number | undefined>(undefined);
   const [rowData, setRowData] = React.useState<Transaction>({} as Transaction);
@@ -47,7 +49,7 @@ const TransactionTable = ({ id, setTransactionId }: { id?: number, setTransactio
 
   const table = useReactTable<Transaction>({
     data: transactions,
-    columns,
+    columns: columns(settings),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -75,7 +77,7 @@ const TransactionTable = ({ id, setTransactionId }: { id?: number, setTransactio
         <SimpleInputFilter table={table} />
         <DataTableViewOptions table={table} />
       </div>
-      <DataTable columns={columns}
+      <DataTable columns={columns(settings)}
         setId={setTransactionId}
         table={table}
       />

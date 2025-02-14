@@ -20,12 +20,13 @@ import SummaryCard from '@/components/common/SummaryCard';
 import TransactionAmountTrend from '@/components/analytics/TransactionAmountTrend';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/lib/format/formatCurrency';
+import { FaMoneyBill } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/format/formatCurrency';
+import { formatDate } from '@/lib/format/formatTime';
+import useSettings from '@/hooks/use-settings';
 
 import { Inter } from 'next/font/google';
-import { formatDate } from '@/lib/format/formatTime';
-import { FaMoneyBill } from 'react-icons/fa';
 const inter = Inter({ subsets: ["latin"] });
 
 const getAnalyzedData = (accounts: Account[], transactions: Transaction[], dateRange: DateRange) => {
@@ -160,6 +161,7 @@ const Page = () => {
 }
 
 const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> }) => {
+  const { settings } = useSettings();
 
   if (!data)
     return (
@@ -208,7 +210,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
       <SummaryCard
         title={`${data.highestValuedAccount?.name || ""}`}
         subHeading="Highest Valued Account by balance"
-        description={formatCurrency(data.highestValuedAccount?.balance || 0) || ""}
+        description={formatCurrency(data.highestValuedAccount?.balance || 0, settings.currencyFormat) || ""}
         subDescription={`${data.highestValuedAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.highestValuedAccountTrend[0]?.date || 0))}`}
         className="grid"
         svg={
@@ -239,7 +241,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
       <SummaryCard
         title={`${data.biggestGrowthAccount?.name || ""}`}
         subHeading="Highest Growth Account by monthly balance"
-        description={formatCurrency(data.biggestGrowthAccount?.balance || 0) || ""}
+        description={formatCurrency(data.biggestGrowthAccount?.balance || 0, settings.currencyFormat) || ""}
         subDescription={`${data.biggestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.biggestGrowthAccountTrend[0]?.date || 0))}`}
         className="grid"
         svg={
@@ -265,7 +267,7 @@ const AccountDataCards = ({ data }: { data?: ReturnType<typeof getAnalyzedData> 
       <SummaryCard
         title={`${data.smallestGrowthAccount?.name || ""}`}
         subHeading="Lowest Growth Account by monthly balance"
-        description={formatCurrency(data.smallestGrowthAccount?.balance || 0) || ""}
+        description={formatCurrency(data.smallestGrowthAccount?.balance || 0, settings.currencyFormat) || ""}
         subDescription={`${data.smallestGrowthAccountGrowthRate.toFixed(2)}% change since ${formatDate(new Date(data.smallestGrowthAccountTrend[0]?.date || 0))}`}
         className="grid"
         svg={

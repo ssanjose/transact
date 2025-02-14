@@ -13,6 +13,7 @@ import { formatCurrency } from '@/lib/format/formatCurrency';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import useSettings from '@/hooks/use-settings';
 
 const DetailsImage = ({ className, transaction }: { className?: string, transaction: Transaction }) => {
   return (
@@ -41,6 +42,7 @@ const DetailsImage = ({ className, transaction }: { className?: string, transact
 const TransactionDetails = ({ id, className }: { id: number, className?: string }) => {
   const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const { settings } = useSettings();
 
   useEffect(() => {
     if (id === -1) {
@@ -103,7 +105,7 @@ const TransactionDetails = ({ id, className }: { id: number, className?: string 
         <DetailsText tL="Category: " tR={transaction.categoryId?.toString() || "None"} />
         <DetailsText tL="Type: " tR={TransactionType[transaction.type]} />
         <DetailsText tL="Frequency: " tR={Frequency[transaction.frequency]} />
-        <DetailsText tL="Amount:" tR={formatCurrency(transaction.amount)} />
+        <DetailsText tL="Amount:" tR={formatCurrency(transaction.amount, settings.currencyFormat)} />
         <DetailsText tL="Status:" tR={transaction.status} />
       </div>
     </Card>

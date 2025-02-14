@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { DataTableColumnHeader } from "@/components/data-table/ColumnHeader";
+import { AppSettings } from "@/lib/types/settings";
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +24,7 @@ declare module '@tanstack/react-table' {
  * The columns for the transaction table
  * @param {Transaction} row - The transaction row
  */
-export const columns: ColumnDef<Transaction>[] = [
+export const columns = (settings: AppSettings): ColumnDef<Transaction>[] => [
   {
     accessorKey: "id",
     header: () => <div className="text-left">ID</div>,
@@ -107,7 +108,7 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
     cell: ({ row }) => {
       const type = row.original.type;
-      const amount = formatCurrency(row.getValue("amount"));
+      const amount = formatCurrency(row.getValue("amount"), settings.currencyFormat);
 
       return (
         <div className={`text-right text-md ${type === 0 ? "text-number-negative" : "text-number-positive"}`}>
