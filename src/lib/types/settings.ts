@@ -24,5 +24,5 @@ export const DEFAULT_SETTINGS: AppSettings = {
   recurringTransactions: false,
 
   currencyFormat: 'USD',
-  dateFormat: 'MMM dd, YYYY'
+  dateFormat: 'MMMM d, yyyy'
 };
