@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer } from '@/components/ui/chart';
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import { TransactionAmountProps } from '@/services/analytics/props/analytics.props';
+import useSettings from '@/hooks/use-settings';
+import { formatCurrency } from '@/lib/format/formatCurrency';
 
 const chartConfig = {
   amount: {
@@ -18,6 +20,8 @@ const chartConfig = {
 }
 
 const TransactionAmountTrend = ({ data }: { data: TransactionAmountProps[] }) => {
+  const { settings } = useSettings();
+
   return (
     <Card>
       <CardHeader>
@@ -31,7 +35,7 @@ const TransactionAmountTrend = ({ data }: { data: TransactionAmountProps[] }) =>
             margin={{
               top: 5,
               right: 10,
-              left: -10,
+              left: 10,
               bottom: 0,
             }}
           >
@@ -54,7 +58,7 @@ const TransactionAmountTrend = ({ data }: { data: TransactionAmountProps[] }) =>
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => formatCurrency(value, settings.currencyFormat)}
             />
             <Bar
               dataKey="amount"

@@ -4,6 +4,8 @@ import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import useSettings from "@/hooks/use-settings"
+import { formatCurrency } from "@/lib/format/formatCurrency"
 
 export interface AreaChartDataPoint {
   date: string;
@@ -44,6 +46,7 @@ export const StackedGradientAreaChart = ({
   showLegend = true,
   ...props
 }: StackedGradientAreaChartProps) => {
+  const { settings } = useSettings();
   const gradientDefinitions = React.useMemo(() =>
     Object.entries(config).map(([key, value]) => (
       <linearGradient key={key} id={`fill${key}`} x1="0" y1="0" x2="0" y2="1">
@@ -92,7 +95,7 @@ export const StackedGradientAreaChart = ({
           >
             <AreaChart data={data}
               margin={{
-                left: -15,
+                left: 10,
               }}
             >
               <defs>
@@ -118,7 +121,7 @@ export const StackedGradientAreaChart = ({
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => formatCurrency(value, settings.currencyFormat)}
               />
               <ChartTooltip
                 cursor={false}
