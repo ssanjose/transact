@@ -43,11 +43,13 @@ const SettingSchema = z.object({
       message: 'Number must be at most 6',
     })),
 
-  continuousTransactions: z.boolean(),
+  recurringTransactions: z.boolean(),
+
+  currencyFormat: z.string(),
+  dateFormat: z.string(),
 
   appUpdates: z.boolean(),
   transactionUpdates: z.boolean(),
-
 })
 
 const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
@@ -60,7 +62,10 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
       recentTransactionLimit: settings.recentTransactionLimit,
       upcomingTransactionLimit: settings.upcomingTransactionLimit,
 
-      continuousTransactions: settings.continuousTransactions,
+      recurringTransactions: settings.recurringTransactions,
+
+      currencyFormat: settings.currencyFormat,
+      dateFormat: settings.dateFormat,
 
       appUpdates: settings.appUpdates,
       transactionUpdates: settings.transactionUpdates,
@@ -71,7 +76,9 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
     form.reset({
       recentTransactionLimit: settings.recentTransactionLimit,
       upcomingTransactionLimit: settings.upcomingTransactionLimit,
-      continuousTransactions: settings.continuousTransactions,
+      recurringTransactions: settings.recurringTransactions,
+      currencyFormat: settings.currencyFormat,
+      dateFormat: settings.dateFormat,
       appUpdates: settings.appUpdates,
       transactionUpdates: settings.transactionUpdates,
     });
@@ -99,11 +106,11 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="continuousTransactions"
+              name="recurringTransactions"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
                   <div className="space-y-0.5">
-                    <FormLabel>Continuous transactions</FormLabel>
+                    <FormLabel>Recurring transactions</FormLabel>
                     <FormDescription>
                       Automatically add new transactions when a new month starts.
                     </FormDescription>
@@ -154,6 +161,45 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
                     </FormControl>
                     <FormMessage />
                   </div>
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-4 text-lg font-medium">Preferences</h3>
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="currencyFormat"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs max-w-[500px]">
+                  <div className="space-y-0.5">
+                    <FormLabel>Currency Format</FormLabel>
+                    <FormDescription>
+                      The default currency for new transactions.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Input {...field} value={field.value} className="w-24" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dateFormat"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs max-w-[500px]">
+                  <div className="space-y-0.5">
+                    <FormLabel>Date format</FormLabel>
+                    <FormDescription>
+                      The format for displaying dates.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Input {...field} value={field.value} className="w-50" />
+                  </FormControl>
                 </FormItem>
               )}
             />
