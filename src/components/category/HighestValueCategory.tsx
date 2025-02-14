@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTransactionContext } from "@/hooks/use-transaction-context"
 import { useCategoryContext } from "@/hooks/use-category-context";
+import SummaryCard from "@/components/common/SummaryCard";
+import { formatCurrency } from "@/lib/format/formatCurrency";
 
 interface Metric {
   category: Category
@@ -61,31 +63,19 @@ const HighestValueCategory = ({
     )
 
   return (
-    <Card className={cn("grid", className)}>
-      <CardHeader className="p-4 pb-0 lg:p-6 lg:pb-0">
-        <CardTitle>Highest Valued Category</CardTitle>
-        <CardDescription>By total amount</CardDescription>
-      </CardHeader>
-      <CardContent className="flex items-center gap-2 p-4 pt-2 lg:p-6 lg:pt-2">
+    <SummaryCard
+      title="Highest Valued Category"
+      subHeading="By total amount"
+      description={topByAmount ? (topByAmount as Metric).category.name : "No transactions"}
+      subDescription={topByAmount ? formatCurrency((topByAmount as Metric).amount || 0) : ""}
+      className="grid"
+      svg={
         <div
-          className="w-4 h-4 rounded"
+          className="size-5 rounded"
           style={{ backgroundColor: (topByAmount as Metric)?.category.color }}
         />
-        <span className="text-lg font-semibold">
-          {topByAmount ?
-            <>
-              {(topByAmount as Metric).category.name} (
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format((topByAmount as Metric).amount || 0)}
-              )
-            </> :
-            "No transactions"
-          }
-        </span>
-      </CardContent>
-    </Card>
+      }
+    />
   )
 }
 

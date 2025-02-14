@@ -2,12 +2,13 @@
 
 import * as React from "react"
 import { useMemo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Category } from "@/lib/db/db.model"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTransactionContext } from "@/hooks/use-transaction-context"
 import { useCategoryContext } from "@/hooks/use-category-context";
+import SummaryCard from "@/components/common/SummaryCard";
 
 interface Metric {
   category: Category
@@ -61,26 +62,19 @@ const MostUsedCategory = ({
     )
 
   return (
-    <Card className={cn("grid", className)}>
-      <CardHeader className="p-4 pb-0 lg:p-6 lg:pb-0">
-        <CardTitle>Most Used Category</CardTitle>
-        <CardDescription>By number of transactions</CardDescription>
-      </CardHeader>
-      <CardContent className="flex items-center gap-2 p-4 pt-2 lg:p-6 lg:pt-2">
+    <SummaryCard
+      title="Most Used Category"
+      subHeading="By number of transactions"
+      description={topByCount ? (topByCount as Metric).category.name : "No transactions"}
+      subDescription={topByCount ? `${(topByCount as Metric).count} transactions` : ""}
+      className="grid"
+      svg={
         <div
-          className="w-4 h-4 rounded"
+          className="size-5 rounded"
           style={{ backgroundColor: (topByCount as Metric)?.category.color }}
         />
-        <span className="text-lg font-semibold">
-          {topByCount ?
-            <>
-              {(topByCount as Metric).category.name} ({(topByCount as Metric).count} transactions)
-            </> :
-            "No transactions"
-          }
-        </span>
-      </CardContent>
-    </Card>
+      }
+    />
   )
 }
 
