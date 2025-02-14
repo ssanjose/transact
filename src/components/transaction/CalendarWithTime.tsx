@@ -51,7 +51,7 @@ const CalendarWithTime = ({ selected, onSelect, initialFocus }: CalendarWithTime
 
   return (
     <>
-      <Input type="time" className="shadow-none border-none font-medium text-sm md:text-lg" value={time} onChange={handleTimeChange} />
+      <Input type="time" className="shadow-none border-none font-normal text-lg" value={time} onChange={handleTimeChange} />
       <Calendar
         mode="single"
         selected={selected}
