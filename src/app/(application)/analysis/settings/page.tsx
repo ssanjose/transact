@@ -62,7 +62,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
 
       continuousTransactions: settings.continuousTransactions,
 
-      appUpdates: settings.appUpdate,
+      appUpdates: settings.appUpdates,
       transactionUpdates: settings.transactionUpdates,
     },
   })
@@ -72,7 +72,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
       recentTransactionLimit: settings.recentTransactionLimit,
       upcomingTransactionLimit: settings.upcomingTransactionLimit,
       continuousTransactions: settings.continuousTransactions,
-      appUpdates: settings.appUpdate,
+      appUpdates: settings.appUpdates,
       transactionUpdates: settings.transactionUpdates,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -2,7 +2,7 @@ export const NUMBER_INPUT_MIN = 1;
 export const NUMBER_INPUT_MAX = 6;
 
 export interface AppSettings {
-  appUpdate: boolean;
+  appUpdates: boolean;
   transactionUpdates: boolean;
 
   recentTransactionLimit: number;
@@ -15,7 +15,7 @@ export interface AppSettings {
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  appUpdate: true,
+  appUpdates: true,
   transactionUpdates: true,
 
   recentTransactionLimit: 3,
