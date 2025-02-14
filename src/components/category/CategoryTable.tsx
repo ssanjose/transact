@@ -24,10 +24,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 interface CategoryTableProps {
-  categories: Category[]
+  categories: Category[];
+  className?: string;
 }
 
-const CategoryTable = ({ categories }: CategoryTableProps) => {
+const CategoryTable = ({ className, categories }: CategoryTableProps) => {
   const transactions = useTransactionContext();
   const [selectedRowForAction, setSelectedRowForAction] = React.useState<number | undefined>()
   const [rowData, setRowData] = React.useState<Category>({} as Category)
@@ -128,6 +129,7 @@ const CategoryTable = ({ categories }: CategoryTableProps) => {
       <DataTable
         columns={columns}
         table={table}
+        className={className}
       />
       <EditCategoryButton
         existingCategory={rowData}

@@ -72,7 +72,7 @@ export default function CategoryPage() {
               <CategoryPieChart />
             </div>
             <div className="w-full lg:w-1/4">
-              <CategoryTable categories={categories || []} />
+              <CategoryTable categories={categories || []} className="rounded-xl shadow-sm" />
             </div>
           </div>
         </ContentContainer>
