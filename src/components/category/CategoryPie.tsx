@@ -53,14 +53,13 @@ const CategoryPieChart = ({
   }, [categories]);
 
   return (
-    <div className={cn("grid", className)}>
-      <PieChart
-        data={chartData}
-        config={chartConfig}
-        title="Transactions by Category"
-        description="Distribution of transactions (income & expenses) across categories"
-      />
-    </div>
+    <PieChart
+      data={chartData}
+      config={chartConfig}
+      title="Transactions by Category"
+      description="Distribution of transactions (income & expenses) across categories"
+      className={cn("grid", className)}
+    />
   )
 }
 
