@@ -8,9 +8,9 @@ export interface AppSettings {
   recentTransactionLimit: number;
   upcomingTransactionLimit: number;
 
-  continuousTransactions: boolean;
+  recurringTransactions: boolean;
 
-  defaultCurrency: string;
+  currencyFormat: string;
   dateFormat: string;
 }
 
@@ -21,8 +21,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   recentTransactionLimit: 3,
   upcomingTransactionLimit: 3,
 
-  continuousTransactions: false,
+  recurringTransactions: false,
 
-  defaultCurrency: 'USD',
+  currencyFormat: 'USD',
   dateFormat: 'MMM dd, YYYY'
 };
