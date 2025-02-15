@@ -53,7 +53,7 @@ const Home = () => {
         <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full" />
         </Card>
-        <Card className="flex w-full md:w-1/2">
+        <Card className="flex w-full h-fit md:w-1/2">
           <UpcomingTransactions className="p-3 md:p-4 border-0 bg-card-overview rounded-xl" limit={settings.upcomingTransactionLimit} />
         </Card>
       </div>
@@ -113,6 +113,7 @@ const Trends = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
     const dateRange = getDateRangeFromSelectedRange(selectedDateRange);
     const trend = TransactionAnalyticsService.getIncomeExpenseTransactionAmount({ transactions: transactions || [], dateRange });
     return AccountAnalyticsService.squeezeTimeSeriesData(trend, 20);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactions]);
 
   return (
