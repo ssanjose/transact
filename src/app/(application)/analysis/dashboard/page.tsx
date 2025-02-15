@@ -6,7 +6,6 @@ import DateRangePicker from '@/components/analytics/DateRangePicker';
 import { addMonths } from 'date-fns';
 import { Account, Transaction } from '@/lib/db/db.model';
 import { TransactionService } from '@/services/transaction.service';
-import { ExpenseTransactionChart, IncomeTransactionChart } from '@/components/overview/TransactionChartSummary';
 import { DateRange } from 'react-day-picker';
 import { TransactionContext } from '@/hooks/use-transaction-context';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -122,7 +121,8 @@ const Page = () => {
 
   useEffect(() => {
     setAnalyzedData(getAnalyzedData(accounts || [], transactions || [], date));
-  }, [transactions])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions, accounts])
 
   return (
     <CategoryContext.Provider value={categories || []}>
@@ -150,8 +150,6 @@ const Page = () => {
                   gR={analyzedData.accountTrendGrowthRate || 0}
                 />
               }
-              <IncomeTransactionChart className="h-fit" />
-              <ExpenseTransactionChart className="h-fit" />
             </div>
           </div>
         </ContentContainer>
