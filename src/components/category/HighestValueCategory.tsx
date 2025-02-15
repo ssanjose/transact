@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useMemo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Category } from "@/lib/db/db.model"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
