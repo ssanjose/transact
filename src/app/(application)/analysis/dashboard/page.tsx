@@ -136,19 +136,15 @@ const Page = () => {
           </div>
           <div className="flex flex-col lg:grid lg:grid-cols-7 pb-0 px-0 gap-2 lg:gap-4 w-full">
             <div className="w-full flex flex-col gap-2 lg:gap-4 lg:col-span-5 relative">
-              {analyzedData &&
-                <TransactionAmountTrend
-                  data={analyzedData.transactionTrend || []}
-                />
-              }
+              <TransactionAmountTrend
+                data={analyzedData.transactionTrend || []}
+              />
             </div>
             <div className="w-full lg:col-span-2">
-              {analyzedData &&
-                <DashboardAccountTrend
-                  data={analyzedData.squeezedAccountTrend || []}
-                  gR={analyzedData.accountTrendGrowthRate || 0}
-                />
-              }
+              <DashboardAccountTrend
+                data={analyzedData.squeezedAccountTrend || []}
+                gR={analyzedData.accountTrendGrowthRate || 0}
+              />
             </div>
           </div>
         </ContentContainer>
