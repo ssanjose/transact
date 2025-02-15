@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import ContentContainer from '@/components/common/ContentContainer';
 import DateRangePicker from '@/components/analytics/DateRangePicker';
 import { addMonths } from 'date-fns';
@@ -100,7 +100,6 @@ const Page = () => {
   const [transactions, setTransactions] = React.useState<Transaction[] | null | undefined>(null);
   const accounts = useLiveQuery(() => AccountService.getAllAccounts());
   const categories = useLiveQuery(() => CategoryService.getAllCategories());
-  const [analyzedData, setAnalyzedData] = React.useState<ReturnType<typeof getAnalyzedData> | null | undefined>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -119,8 +118,8 @@ const Page = () => {
     return () => { isMounted = false; }
   }, [date])
 
-  useEffect(() => {
-    setAnalyzedData(getAnalyzedData(accounts || [], transactions || [], date));
+  const analyzedData = useMemo(() => {
+    return getAnalyzedData(accounts || [], transactions || [], date);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactions, accounts])
 
