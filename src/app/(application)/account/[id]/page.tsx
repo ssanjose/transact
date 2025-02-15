@@ -63,6 +63,7 @@ const SpecificAccountTrend = ({
 
   const data = useMemo(() => {
     return AccountAnalyticsService.getAccountTrend([account], transactions || []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactions]);
 
   return (
