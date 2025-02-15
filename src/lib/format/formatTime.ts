@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { AppSettings } from "@/lib/types/settings";
 
 /**
  * Formats a date to a string
