@@ -11,7 +11,7 @@ import SelectDateRange from '@/components/overview/SelectDateRange';
 import { SelectedDateRange } from '@/services/analytics/props/date-range.props';
 import ContentContainer from '@/components/common/ContentContainer';
 import { TransactionAnalyticsService } from '@/services/analytics/transaction.analytics.service';
-import AccountList from '@/components/overview/AccountTable';
+import AccountList from '@/components/overview/AccountList';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CategoryService } from '@/services/category.service';
 import { TransactionContext, useTransactionContext } from '@/hooks/use-transaction-context';
