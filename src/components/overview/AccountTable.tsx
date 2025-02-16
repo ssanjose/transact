@@ -85,7 +85,7 @@ export const AccountTableSkeleton = () => {
   );
 }
 
-export const AccountList = ({ className }: { className?: string }) => {
+const AccountList = ({ className }: { className?: string }) => {
   return (
     <Accordion type="single" collapsible className={cn("gap-2", className)} defaultValue="item-1">
       <AccordionItem value="item-1" className="border-none">
@@ -101,4 +101,4 @@ export const AccountList = ({ className }: { className?: string }) => {
   )
 }
 
-export default AccountTable;
+export default AccountList;
