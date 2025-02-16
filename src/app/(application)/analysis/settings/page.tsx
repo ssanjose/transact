@@ -22,6 +22,8 @@ import { cn } from "@/lib/utils";
 import useSettings from "@/hooks/use-settings";
 import { Input } from "@/components/ui/input";
 import { NUMBER_INPUT_MAX, NUMBER_INPUT_MIN } from "@/lib/types/settings";
+import { Currencies } from "@/config/currency";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const SettingSchema = z.object({
   recentTransactionLimit: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
@@ -45,7 +47,9 @@ const SettingSchema = z.object({
 
   recurringTransactions: z.boolean(),
 
-  currencyFormat: z.string(),
+  currencyFormat: z.enum(Currencies, {
+    message: 'Currency must be a valid currency',
+  }),
   dateFormat: z.string(),
 
   appUpdates: z.boolean(),
@@ -85,7 +89,7 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings]);
 
-  function onSubmit(data: z.infer<typeof SettingSchema>) {
+  const onSubmit = (data: z.infer<typeof SettingSchema>) => {
     toast({
       title: "You submitted the following values:",
       description: (
@@ -180,9 +184,25 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
                       The default currency for new transactions.
                     </FormDescription>
                   </div>
-                  <FormControl>
-                    <Input {...field} value={field.value} className="w-24" />
-                  </FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl className="w-24">
+                      <SelectTrigger>
+                        <SelectValue>{field.value}</SelectValue>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="w-24">
+                      {Currencies.map((_, index) => {
+                        return (
+                          <SelectItem key={"currencyOption" + index} value={Currencies[index]}>
+                            {Currencies[index]}
+                          </SelectItem>
+                        )
+                      })}
+                    </SelectContent>
+                  </Select>
                 </FormItem>
               )}
             />
