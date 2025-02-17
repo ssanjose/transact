@@ -47,7 +47,7 @@ const Hero = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
         src="/transact_hero.jpg"
         width="1000"
         height="800"
-        alt="Hero Image"
+        alt="Screenshot showing transaction tracking and visualization features"
         className=""
         containerClassName="border-2 border-secondary"
       />

@@ -90,21 +90,27 @@ const CategoryTable = ({ className, categories }: CategoryTableProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {
-                  table.options.meta?.editDialogTrigger()
-                  table.options.meta?.removeId()
-                }}
-              >
-                Edit Category
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  table.options.meta?.deleteDialogTrigger()
-                }}
-              >
-                Delete Category
-              </DropdownMenuItem>
+              <ul role="menu">
+                <li role="menuitem">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      table.options.meta?.editDialogTrigger()
+                      table.options.meta?.removeId()
+                    }}
+                  >
+                    Edit Category
+                  </DropdownMenuItem>
+                </li>
+                <li role="menuitem">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      table.options.meta?.deleteDialogTrigger()
+                    }}
+                  >
+                    Delete Category
+                  </DropdownMenuItem>
+                </li>
+              </ul>
             </DropdownMenuContent>
           </DropdownMenu>
         )
