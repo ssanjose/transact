@@ -102,3 +102,32 @@ Database Version 0 Checklist:
       ✔ Edit the TransactionService editTransaction method to call the applyTransactionsToAccount method when a Transaction is edited to update the Account's balance and edit, update, or delete some transactions @done(25-02-01 04:14)
       ✔ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction @done(25-02-01 03:21)
     
+  Database Version 0.6.0 Checklist:
+      ERD:
+        ☐ Edit the ERD to include the new fields in the Transaction model (accountAmount)
+
+      Diagrams:
+        ☐ 
+        ☐ 
+
+      Models:
+        ☐ Edit the Transaction model to include the new fields (accountAmount?: number)
+        ☐ Adjust Dexie Entity Tables and stores to reflect the changes in the models
+
+      Validation Schema:
+        ☐ Add the new fields to the Transaction schema (accountAmount)
+
+      Form:
+        ☐ Add a new field to the Transaction form (accountAmount), and default to undefined
+
+      Services:
+        ☐ Edit the TransactionService to include the new fields (accountAmount) (TBD)
+        ☐ Edit the AccountService applyTransactionsToAccount method to update the Transactions' accountAmount field when the transaction is committed, search for the first not yet committed transaction and update the accountAmount and the account's balance according to the previous transaction's accountAmount, then subsequently update other Transactions' accountAmount field when the Transaction is edited or deleted
+        ☐ Edit the AccountService rollbackTransactionsFromAccount method to revert the Transactions' accountAmount field when the transaction is uncommitted and revert other Transactions' accountAmount field when the Transaction is edited or deleted, also revert the account's balance to the previous transaction's accountAmount when the transaction is uncommitted and revert the account's balance to the previous transaction's accountAmount when the transaction is edited or deleted (TBD)
+        ☐ Edit the TransactionService createTransaction method to change behaviour to update the Transactions' accountAmount field when a Transaction is created
+        ☐ Edit the TransactionService updateTransaction method to change behaviour to update the Transactions' accountAmount field when a Transaction is updated
+        ☐ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction
+        ☐ Edit the TransactionService commitTransaction method to update the Transaction's status to 'processed' and update the Account's balance and accountAmount field when a Transaction is committed
+        ☐ Edit the TransactionService uncommitTransaction method to update the Transaction's status to 'pending' and revert the Transaction's effect on the Account's balance and accountAmount field when a Transaction is uncommitted
+
+      
