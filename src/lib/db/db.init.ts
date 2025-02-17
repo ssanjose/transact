@@ -9,8 +9,8 @@ const FinanceTrackerDatabase = new Dexie("FinanceTrackerApp") as Dexie & {
 };
 
 FinanceTrackerDatabase.version(1).stores({
-  accounts: "++id, name, balance, startingBalance, createdAt, updatedAt",
-  transactions: "++id, name, amount, date, type, frequency, status, accountId, categoryId, transactionId",
+  accounts: "++id, name, balance, startingBalance, updatedAt",
+  transactions: "++id, name, amount, date, status, accountId, categoryId, transactionId",
   categories: "++id, name, color",
 });
 
