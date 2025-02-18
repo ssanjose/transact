@@ -319,25 +319,18 @@ function getTransactionsByDate({ lowerBound, upperBound, sorted, sortedDirection
 }
 
 /**
- * Commits an array of transactions by updating their status from "pending" to "processed".
+ * Commits an array of transactions by updating their status from "pending" to "processed", and updating the account amount.
  * @param {Transaction[]} transactions - The transactions to commit.
  * @returns {Promise<void>} - A promise that resolves when the transactions are committed.
  */
-function commitTransactions(ids: number[]): Promise<void> {
+function commitTransactions(transactions: Transaction[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    const transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
-
-    const toBeCommitted = transactions.map((transaction, idx) => {
-      if (!transaction || ids[idx] !== transaction.id!)
-        throw new Error('One or more transactions not found');
-
-      if (transaction.status === 'processed')
-        throw new Error('One or more transactions already processed');
-
+    const toBeCommitted = transactions.map((transaction) => {
       return {
         key: transaction.id!,
         changes: {
-          status: 'processed'
+          accountAmount: transaction.accountAmount,
+          status: 'processed',
         } as Partial<Transaction>,
       };
     });
