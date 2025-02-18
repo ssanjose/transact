@@ -59,31 +59,32 @@ function updateTransaction(transaction: Transaction): Promise<void> {
     FinanceTrackerDatabase.transactions,
     async () => {
       const existingTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id));
+      const transactionAfterExisting = (await FinanceTrackerDatabase.transactions.where('accountId').equals(existingTransaction.accountId).and(tx => tx.date >= existingTransaction.date).sortBy('date'));
+      transactionAfterExisting.shift();
+
+      // tag the transaction after the existing transaction as pending
+      // edge case: if the existing transaction is updated to be later than the next transaction, the next transaction should be tagged as pending
+      let prevAfterTransaction = transactionAfterExisting.shift();
+      if (prevAfterTransaction)
+        await FinanceTrackerDatabase.transactions.update(prevAfterTransaction.id, { status: 'pending' });
 
       // Get all affected transactions (parent + existing children)
       const affectedTransactions = [existingTransaction];
-      if (!existingTransaction.transactionId) {
+      if (existingTransaction.transactionId!) {
         const childTransactions = await FinanceTrackerDatabase.transactions
           .where({ transactionId: existingTransaction.id })
           .toArray();
         affectedTransactions.push(...childTransactions);
       }
 
-      // Rollback processed transactions before updating
-      const processedTransactions = affectedTransactions.filter(tx => tx.status === 'processed').map(tx => tx.id!);
-
-      if (processedTransactions.length > 0)
-        await AccountService.rollbackTransactionsFromAccount(
-          existingTransaction.accountId,
-          processedTransactions
-        );
-
       // Update the parent transaction
       await FinanceTrackerDatabase.transactions.update(transaction.id, {
         ...transaction,
         // Make child transactions independent if updated by itself by removing the transactionId, and setting the frequency to one-time
         frequency: transaction.transactionId ? Frequency.OneTime : transaction.frequency,
+        // set status and accountAmount to undefined to redo balance calculation
         status: 'pending',
+        accountAmount: undefined,
         // Ensure that the transactionId is undefined for parent transactions and child transactions
         transactionId: undefined,
       });
@@ -99,7 +100,7 @@ function updateTransaction(transaction: Transaction): Promise<void> {
       const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
       if (existingTransaction.date.toISOString() !== transaction.date.toISOString() || existingTransaction.frequency !== transaction.frequency) {
         const newChildTransactions = generateChildTransactions(updatedTransaction);
-        await updateChildTransactions(updatedTransaction, existingChildTransactions, newChildTransactions);
+        await updateChildTransactions(existingChildTransactions, newChildTransactions);
       } else {
         const changes = await convertToUpdateChanges(existingChildTransactions, updatedTransaction);
         await FinanceTrackerDatabase.transactions.bulkUpdate(changes);
@@ -140,7 +141,7 @@ function deleteTransaction(transactionId: number): Promise<void> {
       // make the transaction status of the transaction after the parent transaction pending then
       // recalculate the account balance with applyTransactionsToAccount
       const accountId = transaction.accountId;
-      await AccountService.rollbackTransactionsFromAccount(accountId, transaction);
+      await AccountService.rollbackTransactionFromAccount(accountId, transaction);
     });
 }
 
@@ -194,12 +195,11 @@ async function convertToUpdateChanges(transactions: Transaction[], parentTransac
 /**
  * Updates a transaction's corresponding child Transactions.
  *
- * @param {Transaction} transaction - The updated transaction object.
  * @param {Transaction[]} existingChildTransactions - The existing child Transactions.
  * @param {Transaction[]} newChildTransactions - The new child Transactions.
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are updated.
  */
-async function updateChildTransactions(transaction: Transaction, existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Promise<void> {
+async function updateChildTransactions(existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Promise<void> {
   // Create a Map for faster lookup
   const existingChildTransactionsMap = new Map(existingChildTransactions.map(ct => [ct.date.toDateString(), ct]));
 
