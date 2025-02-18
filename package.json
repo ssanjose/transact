@@ -54,7 +54,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^19",
     "@types/serviceworker": "^0.0.120",
-    "critters": "^0.0.23",
+    "critters": "^0.0.25",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",
