@@ -37,6 +37,7 @@ interface Transaction {
   type: TransactionType; // 0 = expense, 1 = income
   frequency: Frequency; // 0 = one-time, 1 = daily, 2 = weekly, 3 = monthly
   status: "pending" | "processed";
+  accountAmount?: number; // decimal
   accountId: number; // foreign key
   categoryId?: number; // foreign key
   transactionId?: number; // foreign key to parent transaction

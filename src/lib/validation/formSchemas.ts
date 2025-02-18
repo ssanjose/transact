@@ -48,6 +48,11 @@ const transactionSchema = z.object({
   status: z.enum(["pending", "processed"], {
     message: 'Status must be either "pending" or "processed"',
   }),
+  accountAmount: z.number().min(0.01, {
+    message: 'Account amount must be more than 0',
+  }).multipleOf(0.01, {
+    message: 'Account amount must only have 2 decimal places',
+  }).optional(),
   accountId: z.number(),
   categoryId: z.number().optional(),
   transactionId: z.number().optional(),

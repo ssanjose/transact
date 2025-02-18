@@ -7,6 +7,8 @@ const dataTableConfig = {
     name: true,
     date: true,
     frequency: false,
+    status: true,
+    accountAmount: false,
     categoryId: false,
     amount: true,
   },

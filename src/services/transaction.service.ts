@@ -59,31 +59,32 @@ function updateTransaction(transaction: Transaction): Promise<void> {
     FinanceTrackerDatabase.transactions,
     async () => {
       const existingTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(transaction.id));
+      const transactionAfterExisting = (await FinanceTrackerDatabase.transactions.where('accountId').equals(existingTransaction.accountId).and(tx => tx.date >= existingTransaction.date).sortBy('date'));
+      transactionAfterExisting.shift();
+
+      // tag the transaction after the existing transaction as pending
+      // edge case: if the existing transaction is updated to be later than the next transaction, the next transaction should be tagged as pending
+      let prevAfterTransaction = transactionAfterExisting.shift();
+      if (prevAfterTransaction)
+        await FinanceTrackerDatabase.transactions.update(prevAfterTransaction.id, { status: 'pending' });
 
       // Get all affected transactions (parent + existing children)
       const affectedTransactions = [existingTransaction];
-      if (!existingTransaction.transactionId) {
+      if (existingTransaction.transactionId!) {
         const childTransactions = await FinanceTrackerDatabase.transactions
           .where({ transactionId: existingTransaction.id })
           .toArray();
         affectedTransactions.push(...childTransactions);
       }
 
-      // Rollback processed transactions before updating
-      const processedTransactions = affectedTransactions.filter(tx => tx.status === 'processed').map(tx => tx.id!);
-
-      if (processedTransactions.length > 0)
-        await AccountService.rollbackTransactionsFromAccount(
-          existingTransaction.accountId,
-          processedTransactions
-        );
-
       // Update the parent transaction
       await FinanceTrackerDatabase.transactions.update(transaction.id, {
         ...transaction,
         // Make child transactions independent if updated by itself by removing the transactionId, and setting the frequency to one-time
         frequency: transaction.transactionId ? Frequency.OneTime : transaction.frequency,
+        // set status and accountAmount to undefined to redo balance calculation
         status: 'pending',
+        accountAmount: undefined,
         // Ensure that the transactionId is undefined for parent transactions and child transactions
         transactionId: undefined,
       });
@@ -99,7 +100,7 @@ function updateTransaction(transaction: Transaction): Promise<void> {
       const existingChildTransactions = await FinanceTrackerDatabase.transactions.where({ transactionId: transaction.id }).toArray();
       if (existingTransaction.date.toISOString() !== transaction.date.toISOString() || existingTransaction.frequency !== transaction.frequency) {
         const newChildTransactions = generateChildTransactions(updatedTransaction);
-        await updateChildTransactions(updatedTransaction, existingChildTransactions, newChildTransactions);
+        await updateChildTransactions(existingChildTransactions, newChildTransactions);
       } else {
         const changes = await convertToUpdateChanges(existingChildTransactions, updatedTransaction);
         await FinanceTrackerDatabase.transactions.bulkUpdate(changes);
@@ -125,8 +126,8 @@ function deleteTransaction(transactionId: number): Promise<void> {
       if (!transaction)
         throw new Error(`Transaction with ID ${transactionId} not found`);
 
-      // Get all related transactions (parent + children)
-      const transactionsToDelete = [transaction];
+      // Get all related transactions (children)
+      const transactionsToDelete = [];
       if (!transaction.transactionId) {
         const childTransactions = await FinanceTrackerDatabase.transactions
           .where({ transactionId })
@@ -134,18 +135,13 @@ function deleteTransaction(transactionId: number): Promise<void> {
         transactionsToDelete.push(...childTransactions);
       }
 
-      // Roll back processed transactions
-      const processedTransactions = transactionsToDelete
-        .filter(tx => tx.status === 'processed')
-        .map(tx => tx.id!);
-      if (processedTransactions.length > 0)
-        await AccountService.rollbackTransactionsFromAccount(
-          transaction.accountId,
-          processedTransactions
-        );
-
       const ids = transactionsToDelete.map(tx => tx.id!);
       await FinanceTrackerDatabase.transactions.bulkDelete(ids);
+
+      // make the transaction status of the transaction after the parent transaction pending then
+      // recalculate the account balance with applyTransactionsToAccount
+      const accountId = transaction.accountId;
+      await AccountService.rollbackTransactionFromAccount(accountId, transaction);
     });
 }
 
@@ -199,12 +195,11 @@ async function convertToUpdateChanges(transactions: Transaction[], parentTransac
 /**
  * Updates a transaction's corresponding child Transactions.
  *
- * @param {Transaction} transaction - The updated transaction object.
  * @param {Transaction[]} existingChildTransactions - The existing child Transactions.
  * @param {Transaction[]} newChildTransactions - The new child Transactions.
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are updated.
  */
-async function updateChildTransactions(transaction: Transaction, existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Promise<void> {
+async function updateChildTransactions(existingChildTransactions: Transaction[], newChildTransactions: Transaction[]): Promise<void> {
   // Create a Map for faster lookup
   const existingChildTransactionsMap = new Map(existingChildTransactions.map(ct => [ct.date.toDateString(), ct]));
 
@@ -319,58 +314,23 @@ function getTransactionsByDate({ lowerBound, upperBound, sorted, sortedDirection
 }
 
 /**
- * Commits an array of transactions by updating their status from "pending" to "processed".
+ * Commits an array of transactions by updating their status from "pending" to "processed", and updating the account amount.
  * @param {Transaction[]} transactions - The transactions to commit.
  * @returns {Promise<void>} - A promise that resolves when the transactions are committed.
  */
-function commitTransactions(ids: number[]): Promise<void> {
+function commitTransactions(transactions: Transaction[]): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    const transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
-
-    const toBeCommitted = transactions.map((transaction, idx) => {
-      if (!transaction || ids[idx] !== transaction.id!)
-        throw new Error('One or more transactions not found');
-
-      if (transaction.status === 'processed')
-        throw new Error('One or more transactions already processed');
-
+    const toBeCommitted = transactions.map((transaction) => {
       return {
         key: transaction.id!,
         changes: {
-          status: 'processed'
+          accountAmount: transaction.accountAmount,
+          status: 'processed',
         } as Partial<Transaction>,
       };
     });
 
     await FinanceTrackerDatabase.transactions.bulkUpdate(toBeCommitted);
-  });
-}
-
-/**
- * Uncommits an array of transactions by updating their status from "processed" to "pending".
- * @param {number[]} ids - The IDs of the transactions to uncommit.
- * @returns {Promise<void>} - A promise that resolves when the transactions are uncommitted.
- */
-function unCommitTransactions(ids: number[]): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    const transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
-
-    const toBeUncommitted = transactions.map((transaction, idx) => {
-      if (!transaction || ids[idx] !== transaction.id)
-        throw new Error('One or more transactions not found');
-
-      if (transaction.status === 'pending')
-        throw new Error('One or more transactions already pending');
-
-      return {
-        key: transaction.id!,
-        changes: {
-          status: 'pending'
-        } as Partial<Transaction>,
-      };
-    });
-
-    await FinanceTrackerDatabase.transactions.bulkUpdate(toBeUncommitted);
   });
 }
 
@@ -382,5 +342,4 @@ export const TransactionService = {
   getTransactionsByAccount,
   getTransactionsByDate,
   commitTransactions,
-  unCommitTransactions,
 };

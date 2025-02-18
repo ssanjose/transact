@@ -196,3 +196,33 @@ That is why I am:
 - Committing a transaction and changing the balance can be as easy as changing the transaction's status field and updating the account's balance field.
 - Rolling back transaction commits can be as easy as getting the status field of the specific Transaction and doing a reverse calculation of the Account balance, afterward updating the status field or deleting the entire Transaction record.
 - This enables better auditing and potential rollback features
+
+## Version 0.6.0
+### Data Model
+- Account
+- Transaction
+  - id
+  - name
+  - amount
+  - date
+  - type
+  - frequency
+  - status
+  - accountAmount
+  - accountId
+  - categoryId
+  - transactionId
+- Category
+
+### Reason | Why?
+The current database structure has a way to track which transaction has been committed, meaning that the transaction has changed its account's balance. This, however, does not allow account balance to be tracked reliably. This makes it difficult to track balance changes when date bounds are smaller or greater than a month.
+
+It is possible to track monthly balance changes or even yearly balance changes, however, the calculations are immensely complex which would slow the application reducing user experience.
+
+That is why adding **accountAmount**, which is the account's balance after the transaction has been committed, will allow balance changes to be tracked in any date bounds quickly and accurately.
+
+However, this approach poses some challenges:
+- **Potential extensive database update**: Any changes to older transactions will subsequently affect later transactions and lead to a large record update.
+- **Potential Report Changes**: Any generated reports might have to be re-downloaded for more accurate data.
+
+These challenges, however, as easy to mitigate by handing complex calculations to a web worker. Thus lowering the workload of the main thread.

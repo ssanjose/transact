@@ -88,6 +88,18 @@ export const columns = (settings: AppSettings): ColumnDef<Transaction>[] => [
     }
   },
   {
+    accessorKey: "accountAmount",
+    header: "Account Balance",
+    cell: ({ row }) => {
+      const accountAmount = (row.original.accountAmount) ? formatCurrency(row.original.accountAmount, settings.currencyFormat) : "";
+      return (
+        <div className={`text-right text-md`}>
+          {accountAmount}
+        </div>
+      )
+    }
+  },
+  {
     accessorKey: "categoryId",
     header: () => <div className="text-left">Category</div>,
     cell: ({ row }) => {
