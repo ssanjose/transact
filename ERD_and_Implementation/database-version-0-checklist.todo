@@ -104,30 +104,33 @@ Database Version 0 Checklist:
     
   Database Version 0.6.0 Checklist:
       ERD:
-        ☐ Edit the ERD to include the new fields in the Transaction model (accountAmount)
+        ✔ Edit the ERD to include the new fields in the Transaction model (accountAmount) @done(25-02-17 04:58)
+
+      Data Calculation:
+        ✔ Refactor the getAccountTrend method in the AccountService to calculate the trend based on the accountAmount field in the Transaction model @done(25-02-18 04:11)
+        ✔ Refactor squeezeTimeSeriesData method in the AccountService to calculate the trend based on the accountAmount field in the Transaction model if they are processed, but if they are pending, calculate the trend based on the amount field and the current total balance @done(25-02-18 04:12)
 
       Diagrams:
-        ☐ 
-        ☐ 
+        ✔ Update diagrams to include changes in the TransactionService methods @done(25-02-18 03:00)
+        ✔ Update diagrams to include changes in the AccountService methods @done(25-02-18 01:23)
 
       Models:
-        ☐ Edit the Transaction model to include the new fields (accountAmount?: number)
-        ☐ Adjust Dexie Entity Tables and stores to reflect the changes in the models
+        ✔ Edit the Transaction model to include the new fields (accountAmount?: number) @done(25-02-17 04:56)
+        ✔ Adjust Dexie Entity Tables and stores to reflect the changes in the models @done(25-02-17 04:56)
 
       Validation Schema:
-        ☐ Add the new fields to the Transaction schema (accountAmount)
+        ✔ Add the new fields to the Transaction schema (accountAmount) @done(25-02-17 05:02)
 
       Form:
-        ☐ Add a new field to the Transaction form (accountAmount), and default to undefined
+        ✔ Add a new field to the Transaction form (accountAmount), and default to undefined @done(25-02-17 05:05)
 
       Services:
-        ☐ Edit the TransactionService to include the new fields (accountAmount) (TBD)
-        ☐ Edit the AccountService applyTransactionsToAccount method to update the Transactions' accountAmount field when the transaction is committed, search for the first not yet committed transaction and update the accountAmount and the account's balance according to the previous transaction's accountAmount, then subsequently update other Transactions' accountAmount field when the Transaction is edited or deleted
-        ☐ Edit the AccountService rollbackTransactionsFromAccount method to revert the Transactions' accountAmount field when the transaction is uncommitted and revert other Transactions' accountAmount field when the Transaction is edited or deleted, also revert the account's balance to the previous transaction's accountAmount when the transaction is uncommitted and revert the account's balance to the previous transaction's accountAmount when the transaction is edited or deleted (TBD)
-        ☐ Edit the TransactionService createTransaction method to change behaviour to update the Transactions' accountAmount field when a Transaction is created
-        ☐ Edit the TransactionService updateTransaction method to change behaviour to update the Transactions' accountAmount field when a Transaction is updated
-        ☐ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction
-        ☐ Edit the TransactionService commitTransaction method to update the Transaction's status to 'processed' and update the Account's balance and accountAmount field when a Transaction is committed
-        ☐ Edit the TransactionService uncommitTransaction method to update the Transaction's status to 'pending' and revert the Transaction's effect on the Account's balance and accountAmount field when a Transaction is uncommitted
+        ✔ Edit the AccountService applyTransactionsToAccount method to update the Transactions' accountAmount field when the transaction is committed, search for the first not yet committed transaction and update the accountAmount and the account's balance according to the previous transaction's accountAmount, then subsequently update other Transactions' accountAmount field when the Transaction is edited or deleted @done(25-02-17 23:35)
+        ✔ Edit the AccountService rollbackTransactionsFromAccount method to revert the Transactions' accountAmount field when the transaction is uncommitted and revert other Transactions' accountAmount field when the Transaction is edited or deleted, also revert the account's balance to the previous transaction's accountAmount when the transaction is uncommitted and revert the account's balance to the previous transaction's accountAmount when the transaction is edited or deleted (TBD) @done(25-02-18 02:08)
+        ✔ Edit the TransactionService createTransaction method to change behaviour to update the Transactions' accountAmount field when a Transaction is created @done(25-02-17 23:35)
+        ✔ Edit the TransactionService updateTransaction method to change behaviour to update the Transactions' accountAmount field when a Transaction is updated @done(25-02-18 02:55)
+        ✔ Edit the TransactionService deleteTransaction method to revert the Transaction's effect on the Account's balance and delete the Transaction @done(25-02-18 02:08)
+        ✔ Edit the TransactionService commitTransaction method to update the Transaction's status to 'processed' and update the Account's balance and accountAmount field when a Transaction is committed @done(25-02-17 23:35)
+        ✔ Remove the TransactionService uncommitTransaction method as it is no longer needed @done(25-02-18 02:08)
 
       
