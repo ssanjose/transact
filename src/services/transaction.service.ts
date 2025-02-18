@@ -125,8 +125,8 @@ function deleteTransaction(transactionId: number): Promise<void> {
       if (!transaction)
         throw new Error(`Transaction with ID ${transactionId} not found`);
 
-      // Get all related transactions (parent + children)
-      const transactionsToDelete = [transaction];
+      // Get all related transactions (children)
+      const transactionsToDelete = [];
       if (!transaction.transactionId) {
         const childTransactions = await FinanceTrackerDatabase.transactions
           .where({ transactionId })
@@ -134,18 +134,13 @@ function deleteTransaction(transactionId: number): Promise<void> {
         transactionsToDelete.push(...childTransactions);
       }
 
-      // Roll back processed transactions
-      const processedTransactions = transactionsToDelete
-        .filter(tx => tx.status === 'processed')
-        .map(tx => tx.id!);
-      if (processedTransactions.length > 0)
-        await AccountService.rollbackTransactionsFromAccount(
-          transaction.accountId,
-          processedTransactions
-        );
-
       const ids = transactionsToDelete.map(tx => tx.id!);
       await FinanceTrackerDatabase.transactions.bulkDelete(ids);
+
+      // make the transaction status of the transaction after the parent transaction pending then
+      // recalculate the account balance with applyTransactionsToAccount
+      const accountId = transaction.accountId;
+      await AccountService.rollbackTransactionsFromAccount(accountId, transaction);
     });
 }
 
