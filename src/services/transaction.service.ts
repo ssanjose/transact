@@ -334,34 +334,6 @@ function commitTransactions(transactions: Transaction[]): Promise<void> {
   });
 }
 
-/**
- * Uncommits an array of transactions by updating their status from "processed" to "pending".
- * @param {number[]} ids - The IDs of the transactions to uncommit.
- * @returns {Promise<void>} - A promise that resolves when the transactions are uncommitted.
- */
-function unCommitTransactions(ids: number[]): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.transactions, async () => {
-    const transactions = await FinanceTrackerDatabase.transactions.bulkGet(ids);
-
-    const toBeUncommitted = transactions.map((transaction, idx) => {
-      if (!transaction || ids[idx] !== transaction.id)
-        throw new Error('One or more transactions not found');
-
-      if (transaction.status === 'pending')
-        throw new Error('One or more transactions already pending');
-
-      return {
-        key: transaction.id!,
-        changes: {
-          status: 'pending'
-        } as Partial<Transaction>,
-      };
-    });
-
-    await FinanceTrackerDatabase.transactions.bulkUpdate(toBeUncommitted);
-  });
-}
-
 export const TransactionService = {
   createTransaction,
   getTransaction,
@@ -370,5 +342,4 @@ export const TransactionService = {
   getTransactionsByAccount,
   getTransactionsByDate,
   commitTransactions,
-  unCommitTransactions,
 };
