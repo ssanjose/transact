@@ -118,34 +118,41 @@ function applyTransactionsToAccount(id?: number): Promise<void> {
 /**
  * Rolls back specific transactions from an account
  * @param accountId The account to roll back transactions from
- * @param transactionIds The IDs of transactions to roll back
+ * @param transaction The transaction the rollback should start from
  * @returns A promise that resolves when the transactions are rolled back
  */
-function rollbackTransactionsFromAccount(accountId: number, transactionIds: number[]): Promise<void> {
+function rollbackTransactionFromAccount(accountId: number, transaction: Transaction): Promise<void> {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
     const account = await FinanceTrackerDatabase.accounts.get(accountId);
     if (!account) throw new Error(`Account ${accountId} not found`);
 
-    const transactions = await FinanceTrackerDatabase.transactions
-      .where('id')
-      .anyOf(transactionIds)
-      .and(tx => tx.accountId === accountId && tx.status === 'processed')
-      .toArray();
+    const beforeRolledbackTransaction = (await FinanceTrackerDatabase.transactions.where('accountId').equals(account.id!).and(tx => tx.date < transaction.date).reverse().sortBy('date'))[0];
+    // get the transaction after the transaction in the parameter
+    const transactions = (await FinanceTrackerDatabase.transactions.where('accountId').equals(account.id!).and(tx => tx.date >= transaction.date).sortBy('date'));
+    transactions.shift();
 
-    let balance = account.balance;
+    await FinanceTrackerDatabase.transactions.delete(transaction.id!);
 
-    // Calculate balance adjustment
-    const balanceAdjustment = transactions.reduce((sum, tx) => {
-      // Reverse the transaction effect
-      return sum + (tx.type === 0 ? tx.amount : -tx.amount);
-    }, 0);
+    let sum = 0;
+    let balance = (beforeRolledbackTransaction) ? beforeRolledbackTransaction.accountAmount! : account.startingBalance!;
+    let transactionsToCommit: Transaction[] = [];
 
-    // Update balance and uncommit transactions
-    if (transactions.length > 0) {
-      balance += balanceAdjustment;
-      await FinanceTrackerDatabase.accounts.update(accountId, { balance });
-      await TransactionService.unCommitTransactions(transactions.map(tx => tx.id!));
+    const currentDate = new Date();
+    for (const tx of transactions) {
+      if (tx.date > currentDate)
+        break;
+
+      if (tx.type === 0)
+        sum -= tx.amount;
+      else
+        sum += tx.amount;
+      tx.accountAmount = balance + sum;
+      transactionsToCommit.push(tx);
     }
+
+    balance += sum;
+    await FinanceTrackerDatabase.accounts.update(accountId, { balance });
+    await TransactionService.commitTransactions(transactionsToCommit);
   });
 }
 
@@ -156,5 +163,5 @@ export const AccountService = {
   updateAccount,
   deleteAccount,
   applyTransactionsToAccount,
-  rollbackTransactionsFromAccount,
+  rollbackTransactionFromAccount,
 };
