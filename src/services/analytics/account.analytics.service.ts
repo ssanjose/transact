@@ -1,13 +1,12 @@
 import { Account, Transaction, TransactionType } from "@/lib/db/db.model";
 import { AccountTotalAmountProps, TimeSeriesData } from "@/services/analytics/props/analytics.props"
-import { generateDateRange } from "@/lib/analysis/generateDateRange";
 import { format } from "date-fns";
 
 /**
- * Gets the total amount for each account on each date
- * @param accounts Accounts to calculate
- * @param transactions Transactions to calculate
- * @returns AccountTotalAmountProps[]
+ * Gets the total amount for each account on each date, including both processed and pending transactions
+ * @param accounts Accounts to analyze
+ * @param transactions Transactions to analyze (must be sorted by date)
+ * @returns AccountTotalAmountProps[] with real and projected balances
  * @example
  * ```typescript
  * const accounts = await FinanceTrackerDatabase.accounts.toArray();
@@ -16,15 +15,21 @@ import { format } from "date-fns";
  * ```
  */
 function getAccountTrend(accounts: Account[], transactions: Transaction[]): AccountTotalAmountProps[] {
-  const dates = transactions.map(t => t.date);
-  const dateRange = {
-    from: new Date(Math.min(...dates.map(d => d.getTime()))),
-    to: new Date(Math.max(...dates.map(d => d.getTime())))
-  };
-  const paddedDates = generateDateRange(dateRange.from, dateRange.to);
+  if (!transactions?.length || !accounts?.length) return [];
 
+  // Sort transactions by date and status (processed first, then pending)
+  const sortedTransactions = [...transactions].sort((a, b) => {
+    const dateComparison = a.date.getTime() - b.date.getTime();
+    if (dateComparison === 0) {
+      // If same date, processed comes before pending
+      return a.status === 'processed' ? -1 : 1;
+    }
+    return dateComparison;
+  });
+
+  // Group transactions by date
   const transactionsByDate = new Map<string, Transaction[]>();
-  transactions.forEach(transaction => {
+  sortedTransactions.forEach(transaction => {
     const date = format(transaction.date, 'yyyy-MM-dd');
     if (!transactionsByDate.has(date)) {
       transactionsByDate.set(date, []);
@@ -32,28 +37,42 @@ function getAccountTrend(accounts: Account[], transactions: Transaction[]): Acco
     transactionsByDate.get(date)!.push(transaction);
   });
 
-  // Initialize total with starting balances
-  const runningTotals = new Map<number, number>();
+  // Track last known processed amount for each account
+  const lastProcessedAmount = new Map<number, number>();
   accounts.forEach(account => {
-    runningTotals.set(account.id!, account.startingBalance!);
+    lastProcessedAmount.set(account.id!, account.startingBalance || 0);
   });
 
-  // Calculate cumulative totals for each date - O(n^2) -> O(n)
-  return paddedDates.map(date => {
-    const dayTransactions = transactionsByDate.get(date) || [];
+  // Calculate daily totals
+  const daily = Array.from(transactionsByDate.entries()).map(([date, dayTransactions]) => {
+    let dailyTotal = 0;
 
-    dayTransactions.forEach(tx => {
-      const currentTotal = runningTotals.get(tx.accountId)!;
-      const amount = tx.type === TransactionType.Income ? tx.amount : -tx.amount;
-      runningTotals.set(tx.accountId, currentTotal + amount);
+    // Process each account's transactions for this day
+    accounts.forEach(account => {
+      const accountTransactions = dayTransactions.filter(tx => tx.accountId === account.id);
+      let currentTotal = lastProcessedAmount.get(account.id!)!;
+
+      accountTransactions.forEach(tx => {
+        if (tx.status === 'processed') {
+          // Use the actual accountAmount for processed transactions
+          currentTotal = tx.accountAmount!;
+        } else {
+          // For pending transactions, add their amount to the last known total
+          currentTotal += tx.type === TransactionType.Income ? tx.amount : -tx.amount;
+        }
+      });
+
+      // Update the last known amount for this account
+      lastProcessedAmount.set(account.id!, currentTotal);
+      dailyTotal += currentTotal;
     });
 
     return {
       date,
-      accountAmount: Array.from(runningTotals.values())
-        .reduce((sum, amount) => sum + amount, 0)
+      accountAmount: dailyTotal
     };
   });
+  return daily;
 }
 
 /**
