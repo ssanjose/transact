@@ -67,7 +67,23 @@ function deleteAccount(id: number): Promise<void> {
 }
 
 /**
- * Rebalances an account by updating the account balance if the account has transactions and transactions have passed the current date, meaning the transaction should be committed to the account balance. If the account ID is not given, the function will update all accounts.
+ * Deletes all accounts, including all related transactions and child transactions.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the account and related records are deleted.
+ */
+function deleteAllAccount(): Promise<void> {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
+
+    const accountIds = (await FinanceTrackerDatabase.accounts.toArray()).map(account => account.id!);
+    await FinanceTrackerDatabase.accounts.bulkDelete(accountIds);
+  })
+}
+
+
+
+
+/**
+ * Rebalances an account by updating the account balance if the account has transactions and transactions has passed the current date, meaning the transaction should be committed to the account balance. If the account id is not given, the function will update all accounts.
  * If the transaction is commitable, the transaction amount will be added to the account balance based on its type: income(1) or expense(0).
  * 
  * @param {number} [id] - The ID of the account to rebalance.
@@ -162,6 +178,7 @@ export const AccountService = {
   getAllAccounts,
   updateAccount,
   deleteAccount,
+  deleteAllAccount,
   applyTransactionsToAccount,
   rollbackTransactionFromAccount,
 };

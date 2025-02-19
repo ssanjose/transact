@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { NUMBER_INPUT_MAX, NUMBER_INPUT_MIN } from "@/lib/types/settings";
 import { Currencies } from "@/config/currency";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DeleteAllAccountButton } from "@/components/account/AccountButtons";
 
 const SettingSchema = z.object({
   recentTransactionLimit: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
@@ -270,6 +271,28 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
               )}
             />
           </div>
+        </div>
+        <h3 className="mb-4 text-lg font-medium">Data</h3>
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="appUpdates"
+            render={() => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
+                <div className="space-y-0.5">
+                  <FormLabel>Delete Accounts</FormLabel>
+                  <FormDescription>
+                    Delete all accounts and transactions.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <DeleteAllAccountButton
+                    button={<Button variant="destructive">Delete</Button>}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </div>
         <div className="flex flex-row items-center space-x-4">
           <Button type="submit">Save</Button>
