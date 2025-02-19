@@ -64,7 +64,7 @@ function updateTransaction(transaction: Transaction): Promise<void> {
 
       // tag the transaction after the existing transaction as pending
       // edge case: if the existing transaction is updated to be later than the next transaction, the next transaction should be tagged as pending
-      let prevAfterTransaction = transactionAfterExisting.shift();
+      const prevAfterTransaction = transactionAfterExisting.shift();
       if (prevAfterTransaction)
         await FinanceTrackerDatabase.transactions.update(prevAfterTransaction.id, { status: 'pending' });
 

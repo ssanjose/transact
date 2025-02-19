@@ -135,7 +135,7 @@ function rollbackTransactionFromAccount(accountId: number, transaction: Transact
 
     let sum = 0;
     let balance = (beforeRolledbackTransaction) ? beforeRolledbackTransaction.accountAmount! : account.startingBalance!;
-    let transactionsToCommit: Transaction[] = [];
+    const transactionsToCommit: Transaction[] = [];
 
     const currentDate = new Date();
     for (const tx of transactions) {
