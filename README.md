@@ -76,16 +76,14 @@ transact/
 │   │   ├── database_design.md
 │   │   ├── data_design_for_visualizations.md
 │   │   └── system_architecture.md
+│   ├── diagrams/...
 │   ├── discussion/
 │   │   └── component_folder_organization.md
-│   ├── ...
 │   ├── style/
 │   │   └── style_guide.md
-│   ├── CHANGELOG.md
-├── ERD_and_Implementation/
-│   ├── diagrams/...
 │   ├── Plan.erd
 │   ├── Requirements.todo
+│   ├── CHANGELOG.md
 │   └── ...
 ├── src/
 │   ├── app/
@@ -97,7 +95,7 @@ transact/
 
 ## Getting Started
 > [!IMPORTANT]
-> If you want to contribute, please take a look at the [Requirements file](./ERD_and_Implementation/Requirements.todo) and afterward, make an issue detailing what feature do you want to develop. Help is always appreciated! :)
+> If you want to contribute, please take a look at the [Requirements file](./docs/Requirements.todo) and afterward, make an issue detailing what feature do you want to develop. Help is always appreciated! :)
 
 This project is an offline-first based app which means you can easily run and use the application with a few commands:
 
