@@ -51,7 +51,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22",
-    "@types/react": "^18",
+    "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/serviceworker": "^0.0.120",
     "critters": "^0.0.25",
