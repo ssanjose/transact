@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { Inter } from 'next/font/google';
+import { useDialog } from "@/hooks/use-dialog";
 const inter = Inter({ subsets: ["latin"] });
 
 interface DrawerDialogProps {
@@ -23,18 +24,7 @@ interface DrawerDialogProps {
   title?: string;
   className?: string;
   description?: string;
-  dialog: {
-    triggerProps: {
-      ref: React.RefObject<HTMLButtonElement>;
-      onClick: () => void;
-    };
-    dialogProps: {
-      open: boolean;
-      onOpenChange: (open: boolean) => void;
-    };
-    trigger: () => void;
-    dismiss: () => void;
-  };
+  dialog: ReturnType<typeof useDialog>;
   noX?: boolean;
 }
 
