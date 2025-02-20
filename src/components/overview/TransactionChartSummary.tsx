@@ -169,9 +169,9 @@ const IncomeTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
   if (incomeTransactions === undefined || incomeTransactions.length === 0)
     return (
       <div className="flex flex-col items-center justify-center w-full min-h-[210px]">
-        <h4 className="my-auto h-fit text-center text-xl md:text-sm lg:text-lg tracking-tight text-muted-foreground p-2">
+        <p className="my-auto h-fit text-center text-xl md:text-sm lg:text-lg tracking-tight text-muted-foreground p-2">
           No income received
-        </h4>
+        </p>
       </div>
     )
 
@@ -293,9 +293,9 @@ const ExpenseTransactionChart = ({ className }: BaseRadioChartSummaryProps) => {
   if (expenseTransactions === undefined || expenseTransactions.length === 0)
     return (
       <div className={cn("flex flex-col items-center justify-center w-full min-h-[210px]", className)}>
-        <h4 className="my-auto h-fit text-center text-xl md:text-sm lg:text-lg tracking-tight text-muted-foreground p-2">
+        <p className="my-auto h-fit text-center text-xl md:text-sm lg:text-lg tracking-tight text-muted-foreground p-2">
           No expenses made
-        </h4>
+        </p>
       </div>
     )
 
