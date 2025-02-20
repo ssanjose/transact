@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import { NUMBER_INPUT_MAX, NUMBER_INPUT_MIN } from "@/lib/types/settings";
 import { Currencies } from "@/config/currency";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DeleteAllAccountButton } from "@/components/account/AccountButtons";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const SettingSchema = z.object({
   recentTransactionLimit: z.preprocess((x) => x || x === 0 ? Number(x) : undefined, z.number({
@@ -293,6 +295,23 @@ const Page = () => {
       <Title>Settings</Title>
       <SectionTitle className="sr-only">Settings Form</SectionTitle>
       <SettingForm />
+      <div className="w-full space-y-6 max-w-[900px] mx-auto mt-4">
+      <h3 className="mb-4 text-lg font-medium">Data</h3>
+        <Card className=" space-y-1 flex flex-row items-center justify-between rounded-lg border p-3 shadow-x">
+          <CardHeader className="space-y-0.5 p-1">
+            <CardTitle className="text-sm font-medium">
+              Delete All Accounts
+            </CardTitle>
+            <CardDescription className="text-[0.8rem]">
+              This action will permanently delete all accounts and associated
+              transactions.
+            </CardDescription>
+          </CardHeader>
+          <DeleteAllAccountButton
+            button={<Button variant="destructive">Delete</Button>}
+          />
+        </Card>
+      </div>
     </ContentContainer>
   )
 };

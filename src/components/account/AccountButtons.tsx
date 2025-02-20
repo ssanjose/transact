@@ -170,5 +170,65 @@ const DeleteAccountButton = ({ id, button, title, description }: DeleteAccountBu
     </AlertDialog>
   )
 }
+const DeleteAllAccountButton = ({ button,title,description }: DeleteAccountButtonProps) => {
 
-export { OpenAccountButton, EditAccountButton, DeleteAccountButton };
+  const { toast } = useToast();
+  const buttonChildren = button || (
+    <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start">
+      <span>Delete Account</span>
+    </Button>
+  );
+
+  const handleDelete = async () => {
+    try {
+      const getTransaction = async () => {
+        await AccountService.deleteAllAccount();
+        await Sleep(500);
+        toast({
+          variant: "destructive",
+          title: "Accounts Deleted",
+          description: `All Accounts has been deleted successfully.`,
+          duration: 4000,
+        });
+      }
+      getTransaction();
+    } catch (e) {
+      let result = (e as Error).message;
+      if (typeof e === "string")
+        result = e;
+      else if (e instanceof Error)
+        result = e.message;
+
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result,
+        duration: 4000,
+      });
+    }
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        {buttonChildren}
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-lg font-semibold">
+            {title ? title : "Are you sure you want to delete this account?"}
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-sm">
+            {description ? description : "This action cannot be undone. This will permanently delete all the accounts and associated transactions."}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={() => handleDelete()}>Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+export { OpenAccountButton, EditAccountButton, DeleteAccountButton, DeleteAllAccountButton };
