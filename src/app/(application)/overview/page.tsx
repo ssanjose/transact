@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { SectionTitle } from '@/components/shared/Headers';
+import { SectionTitle, Title } from '@/components/shared/Headers';
 import { Card } from '@/components/ui/card';
 import UpcomingTransactions from '@/components/analytics/UpcomingTransactions';
 import { IncomeTransactionChart, ExpenseTransactionChart, TotalTransactionRadioChart } from '@/components/overview/TransactionChartSummary';
@@ -48,7 +48,8 @@ const Home = () => {
 
   return (
     <ContentContainer className="flex flex-col gap-2 min-h-screen">
-      <br />
+      <Title className="text-secondary-foreground">Overview</Title>
+      <SectionTitle className='sr-only'>Accounts</SectionTitle>
       <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 gap-4">
         <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full" />
@@ -57,6 +58,7 @@ const Home = () => {
           <UpcomingTransactions className="p-3 md:p-4 border-0 bg-card-overview rounded-xl" limit={settings.upcomingTransactionLimit} />
         </Card>
       </div>
+      <SectionTitle className='sr-only'>Transactions Overview</SectionTitle>
       <TransactionsOverview className="h-fit min-h-72 mx-2 p-4 rounded-xl bg-card-overview" />
     </ContentContainer>
   );
@@ -82,7 +84,6 @@ const TransactionsOverview = ({ className }: React.HTMLAttributes<HTMLDivElement
       <TransactionContext.Provider value={transactions}>
         <CategoryContext.Provider value={categories || []}>
           <div className={cn("flex flex-col gap-2 mt-4 relative", className)}>
-            <SectionTitle className="text-secondary-foreground sr-only">Overview</SectionTitle>
             <SelectDateRange selectedDateRange={selectedDateRange} setSelectedDateRange={setSelectedDateRange}
               className="self-start border p-1.5 px-2.5 bg-background text-foreground rounded-xl shadow-xl absolute top-[-0.5rem] left-[-0.5rem]"
             />
