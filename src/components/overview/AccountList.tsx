@@ -43,7 +43,7 @@ const AccountTable = () => {
             <TableCell>{account.name}</TableCell>
             <TableCell className="text-right">{formatCurrency(account.balance ?? 0.00, settings.currencyFormat)}</TableCell>
             <TableCell className="w-1/6 text-right">
-              <Link className={buttonVariants({ variant: "link" })} href={`${appLinks.account}/${account.id}`} onClick={(e) => e.stopPropagation()}>
+              <Link className={buttonVariants({ variant: "link" })} href={`${appLinks.account}/${account.id}`} onClick={(e) => e.stopPropagation()} aria-label={`Edit account '${account.name}'`}>
                 <SquarePen />
               </Link>
             </TableCell>
