@@ -16,22 +16,22 @@ const Breadcrumbs = ({ className }: React.HTMLAttributes<HTMLElement>) => {
         {paths.map((path, index) => {
           if (excludePaths.includes(path))
             return (
-              <span key={index} className="flex items-center gap-2">
-                <BreadcrumbItem className="capitalize">
+              <>
+                <BreadcrumbItem key={`${index}-item`} className="flex items-center gap-2 capitalize">
                   <BreadcrumbEllipsis />
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
-              </span>
+                <BreadcrumbSeparator key={`${index}-separator`} />
+              </>
             )
-
-          return (
-            <span key={index} className="flex items-center gap-2">
-              <BreadcrumbItem className="capitalize">
-                <BreadcrumbLink href={`/${paths.slice(0, index + 1).join('/')}`}>{path}</BreadcrumbLink>
-              </BreadcrumbItem>
-              {index < paths.length - 1 && <BreadcrumbSeparator />}
-            </span>
-          )
+          else
+            return (
+              <>
+                <BreadcrumbItem key={`${index}-item`} className="flex items-center gap-2 capitalize">
+                  <BreadcrumbLink href={`/${paths.slice(0, index + 1).join('/')}`}>{path}</BreadcrumbLink>
+                </BreadcrumbItem>
+                {index < paths.length - 1 && <BreadcrumbSeparator key={`${index}-separator`} />}
+              </>
+            )
         })}
       </BreadcrumbList >
     </Breadcrumb >

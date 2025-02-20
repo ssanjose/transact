@@ -38,7 +38,7 @@ const AccountMenu = ({ account }: { account: Account }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="size-8"><EllipsisVerticalIcon /></Button>
+        <Button variant="ghost" className="size-8" aria-label="menu"><EllipsisVerticalIcon /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-[200px]">
         <DropdownMenuLabel>Account</DropdownMenuLabel>

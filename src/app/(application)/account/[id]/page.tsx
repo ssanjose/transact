@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { SectionTitle, Title } from '@/components/shared/Headers';
 import { useParams } from "next/navigation";
 import TransactionTable from '@/components/transaction/TransactionTable';
 import TransactionDetails from '@/components/transaction/TransactionDetails';
@@ -23,21 +24,23 @@ const Page = () => {
   if (!account) return;
 
   return (
-    <ContentContainer className="grid grid-cols-4 gap-2">
+    <ContentContainer className="grid grid-cols-4 gap-2 pt-0 sm:pt-0">
       <main className={`col-span-4 lg:col-span-3 w-full px-0 sm:p-2 sm:px-0 pt-2`}>
         <div className="flex flex-start justify-between px-2 sm:p-0 sm:pb-2">
           <div className="w-full flex justify-between items-center">
-            <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight mr-2">
+            <Title className="scroll-m-20 font-semibold tracking-tight mr-2">
               {account.name}
               <span className="text-normal font-normal text-md ml-2">{account ? `(${account.id})` : null}</span>
-            </h1>
+            </Title>
             <OpenTransactionButton accountId={accountId} />
           </div>
           <AccountMenu account={account} />
         </div>
+        <SectionTitle className="sr-only">Transactions</SectionTitle>
         <TransactionTable id={accountId} setTransactionId={setTransactionId} />
       </main>
       <aside className="col-span-4 block lg:flex lg:flex-col lg:gap-4 lg:col-span-1 mt-4">
+        <SectionTitle className="sr-only">Trend And Details</SectionTitle>
         <SpecificAccountTrend account={account} />
         <TransactionDetails id={transactionId} className={`${transactionId !== -1 ? "block" : "hidden"} hidden sm:block h-[45vh] sticky top-4`} />
       </aside>

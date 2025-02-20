@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ContentContainer from '@/components/common/ContentContainer';
+import { SectionTitle, Title } from '@/components/shared/Headers';
 import { Card } from '@/components/ui/card';
 import AccountList from '@/components/overview/AccountList';
 import UpcomingTransactions from '@/components/analytics/UpcomingTransactions';
@@ -20,7 +21,8 @@ const Page = () => {
 
   return (
     <ContentContainer className="flex flex-col gap-4 min-h-screen">
-      <br />
+      <Title>Accounts</Title>
+      <SectionTitle className="sr-only">Account and Transaction Lists</SectionTitle>
       <div className="block md:grid md:grid-cols-2 pb-0 px-0 space-y-4 md:space-y-0 md:space-x-4 w-full">
         <Card className="cols-span-1 items-center h-fit md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full" />
@@ -29,6 +31,7 @@ const Page = () => {
           <TransactionCarousel />
         </div>
       </div>
+      <SectionTitle className="sr-only">Account Trend</SectionTitle>
       <AllAccountsTrend />
     </ContentContainer>
   )

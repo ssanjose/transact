@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo } from 'react';
 import ContentContainer from '@/components/common/ContentContainer';
+import { SectionTitle, Title } from '@/components/shared/Headers';
 import DateRangePicker from '@/components/analytics/DateRangePicker';
 import { addMonths } from 'date-fns';
 import { Account, Transaction } from '@/lib/db/db.model';
@@ -20,13 +21,9 @@ import TransactionAmountTrend from '@/components/analytics/TransactionAmountTren
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FaMoneyBill } from 'react-icons/fa';
-import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/format/formatCurrency';
 import { formatDate } from '@/lib/format/formatTime';
 import useSettings from '@/hooks/use-settings';
-
-import { Inter } from 'next/font/google';
-const inter = Inter({ subsets: ["latin"] });
 
 const getAnalyzedData = (accounts: Account[], transactions: Transaction[], dateRange: DateRange) => {
   const accountTrend = AccountAnalyticsService.getAccountTrend(accounts, transactions);
@@ -126,11 +123,15 @@ const Page = () => {
   return (
     <CategoryContext.Provider value={categories || []}>
       <TransactionContext.Provider value={transactions}>
-        <ContentContainer className={cn("flex flex-col gap-2 lg:gap-4 min-h-screen", inter.className)}>
-          <DateRangePicker className="w-fit self-end"
-            date={date!}
-            setDate={setDate}
-          />
+        <ContentContainer className="flex flex-col gap-2 lg:gap-4 min-h-screen">
+          <div className="flex flex-col md:flex-row md:justify-between w-full">
+            <Title>Dashboard</Title>
+            <DateRangePicker className="w-fit self-start md:self-end"
+              date={date!}
+              setDate={setDate}
+            />
+          </div>
+          <SectionTitle className="sr-only">Analytics</SectionTitle>
           <div className="w-full grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-4">
             <AccountDataCards data={analyzedData || undefined} />
           </div>

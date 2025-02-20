@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { SectionTitle, Title } from "@/components/shared/Headers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -288,9 +289,10 @@ const SettingForm = ({ className }: React.HTMLAttributes<HTMLFormElement>) => {
 
 const Page = () => {
   return (
-    <ContentContainer className="flex flex-col gap-2 min-h-screen">
-      <br />
-      <SettingForm className="mx-auto max-w-[900px]" />
+    <ContentContainer className="flex flex-col gap-2 min-h-screen mx-auto max-w-[900px]">
+      <Title>Settings</Title>
+      <SectionTitle className="sr-only">Settings Form</SectionTitle>
+      <SettingForm />
     </ContentContainer>
   )
 };

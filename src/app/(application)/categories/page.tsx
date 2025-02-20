@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import ContentContainer from "@/components/common/ContentContainer";
+import { SectionTitle, Title } from "@/components/shared/Headers";
 import { DateRange } from "react-day-picker";
 import { addMonths } from "date-fns";
 import { Transaction } from "@/lib/db/db.model";
@@ -47,7 +48,8 @@ export default function CategoryPage() {
   return (
     <CategoryContext.Provider value={categories || []}>
       <TransactionContext.Provider value={transactions}>
-        <ContentContainer className="flex flex-col gap-2 min-h-screen pt-4">
+        <ContentContainer className="flex flex-col gap-2 min-h-screen">
+          <Title>Categories</Title>
           <div className="w-full relative flex justify-between items-center">
             <DateRangePicker
               className="w-fit inline-block"
@@ -63,6 +65,7 @@ export default function CategoryPage() {
               }
             />
           </div>
+          <SectionTitle className="sr-only">Analysis</SectionTitle>
           <div className="w-full flex flex-col lg:flex-row gap-2">
             <div className="w-full lg:w-3/4 h-fit space-y-2">
               <div className="block md:grid grid-cols-2 space-y-2 md:space-y-0 gap-2 justify-between">

@@ -16,7 +16,7 @@ const SelectDateRange = ({ className, selectedDateRange, setSelectedDateRange }:
     <Select defaultValue={`${selectedDateRange}`}
       onValueChange={(value) => setSelectedDateRange(parseInt(value) as SelectedDateRange)}
     >
-      <SelectTrigger className={cn("w-fit self-start shadow-none text-left w-[100px]", className)}>
+      <SelectTrigger className={cn("w-fit self-start shadow-none text-left w-[100px]", className)} aria-label="Select Date Range">
         <SelectValue placeholder={selectedDateRange} />
       </SelectTrigger>
       <SelectContent>
