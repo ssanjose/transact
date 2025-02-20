@@ -8,9 +8,9 @@
 
 <div>
   <p align="center">
-    Feature on Progress: Dashboard & Settings
+    Feature on Progress: --
   </p>
-  <p align="center">Features left before pre-release: Accesibility & Performance Improvements</p>
+  <p align="center">Features left before v0.2.0 release: TBD</p>
 </div>
 
 <p align="center">
