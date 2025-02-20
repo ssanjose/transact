@@ -71,12 +71,8 @@ function deleteAccount(id: number): Promise<void> {
  *
  * @returns {Promise<void>} - A promise that resolves when the account and related records are deleted.
  */
-function deleteAllAccount(): Promise<void> {
-  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
-
-    const accountIds = (await FinanceTrackerDatabase.accounts.toArray()).map(account => account.id!);
-    await FinanceTrackerDatabase.accounts.bulkDelete(accountIds);
-  })
+async function deleteAllAccount(): Promise<void> {
+  return await FinanceTrackerDatabase.delete({disableAutoOpen:false});
 }
 
 
