@@ -67,8 +67,8 @@ const AppSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex justify-between items-center">
-            <Link href={(siteConfig.navLinks![0].href) || '/'} onClick={() => setOpenMobile(false)} className="py-0">
-              <h1 className="text-lg font-semibold">{siteConfig.name}</h1>
+            <Link href={(siteConfig.navLinks![0].href) || '/'} onClick={() => setOpenMobile(false)} className="text-lg font-semibold py-0">
+              {siteConfig.name.slice(-8)}
             </Link>
             <ThemeModeToggle className="size-8 bg-inherit mr-0" />
           </SidebarMenuItem>

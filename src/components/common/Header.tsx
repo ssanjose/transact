@@ -40,7 +40,7 @@ const Header = ({ className }: HTMLAttributes<HTMLElement>) => {
     <header className={cn(`py-2 flex justify-between items-center bg-background`, className, inter.className)}
     >
       <Link href="/" className="text-foreground text-xl md:text-2xl font-bold">
-        {siteConfig.name}
+        {siteConfig.name.slice(-8)}
       </Link>
       <Links />
       <Icons />
