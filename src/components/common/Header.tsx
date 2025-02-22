@@ -39,10 +39,8 @@ const Header = ({ className }: HTMLAttributes<HTMLElement>) => {
   return (
     <header className={cn(`py-2 flex justify-between items-center bg-background`, className, inter.className)}
     >
-      <Link href="/">
-        <h1 className="text-foreground text-xl md:text-2xl font-bold">
-          {siteConfig.name}
-        </h1>
+      <Link href="/" className="text-foreground text-xl md:text-2xl font-bold">
+        {siteConfig.name}
       </Link>
       <Links />
       <Icons />
