@@ -52,7 +52,7 @@ const Features = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
     <section id="features" className={cn(`text-center bg-secondary flex flex-col gap-10`, className)}>
       <LandingPageHeading
         mainHeading="Features"
-        subHeading={`What does ${siteConfig.name} offer?`}
+        subHeading={`What does ${siteConfig.name.slice(-8)} offer?`}
         className="pb-4"
       />
       <Cards />

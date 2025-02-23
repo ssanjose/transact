@@ -3,8 +3,8 @@ import { siteConfig } from '../config/site'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: siteConfig.name,
-    short_name: siteConfig.name,
+    name: siteConfig.name.slice(-8),
+    short_name: siteConfig.name.slice(-8),
     description: siteConfig.description,
     start_url: '/overview',
     display: 'standalone',

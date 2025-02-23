@@ -11,7 +11,7 @@ const Footer = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
       <div className="flex flex-col sm:flex-row justify-between items-center bg-background border-b border-secondary px-6 pb-6 mb-10">
         <Link href="/">
           <h1 className="text-foreground text-xl md:text-2xl font-bold">
-            {siteConfig.name}
+            {siteConfig.name.slice(-8)}
           </h1>
         </Link>
         <div className="w-fit">
@@ -34,7 +34,7 @@ const Footer = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
             href={siteConfig.links.github}
             className="hover:underline"
           >
-            {siteConfig.name} App
+            {siteConfig.name.slice(-8)} App
           </a>
           . All Rights Reserved.
         </div>
