@@ -30,7 +30,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select'
+} from '@/components/ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import {
   Command,
@@ -39,12 +39,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/command'
+} from '@/components/ui/command'
 import {
   DeleteCategoryButton,
   EditCategoryButton,
   OpenCategoryButton,
-} from '../category/CategoryButtons'
+} from '@/components/category/CategoryButtons'
 import {
   CalendarIcon,
   Check,
@@ -61,10 +61,9 @@ import {
 import { CategoryService } from '@/services/category.service'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useDialog } from '@/hooks/use-dialog'
-import CalendarWithTime from '../transaction/CalendarWithTime'
+import CalendarWithTime from '@/components/transaction/CalendarWithTime'
 import { format } from 'date-fns'
 import { TransactionService } from '@/services/transaction.service'
-import { AccountService } from '@/services/account.service'
 const inter = Inter({ subsets: ['latin'] })
 
 interface AccountFormProps {
@@ -74,7 +73,7 @@ interface AccountFormProps {
   Account?: Account
 }
 
-const TransferBalance = ({
+const TransferBalanceForm = ({
   className,
   onSave,
   Accounts,
@@ -86,7 +85,6 @@ const TransferBalance = ({
     undefined
   )
 
-  const [modal, setModal] = React.useState(false)
   const editCategory = { ...useDialog() }
   editCategory.dismiss = () => closeModal()
 
@@ -95,39 +93,41 @@ const TransferBalance = ({
   const closeModal = () => {
     editCategory.dialogProps.onOpenChange(false)
     deleteCategory.dialogProps.onOpenChange(false)
-    setModal(false)
   }
 
   const form = useForm<z.infer<typeof transferBalanceSchema>>({
     resolver: zodResolver(transferBalanceSchema),
     mode: 'onChange',
     defaultValues: {
-      date: new Date(),
       id: undefined,
       name: '',
       amount: 0.00,
+      date: new Date(),
       type: TransactionType.Expense,
       accountTransferId: undefined,
       frequency: Frequency.OneTime,
       status: 'pending',
       accountAmount: undefined,
       accountId: Account?.id ?? undefined,
+      accountBalance: Account?.balance ?? undefined,
       categoryId: undefined,
       transactionId: undefined,
     },
   })
-
-  const amount = form.watch('amount')
   const accountId = form.watch('accountId')
-  const accountBalance = useLiveQuery(
-    () => (accountId ? AccountService.getAccount(accountId) : undefined),
-    [accountId]
-  )
+
+  useEffect(() => {
+    const account = Accounts?.find((account) => account.id === accountId)
+    form.setValue('accountBalance', account?.balance ?? 0)
+    // accountId and Accounts are the only dependencies, form is not needed as dependency as we are only watching accountId
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId, Accounts])
 
   const onSubmit = async (values: z.infer<typeof transferBalanceSchema>) => {
-    if (modal || !form.formState.isValid) return
-
     try {
+      await form.trigger();
+      if (!form.formState.isValid) throw new Error('Form validation error');
+
       const transactionWithdraw = {
         id: values.id,
         name: values.name,
@@ -191,10 +191,10 @@ const TransferBalance = ({
                   type="text"
                 />
               </FormControl>
-              <FormMessage />
               <FormDescription className="text-muted-foreground font-normal">
                 Title e.g. &apos;Insurance&apos;, &apos;Quick Shopping&apos;.
               </FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -217,7 +217,7 @@ const TransferBalance = ({
                       {Accounts?.map((account) => (
                         <SelectItem
                           key={account.id}
-                          value={account.id?.toString()!}>
+                          value={account.id!.toString()}>
                           {account.name} ({account.id})
                         </SelectItem>
                       ))}
@@ -249,7 +249,7 @@ const TransferBalance = ({
                       {Accounts?.map((account) => (
                         <SelectItem
                           key={account.id}
-                          value={account.id?.toString()!}>
+                          value={account.id!.toString()}>
                           {account.name} ({account.id})
                         </SelectItem>
                       ))}
@@ -279,15 +279,10 @@ const TransferBalance = ({
                     onChange={(e) => field.onChange(e.target.value)}
                   />
                 </FormControl>
-                <FormMessage />
-                {amount > accountBalance?.balance! && (
-                  <FormMessage>
-                    Insufficient balance. Available: {accountBalance?.balance}
-                  </FormMessage>
-                )}
                 <FormDescription>
                   Amount to transfer to the selected account
                 </FormDescription>
+                <FormMessage />
               </FormItem>
             )
           }}
@@ -351,9 +346,8 @@ const TransferBalance = ({
                       )}>
                       <div className="flex items-center">
                         <div
-                          className={`w-4 h-4 rounded mr-2 ${
-                            !field.value ? 'hidden' : 'block'
-                          }`}
+                          className={`w-4 h-4 rounded mr-2 ${!field.value ? 'hidden' : 'block'
+                            }`}
                           style={{
                             backgroundColor: categories?.find(
                               (category) => category.id === field.value
@@ -362,8 +356,8 @@ const TransferBalance = ({
                         />
                         {field.value
                           ? categories?.find(
-                              (category) => category.id === field.value
-                            )?.name
+                            (category) => category.id === field.value
+                          )?.name
                           : 'Select a category'}
                       </div>
                       <ChevronsUpDown className="opacity-50" />
@@ -424,7 +418,6 @@ const TransferBalance = ({
                                 <DropdownMenuItem
                                   onClick={(e) => {
                                     e.preventDefault()
-                                    setModal(true)
                                     editCategory.trigger()
                                   }}>
                                   Edit Category
@@ -432,7 +425,6 @@ const TransferBalance = ({
                                 <DropdownMenuItem
                                   onClick={(e) => {
                                     e.preventDefault()
-                                    setModal(true)
                                     deleteCategory.trigger()
                                   }}>
                                   Delete Category
@@ -481,4 +473,4 @@ const TransferBalance = ({
   )
 }
 
-export { TransferBalance }
+export { TransferBalanceForm }

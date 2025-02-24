@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { AccountForm } from '@/components/account/AccountForm';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftRight, CirclePlus } from 'lucide-react';
@@ -22,7 +22,7 @@ import { useRouter } from 'next/navigation';
 import { AccountService } from '@/services/account.service';
 import { Sleep } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { TransferBalance } from './TransferBalance';
+import { TransferBalanceForm } from '@/components/account/TransferBalanceForm';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 interface AccountButtonProps {
@@ -101,13 +101,13 @@ const TransferBalanceButton = ({ button, dialogProps, title, description, accoun
   return (
     <DrawerDialog
       triggerButton={buttonChildren}
-      title={title ? title:`Transfer from ${account?.name}` }
+      title={title ? title : `Transfer from ${account?.name}`}
       description={description ? description : ""}
       dialog={openAccountDialog}
       footer={null}
       noX
     >
-      <TransferBalance onSave={openAccountDialog.dismiss} Accounts={accounts} Account={account!} />
+      <TransferBalanceForm onSave={openAccountDialog.dismiss} Accounts={accounts} Account={account!} />
     </DrawerDialog>
   )
 }
@@ -213,8 +213,7 @@ const DeleteAccountButton = ({ id, button, title, description }: DeleteAccountBu
     </AlertDialog>
   )
 }
-const DeleteAllAccountButton = ({ button,title,description }: DeleteAccountButtonProps) => {
-
+const DeleteAllAccountButton = ({ button, title, description }: DeleteAccountButtonProps) => {
   const { toast } = useToast();
   const buttonChildren = button || (
     <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start">

@@ -1,8 +1,7 @@
-import { Account, Frequency, Transaction } from '../lib/db/db.model';
+import { Frequency, Transaction } from '../lib/db/db.model';
 import FinanceTrackerDatabase from '../lib/db/db.init';
 import { checkIfExists } from '../lib/utils';
 import { AccountService } from './account.service';
-import { PromiseExtended } from 'dexie';
 
 /**
  * Creates a transaction and its corresponding child Transactions based on frequency and datetime.
@@ -31,8 +30,6 @@ function createTransaction(transaction: Transaction): Promise<void> {
 function getTransaction(id: number) {
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
     const transaction = await FinanceTrackerDatabase.transactions.get(id)
-    console.log(transaction)
-    debugger
     checkIfExists(transaction);
     return transaction;
   })
@@ -44,14 +41,13 @@ function getTransaction(id: number) {
  *
  * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are created.
  */
-function transferBalance(transactionWithdraw:Transaction,transactionTransfer:Transaction){
+function transferBalance(transactionWithdraw: Transaction, transactionTransfer: Transaction) {
   return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
     const txId = await FinanceTrackerDatabase.transactions.add(transactionWithdraw);
-    const persistedTransaction = checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId)));
-    await AccountService.applyTransactionsToAccount(persistedTransaction.accountId);
-    const txId2 = await FinanceTrackerDatabase.transactions.add({...transactionTransfer,transactionId:persistedTransaction.id});
-    const persistedTransaction2 = checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId2)));
-    await AccountService.applyTransactionsToAccount(persistedTransaction2.accountId);
+    checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId)));
+    const txId2 = await FinanceTrackerDatabase.transactions.add(transactionTransfer);
+    checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId2)));
+    await AccountService.applyTransactionsToAccount();
   })
 }
 
