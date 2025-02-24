@@ -68,4 +68,12 @@ const categorySchema = z.object({
   }),
 });
 
-export { accountSchema, transactionSchema, categorySchema };
+
+const transferBalanceSchema = transactionSchema.extend({
+  accountTransferId: z.number(),
+}).refine((data) => data.accountTransferId !== data.accountId, {
+  message: "Accounts must be different",
+  path: ["accountTransferId"],
+});
+
+export { accountSchema, transactionSchema, categorySchema, transferBalanceSchema };

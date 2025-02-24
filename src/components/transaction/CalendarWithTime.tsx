@@ -25,7 +25,6 @@ const CalendarWithTime = ({ selected, onSelect, initialFocus }: CalendarWithTime
 
   const formattedTime = useMemo(() => {
     if (!selected) return "00:00";
-
     const hours = selected.getHours().toString().padStart(2, "0");
     const minutes = selected.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;

@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Button } from '@/components/ui/button';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import { Account } from '@/lib/db/db.model';
-import { OpenAccountButton, DeleteAccountButton, EditAccountButton } from '@/components/account/AccountButtons';
+import { OpenAccountButton, DeleteAccountButton, EditAccountButton, TransferBalanceButton } from '@/components/account/AccountButtons';
 
 const AccountMenu = ({ account }: { account: Account }) => {
   // Menu items.
@@ -33,6 +33,18 @@ const AccountMenu = ({ account }: { account: Account }) => {
           description=""
         />
     },
+    {
+      content:
+      <TransferBalanceButton
+      button={
+        <Button variant="ghost" size="icon" className="px-2 w-full flex justify-start" >
+          <span>Transfer</span>
+        </Button>
+      }
+      account={account}
+      description=""
+    />
+    }
   ]
 
   return (

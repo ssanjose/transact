@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AccountForm } from '@/components/account/AccountForm';
 import { Button } from '@/components/ui/button';
-import { CirclePlus } from 'lucide-react';
+import { ArrowLeftRight, CirclePlus } from 'lucide-react';
 import { DrawerDialog } from '@/components/shared/ResponsiveDrawerDialog';
 import { useDialog } from '@/hooks/use-dialog';
 import { Account } from '@/lib/db/db.model';
@@ -22,6 +22,8 @@ import { useRouter } from 'next/navigation';
 import { AccountService } from '@/services/account.service';
 import { Sleep } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { TransferBalance } from './TransferBalance';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 interface AccountButtonProps {
   button?: React.ReactNode;
@@ -32,6 +34,10 @@ interface AccountButtonProps {
 
 interface EditAccountButtonProps extends AccountButtonProps {
   existingAccount: Account;
+}
+
+interface TransferBalanceButtonProps extends AccountButtonProps {
+  account?: Account;
 }
 
 interface DeleteAccountButtonProps extends AccountButtonProps {
@@ -68,6 +74,43 @@ const OpenAccountButton = ({ button, dialogProps, title, description }: AccountB
     </DrawerDialog>
   )
 };
+
+/**
+ * Opens a dialog to create a new account
+ * @param {React.ReactNode} button - The button to render
+ * @param {typeof useDialog} dialogProps - The dialog props
+ * @param {string} title - The title of the dialog
+ * @param {string} description - The description of the dialog
+ * @param {Account} account - The account to transfer from
+ */
+const TransferBalanceButton = ({ button, dialogProps, title, description, account }: TransferBalanceButtonProps) => {
+  const dialog = useDialog();
+  const openAccountDialog = dialogProps ? dialogProps() : dialog;
+
+  const accounts = useLiveQuery(() => AccountService.getAllAccounts());
+  if (!accounts || accounts.length <= 1) {
+    return null;
+  }
+  const buttonChildren = button || (
+    <Button variant="link" size="icon" className="p-none w-min">
+      <span>Transfer Balance to Another Account</span>
+      <ArrowLeftRight />
+    </Button>
+  );
+
+  return (
+    <DrawerDialog
+      triggerButton={buttonChildren}
+      title={title ? title:`Transfer from ${account?.name}` }
+      description={description ? description : ""}
+      dialog={openAccountDialog}
+      footer={null}
+      noX
+    >
+      <TransferBalance onSave={openAccountDialog.dismiss} Accounts={accounts} Account={account!} />
+    </DrawerDialog>
+  )
+}
 
 /**
  * Opens a dialog to edit an account
@@ -231,4 +274,4 @@ const DeleteAllAccountButton = ({ button,title,description }: DeleteAccountButto
   )
 }
 
-export { OpenAccountButton, EditAccountButton, DeleteAccountButton, DeleteAllAccountButton };
+export { OpenAccountButton, EditAccountButton, DeleteAccountButton, DeleteAllAccountButton, TransferBalanceButton };

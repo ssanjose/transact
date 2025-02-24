@@ -88,7 +88,6 @@ const TransactionForm = ({ className, accountId, onSave, existingTransaction }: 
         categoryId: values.categoryId === null ? undefined : values.categoryId,
         transactionId: values.transactionId,
       });
-
       if (existingTransaction && existingTransaction.id !== undefined) {
         await TransactionService.updateTransaction(transaction);
         toast({
