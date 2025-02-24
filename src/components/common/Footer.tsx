@@ -9,10 +9,8 @@ const Footer = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <footer className={cn("", className)}>
       <div className="flex flex-col sm:flex-row justify-between items-center bg-background border-b border-secondary px-6 pb-6 mb-10">
-        <Link href="/">
-          <h1 className="text-foreground text-xl md:text-2xl font-bold">
-            {siteConfig.name.slice(-8)}
-          </h1>
+        <Link href="/" className="text-foreground text-xl md:text-2xl font-bold">
+          {siteConfig.name.slice(-8)}
         </Link>
         <div className="w-fit">
           <ul className="flex flex-row gap-6">
