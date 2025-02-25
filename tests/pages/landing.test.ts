@@ -13,7 +13,7 @@ test('page has heading', async ({ page }) => {
   await page.goto('http://localhost:3000/');
 
   // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Transact' })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Transact' })).toBeVisible();
 });
 
 test('page has free and open source link', async ({ page }) => {
