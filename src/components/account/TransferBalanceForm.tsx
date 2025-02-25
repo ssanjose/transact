@@ -134,7 +134,7 @@ const TransferBalanceForm = ({
 
       const transactionWithdraw = {
         id: values.id,
-        name: `withdrawl to ${selectedTransferAccountName}`,
+        name: `Withdrawal to '${selectedTransferAccountName}'`,
         amount: Math.round(values.amount * 100) / 100,
         date: values.date,
         type: TransactionType.Expense,
@@ -148,7 +148,7 @@ const TransferBalanceForm = ({
       const transactionTransfer = {
         ...transactionWithdraw,
         type: TransactionType.Income,
-        name: `transfer from ${selectedAccountName}`,
+        name: `Transfer from '${selectedAccountName}'`,
         accountId: values.accountTransferId,
       }
 
@@ -159,7 +159,7 @@ const TransferBalanceForm = ({
       toast({
         variant: 'default',
         title: 'Balance Transfered',
-        description: `Balance has been transfered successfully of Amount ${values.amount}`,
+        description: `Balance has been transfered successfully of amount: ${values.amount}`,
       })
     } catch (e) {
       let result = (e as Error).message
@@ -199,7 +199,6 @@ const TransferBalanceForm = ({
                         (acc) => acc.id?.toString() === value
                       )
                       setSelectedAccountName(selectedAccount?.name || null)
-                      console.log(selectedAccount)
                       field.onChange(
                         selectedAccount ? selectedAccount.id : undefined
                       )
@@ -350,9 +349,8 @@ const TransferBalanceForm = ({
                       )}>
                       <div className="flex items-center">
                         <div
-                          className={`w-4 h-4 rounded mr-2 ${
-                            !field.value ? 'hidden' : 'block'
-                          }`}
+                          className={`w-4 h-4 rounded mr-2 ${!field.value ? 'hidden' : 'block'
+                            }`}
                           style={{
                             backgroundColor: categories?.find(
                               (category) => category.id === field.value
@@ -361,8 +359,8 @@ const TransferBalanceForm = ({
                         />
                         {field.value
                           ? categories?.find(
-                              (category) => category.id === field.value
-                            )?.name
+                            (category) => category.id === field.value
+                          )?.name
                           : 'Select a category'}
                       </div>
                       <ChevronsUpDown className="opacity-50" />
