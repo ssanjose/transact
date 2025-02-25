@@ -84,6 +84,11 @@ const TransferBalanceForm = ({
   const [category, setCategory] = React.useState<Category | undefined>(
     undefined
   )
+  const [selectedAccountName, setSelectedAccountName] = React.useState<
+    string | null
+  >(Account?.name ?? null)
+  const [selectedTransferAccountName, setSelectedTransferAccountName] =
+    React.useState<string | null>(null)
 
   const editCategory = { ...useDialog() }
   editCategory.dismiss = () => closeModal()
@@ -100,8 +105,7 @@ const TransferBalanceForm = ({
     mode: 'onChange',
     defaultValues: {
       id: undefined,
-      name: '',
-      amount: 0.00,
+      amount: 0.0,
       date: new Date(),
       type: TransactionType.Expense,
       accountTransferId: undefined,
@@ -130,7 +134,7 @@ const TransferBalanceForm = ({
 
       const transactionWithdraw = {
         id: values.id,
-        name: values.name,
+        name: `withdrawl to ${selectedTransferAccountName}`,
         amount: Math.round(values.amount * 100) / 100,
         date: values.date,
         type: TransactionType.Expense,
@@ -144,6 +148,7 @@ const TransferBalanceForm = ({
       const transactionTransfer = {
         ...transactionWithdraw,
         type: TransactionType.Income,
+        name: `transfer from ${selectedAccountName}`,
         accountId: values.accountTransferId,
       }
 
@@ -181,26 +186,6 @@ const TransferBalanceForm = ({
         onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="text"
-                />
-              </FormControl>
-              <FormDescription className="text-muted-foreground font-normal">
-                Title e.g. &apos;Insurance&apos;, &apos;Quick Shopping&apos;.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name="accountId"
           render={({ field }) => {
             return (
@@ -209,7 +194,16 @@ const TransferBalanceForm = ({
                 <FormControl>
                   <Select
                     defaultValue={Account?.id!.toString()}
-                    onValueChange={(value) => field.onChange(Number(value))}>
+                    onValueChange={(value) => {
+                      const selectedAccount = Accounts?.find(
+                        (acc) => acc.id?.toString() === value
+                      )
+                      setSelectedAccountName(selectedAccount?.name || null)
+                      console.log(selectedAccount)
+                      field.onChange(
+                        selectedAccount ? selectedAccount.id : undefined
+                      )
+                    }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Withdraw Account" />
                     </SelectTrigger>
@@ -241,7 +235,17 @@ const TransferBalanceForm = ({
                 <FormLabel>Select Account</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={(value) => field.onChange(Number(value))}>
+                    onValueChange={(value) => {
+                      const selectedAccount = Accounts?.find(
+                        (acc) => acc.id?.toString() === value
+                      )
+                      setSelectedTransferAccountName(
+                        selectedAccount?.name || null
+                      )
+                      field.onChange(
+                        selectedAccount ? selectedAccount.id : undefined
+                      )
+                    }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Transfer Account" />
                     </SelectTrigger>
@@ -346,8 +350,9 @@ const TransferBalanceForm = ({
                       )}>
                       <div className="flex items-center">
                         <div
-                          className={`w-4 h-4 rounded mr-2 ${!field.value ? 'hidden' : 'block'
-                            }`}
+                          className={`w-4 h-4 rounded mr-2 ${
+                            !field.value ? 'hidden' : 'block'
+                          }`}
                           style={{
                             backgroundColor: categories?.find(
                               (category) => category.id === field.value
@@ -356,8 +361,8 @@ const TransferBalanceForm = ({
                         />
                         {field.value
                           ? categories?.find(
-                            (category) => category.id === field.value
-                          )?.name
+                              (category) => category.id === field.value
+                            )?.name
                           : 'Select a category'}
                       </div>
                       <ChevronsUpDown className="opacity-50" />

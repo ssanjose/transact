@@ -69,6 +69,7 @@ const categorySchema = z.object({
 });
 
 const transferBalanceSchema = transactionSchema.extend({
+  name: transactionSchema.shape.name.optional(),
   accountTransferId: z.number(),
   accountBalance: z.number(),
 }).superRefine((data, ctx) => {
