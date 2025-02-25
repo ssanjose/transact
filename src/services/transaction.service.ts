@@ -30,11 +30,27 @@ function createTransaction(transaction: Transaction): Promise<void> {
 function getTransaction(id: number) {
   return FinanceTrackerDatabase.transaction('r', FinanceTrackerDatabase.transactions, async () => {
     const transaction = await FinanceTrackerDatabase.transactions.get(id)
-
     checkIfExists(transaction);
     return transaction;
   })
 }
+
+
+/**
+ * Transaction object to withdraw money from an account and transfer it to another account.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the transaction and child Transactions are created.
+ */
+function transferBalance(transactionWithdraw: Transaction, transactionTransfer: Transaction) {
+  return FinanceTrackerDatabase.transaction('rw', FinanceTrackerDatabase.accounts, FinanceTrackerDatabase.transactions, async () => {
+    const txId = await FinanceTrackerDatabase.transactions.add(transactionWithdraw);
+    checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId)));
+    const txId2 = await FinanceTrackerDatabase.transactions.add(transactionTransfer);
+    checkIfExists(await FinanceTrackerDatabase.transactions.get(checkIfExists(txId2)));
+    await AccountService.applyTransactionsToAccount();
+  })
+}
+
 
 /**
  * Updates a transaction and its corresponding child Transactions based on frequency and datetime.
@@ -342,4 +358,5 @@ export const TransactionService = {
   getTransactionsByAccount,
   getTransactionsByDate,
   commitTransactions,
+  transferBalance
 };

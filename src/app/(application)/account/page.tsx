@@ -16,6 +16,7 @@ import { AccountService } from '@/services/account.service';
 import { TransactionService } from '@/services/transaction.service';
 import AccountTrend from '@/components/account/AccountTrend';
 import { AccountAnalyticsService } from '@/services/analytics/account.analytics.service';
+import { TransferBalanceButton } from '@/components/account/AccountButtons';
 
 const Page = () => {
 
@@ -26,6 +27,9 @@ const Page = () => {
       <div className="block md:grid md:grid-cols-2 pb-0 px-0 space-y-4 md:space-y-0 md:space-x-4 w-full">
         <Card className="cols-span-1 items-center h-fit md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full" />
+          <TransferBalanceButton 
+            title='Transfer Balance'
+         />
         </Card>
         <div className="cols-span-1">
           <TransactionCarousel />
