@@ -8,7 +8,7 @@
 
 <div>
   <p align="center">
-    Feature on Progress: --
+    Feature on Progress: Tests and CI
   </p>
   <p align="center">Features left before v0.2.0 release: TBD</p>
 </div>
