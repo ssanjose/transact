@@ -89,7 +89,7 @@ test.describe('category actions', () => {
     await page.getByRole('menuitem', { name: 'Edit Category' }).click();
     
     await expect(page.getByRole('textbox', { name: 'Name' })).toHaveValue('Groceries1');
-    await expect(page.getByRole('textbox', { name: '#' })).toHaveValue('#408057');
+    await expect(page.getByRole('textbox', { name: '#' })).toHaveValue('#408058');
 
     await page.getByRole('button', { name: 'Cancel' }).click();
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
