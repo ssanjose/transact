@@ -17,8 +17,13 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Build Next.js app
+      run: npm run build
+    - name: Start Next.js app and run tests
+      run: |
+        npm run start & # Start the server in background
+        npx wait-on http://localhost:3000 # Wait for server to be ready
+        npm run test:e2e
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
