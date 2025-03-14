@@ -1,72 +1,102 @@
 # Testing Guide
 
-This document outlines the testing strategy for the Transact App, focusing on End-to-End (E2E) testing using Cypress.
+This document outlines the testing strategy for the Transact App, focusing on End-to-End (E2E) testing using Playwright.
 
 ## Testing Stack
 
-- **Cypress**: Main E2E testing framework
+- **Playwright**: Main E2E testing framework
 - **GitHub Actions**: CI pipeline integration
 - **Vercel**: CD platform
 
-### Sample Test Structure (WIP)
+### Test Structure
 ```
-cypress/
-├── e2e/                   # E2E test files
-│   ├── auth/              # Authentication tests
-│   ├── transactions/      # Transaction flow tests
-│   └── dashboard/         # Dashboard visualization tests
-├── fixtures/              # Test data
-└── support/               # Support files and commands
+tests/
+└── pages/                 # Page-specific tests
+   ├── landing.test.ts    # Landing page tests
+   ├── accounts.test.ts   # Account management tests
+   ├── overview.test.ts   # Overview page tests
+   ├── categories.test.ts # Categories page tests
+   ├── dashboard.test.ts  # Dashboard tests
+   └── settings.test.ts   # Settings page tests
+playwright.config.ts   # Playwright configuration
 ```
+
 ### Key Test Scenarios
-#### Authentication Flow
-- User registration
-- User login
-- Password reset flow
+
+#### Page Layout Tests
+- Title verification
+- Heading presence
+- Section visibility
+- Component rendering
+
+#### Account Management
+- Account creation
+- Account editing
+- Account deletion
+- Balance verification
 
 #### Transaction Management
-- Adding new transactions
-- Editing existing transactions
-- Deleting transactions
+- Transaction creation
+- Transaction editing
+- Transaction deletion
 - Category assignment
- 
-#### Dashboard Tests
-- Graph rendering
-- Data filtering
-- Summary calculations
+
+#### Settings Management
+- Preferences configuration
+- Data management
+- Notification settings
 
 ## CI/CD Integration
-- GitHub Actions Workflow
+
+### GitHub Actions Workflow
 ```yaml
-name: E2E Tests
-on: [push, pull_request]
+name: Playwright Tests
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 jobs:
-  cypress-run:
+  test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          build: npm run build
-          start: npm start
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 10
 ```
-- Vercel Integration
-  - Tests will run automatically on every deployment preview and production build through the GitHub Actions pipeline.
 
 ## Best Practices
-1. Write descriptive test cases using BDD syntax
+1. Write descriptive test cases using async/await syntax
 2. Keep tests independent and atomic
-3. Use meaningful selectors (data-testid attributes)
-4. Maintain test data in fixtures
-5. Group related tests in describe 
+3. Use meaningful selectors (roles, text content, testid)
+4. Group related tests using test.describe()
+5. Follow page object pattern for better maintainability
 
 ### Running Tests Locally
 ```bash
-# Run tests in headless mode
-npm run test:e2e
+# Install Playwright and dependencies
+npm init playwright@latest
 
-# Open Cypress Test Runner
-npm run cypress:open
+# Run tests in headless mode
+npx playwright test
+
+# Run tests with UI mode
+npx playwright test --ui
+
+# Show test report
+npx playwright show-report
 ```
