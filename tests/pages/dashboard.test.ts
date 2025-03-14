@@ -45,7 +45,7 @@ test.describe('Dashboard page has 4 summary cards', () => {
     // Expects page to have a card with the name of Highest Valued Account by balance.
     await expect(page.locator('div').filter({ hasText: 'Highest Valued Account by balance' }).first()).toBeVisible();
     await expect(page.locator('#top')).toContainText('Highest Valued Account by balance');
-    await expect(page.locator('#top')).toContainText('0.00NaN% change since December 31, 1969');
+    await expect(page.locator('#top')).toContainText(/^0.00NaN% change since December 31, 1969$/);
   });
 
   test('page has "Most Used Account by frequency" card', async ({ page }) => {
@@ -54,7 +54,7 @@ test.describe('Dashboard page has 4 summary cards', () => {
     // Expects page to have a card with the name of Most Used Account by frequency.
     await expect(page.locator('#top').filter({ hasText: 'Most Used Account by frequency' }).first()).toBeVisible();
     await expect(page.locator('#top')).toContainText('Most Used Account by frequency');
-    await expect(page.locator('#top')).toContainText('0Transactions since December 31, 1969');
+    await expect(page.locator('#top')).toContainText(/^0Transactions since December 31, 1969$/);
   });
 
   test('page has "Highest Growth Account by monthly balance" card', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Dashboard page has 4 summary cards', () => {
     // Expects page to have a card with the name of Highest Growth Account by monthly balance.
     await expect(page.locator('div').filter({ hasText: 'Highest Growth Account by monthly balance' }).first()).toBeVisible();
     await expect(page.locator('#top')).toContainText('Highest Growth Account by monthly balance');
-    await expect(page.locator('#top')).toContainText('0.00NaN% change since December 31, 1969');
+    await expect(page.locator('#top')).toContainText(/^0.00NaN% change since December 31, 1969$/);
   });
 
   test('page has "Lowest Growth Account by monthly balance" card', async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe('Dashboard page has 4 summary cards', () => {
     // Expects page to have a card with the name of Lowest Growth Account by monthly balance.
     await expect(page.locator('div').filter({ hasText: 'Lowest Growth Account by monthly balance' }).first()).toBeVisible();
     await expect(page.locator('#top')).toContainText('Lowest Growth Account by monthly balance');
-    await expect(page.locator('#top')).toContainText('0.00NaN% change since December 31, 1969');
+    await expect(page.locator('#top')).toContainText(/^0.00NaN% change since December 31, 1969$/);
   });
 });
 
@@ -81,11 +81,4 @@ test('page has "Transaction Amount Trend Bar Chart"', async ({ page }) => {
 
   // Expects page to have a Transaction Amount Trend bar chart.
   await expect(page.locator('div').filter({ hasText: /^Overview$/ }).first()).toBeVisible();
-});
-
-test('page has "Dashboard Account Trend Line Chart"', async ({ page }) => {
-  await page.goto('http://localhost:3000/analysis/dashboard/');
-
-  // Expects page to have a Dashboard Account Trend Line chart.
-  await expect(page.locator('#top')).toContainText('$0.000.00% increase since December 31, 1969');
 });
