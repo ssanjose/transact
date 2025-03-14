@@ -86,17 +86,30 @@ jobs:
 4. Group related tests using test.describe()
 5. Follow page object pattern for better maintainability
 
-### Running Tests Locally
+## Test Conventions
+1. File Naming: `*.test.ts` for test files
+2. Test Organization:
+   - Group related tests using `test.describe()`
+   - Use descriptive test names
+   - Keep tests independent
+
+## Running Tests Locally
 ```bash
-# Install Playwright and dependencies
-npm init playwright@latest
+# Install dependencies
+npm install
+
+# Run all tests
+npm test
+
+# Run specific test file
+npx playwright test tests/pages/landing.test.ts
 
 # Run tests in headless mode
 npx playwright test
 
-# Run tests with UI mode
+# Run tests with UI
 npx playwright test --ui
 
-# Show test report
+# View test report
 npx playwright show-report
 ```

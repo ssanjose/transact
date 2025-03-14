@@ -53,12 +53,28 @@ Requirements:
         ✔ Users can set their settings for the dashboard @done(25-02-05 00:30)
         ✔ Users can set their settings for the notifications @done(25-02-05 00:30)
 
-        ☐ Users can reset all application data with a button in the settings page
-        ☐ Users can reset all saved data with a button in the settings page
+        ✔ Users can reset all application data with a button in the settings page @done(25-03-14 01:13)
+        ✔ Users can reset all saved data with a button in the settings page @done(25-03-14 01:13)
         ✔ Users can reset their settings with a button in the settings page @done(25-02-04 23:48)
         ✔ Users can reset their dashboard settings with a button in the dashboard settings page @done(25-02-04 23:48)
 
+      Testing:
+        ✔ Contributors can test the app on their local machine @done(25-03-14 01:15)
+        ✔ Tests will be written for the landing page @done(25-03-14 01:15)
+        ✔ Tests will be written for the overview page @done(25-03-14 01:15)
+        ✔ Tests will be written for the accounts page @done(25-03-14 01:15)
+        ✔ Tests will be written for the account page @done(25-03-14 01:15)
+        ✔ Tests will be written for the categories page @done(25-03-14 01:15)
+        ✔ Tests will be written for the dashboard page @done(25-03-14 01:15)
+        ✔ Tests will be written for the settings page @done(25-03-14 01:15)
+
   Complex Features:
+    CI/CD:
+      ✔ CodeQL will check code when a PR is opened towards the master branch @done(25-03-14 01:15)
+      ✔ App will be tested when a PR is opened towards the master branch @done(25-03-14 01:16)
+
+      ☐ App will be deployed to a production environment when a release is created
+
     Analysis-&-Visualization:
       Account:
         ✔ Users can view a trend chart of one of their Account's balance over time @done(25-02-07 22:29)

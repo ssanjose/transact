@@ -49,4 +49,8 @@ When you create a commit we kindly ask you to follow the convention category: me
 If you are interested in the detailed specification you can visit https://www.conventionalcommits.org/.
 
 ## Testing
-(TBD)
+Before submitting a PR:
+1. Write tests for new features
+2. Run existing tests: `npm test`
+3. Ensure all tests pass
+4. Follow test conventions in `docs/conventions/testing.md`
