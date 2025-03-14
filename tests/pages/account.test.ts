@@ -36,6 +36,9 @@ test.describe('Accounts Card', () => {
     await page.goto('http://localhost:3000/account/');
 
     await page.getByRole('button', { name: 'Create a new Account' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await page.getByRole('textbox', { name: 'Name' }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill('Chequing');
     await page.getByRole('spinbutton', { name: 'Balance' }).click();
@@ -137,6 +140,9 @@ test.describe('transaction actions', () => {
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
 
     await page.getByRole('button', { name: 'Add Transaction' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await expect(page.getByRole('heading')).toContainText('Transaction');
     await page.getByRole('textbox', { name: 'Name' }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill('Test1');
@@ -157,11 +163,9 @@ test.describe('transaction actions', () => {
     await page.getByRole('button', { name: 'Open menu' }).focus();
     await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
 
     const browser = page.context().browser();
-    if (browser && (browser.browserType().name() === 'firefox' || browser.browserType().name() === 'webkit')) {
-      if (browser.browserType().name() === 'webkit')
+    if (browser && browser.browserType().name() === 'chromium') {
         await page.getByRole('button', { name: 'Open menu' }).focus();
       await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
     }
@@ -196,6 +200,9 @@ test.describe('transaction actions', () => {
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
 
     await page.getByRole('button', { name: 'Add Transaction' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await expect(page.getByRole('heading')).toContainText('Transaction');
     await page.getByRole('textbox', { name: 'Name' }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill('Test1');
@@ -216,13 +223,11 @@ test.describe('transaction actions', () => {
     await page.getByRole('button', { name: 'Open menu' }).focus();
     await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
 
     const browser = page.context().browser();
-    if (browser && (browser.browserType().name() === 'firefox' || browser.browserType().name() === 'webkit')) {
-      if (browser.browserType().name() === 'webkit')
+    if (browser && browser.browserType().name() === 'chromium') {
         await page.getByRole('button', { name: 'Open menu' }).focus();
-      await page.getByRole('button', { name: 'Open menu' }).click({delay: 100});
+      await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
     }
 
     await page.getByRole('menuitem', { name: 'Delete Transaction' }).click();
