@@ -6,6 +6,8 @@
   <br />
 </h1>
 
+[![Playwright Tests](https://github.com/ssanjose/transact/actions/workflows/playwright.yml/badge.svg)](https://github.com/ssanjose/transact/actions/workflows/playwright.yml)
+
 <div>
   <p align="center">
     --
