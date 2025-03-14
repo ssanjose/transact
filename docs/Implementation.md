@@ -19,3 +19,8 @@
   - Sorted with binary search
   - Stack
 
+## Testing
+- E2E tests implemented with Playwright
+- Test files located in `tests/pages/`
+- CI integration with GitHub Actions
+- See `docs/conventions/testing.md` for details

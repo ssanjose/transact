@@ -2,7 +2,7 @@ import { SiteConfig } from "@/lib/types/site";
 import type { Metadata } from "next";
 
 export const siteConfig: SiteConfig = {
-  name: "Transact",
+  name: "Offline-first account tracking app | Transact",
   author: "Kurt San Jose",
   description: "A simple finance tracking app to monitor your income, and expenses with little effort. Visualize your transactions with beautiful charts! ",
   keywords: [

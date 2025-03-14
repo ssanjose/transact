@@ -40,6 +40,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(`${geistSans.variable} ${geistMono.variable} antialiased`, inter.className)}
+        id="top"
       >
         <ThemeProvider
           attribute="class"
