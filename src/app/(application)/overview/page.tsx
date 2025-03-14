@@ -23,6 +23,7 @@ import useSettings from '@/hooks/use-settings';
 import { getDateRangeFromSelectedRange } from '@/lib/analysis/getDateRangeFromSelectedRange';
 import { Transaction } from '@/lib/db/db.model';
 import { AccountAnalyticsService } from '@/services/analytics/account.analytics.service';
+import { TransferBalanceButton } from '@/components/account/AccountButtons';
 
 const Home = () => {
   const { settings } = useSettings();
@@ -53,6 +54,9 @@ const Home = () => {
       <div className="flex flex-col md:flex-row md:flex-start pb-0 px-2 sm:px-2 gap-4">
         <Card className="flex flex-col items-center w-full md:w-1/2 md:items-start shadow-none px-4 pb-4 pt-0">
           <AccountList className="w-full" />
+          <TransferBalanceButton 
+            title='Transfer Balance'
+         />
         </Card>
         <Card className="flex w-full h-fit md:w-1/2">
           <UpcomingTransactions className="p-3 md:p-4 border-0 bg-card-overview rounded-xl" limit={settings.upcomingTransactionLimit} />

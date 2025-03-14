@@ -68,4 +68,27 @@ const categorySchema = z.object({
   }),
 });
 
-export { accountSchema, transactionSchema, categorySchema };
+const transferBalanceSchema = transactionSchema.extend({
+  name: transactionSchema.shape.name.optional(),
+  accountTransferId: z.number(),
+  accountBalance: z.number(),
+}).superRefine((data, ctx) => {
+  // First check if accounts are different
+  if (data.accountTransferId === data.accountId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Accounts must be different",
+      path: ["accountTransferId"],
+    });
+  }
+
+  if (data.accountId && data.amount > data.accountBalance) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Insufficient balance. Available: ${data.accountBalance}`,
+      path: ["amount"],
+    });
+  }
+});
+
+export { accountSchema, transactionSchema, categorySchema, transferBalanceSchema };
