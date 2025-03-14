@@ -196,7 +196,7 @@ test.describe('transaction actions', () => {
     await expect(page.getByLabel('Are you sure you want to')).toContainText('Cancel');
     await expect(page.getByLabel('Are you sure you want to')).toContainText('Delete');
     await page.getByRole('button', { name: 'Delete' }).click();
-    await expect(page.locator('td')).toContainText('No results.');
+    await expect(page.getByRole('cell', { name: 'No results.' })).toBeVisible();
 
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
   });
