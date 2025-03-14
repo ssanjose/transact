@@ -12,7 +12,7 @@ const SummaryCard = ({
   svg,
   className }: { title: string, subHeading: string, description: string, subDescription?: string, svg: React.ReactNode, className: string }) => {
   return (
-    <Card className={cn("flex flex-col gap-2", className)}>
+    <Card id={subHeading} className={cn("flex flex-col gap-2", className)}>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 p-4 pb-0 lg:p-6 lg:pb-0">
         <div>
           <CardTitle className="leading-none tracking-tight text-md">{title}</CardTitle>

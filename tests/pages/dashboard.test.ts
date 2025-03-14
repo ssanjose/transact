@@ -1,9 +1,10 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import { format } from 'date-fns';
+import { formatDate } from '../../src/lib/format/formatTime';
 
 test('page has title', async ({ page }) => {
-  await page.goto('http://localhost:3000/account/');
+  await page.goto('http://localhost:3000/analysis/dashboard');
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Transact/);
@@ -39,22 +40,26 @@ test('page has data range selector', async ({ page }) => {
 });
 
 test.describe('Dashboard page has 4 summary cards', () => {
+  // Format epoch date (January 1, 1970) consistently using the same formatDate function used in the app
+  const epochDate = new Date(0); // Unix epoch timestamp 0
+  const formattedEpochDate = formatDate(epochDate, 'MMMM d, yyyy');
+
   test('page has "Highest Valued Account by balance" card', async ({ page }) => {
     await page.goto('http://localhost:3000/analysis/dashboard/');
   
     // Expects page to have a card with the name of Highest Valued Account by balance.
     await expect(page.locator('div').filter({ hasText: 'Highest Valued Account by balance' }).first()).toBeVisible();
-    await expect(page.locator('#top')).toContainText('Highest Valued Account by balance');
-    await expect(page.locator('#top')).toContainText(/^0.00NaN% change since December 31, 1969$/);
+    await expect(page.locator('div').filter({ hasText: /^Highest Valued Account by balance$/ }).first()).toBeVisible();
+    await expect(page.locator('[id="Highest\\ Valued\\ Account\\ by\\ balance"]').getByText(`$0.00NaN% change since ${formattedEpochDate}`)).toBeVisible();
   });
 
   test('page has "Most Used Account by frequency" card', async ({ page }) => {
     await page.goto('http://localhost:3000/analysis/dashboard/');
   
     // Expects page to have a card with the name of Most Used Account by frequency.
-    await expect(page.locator('#top').filter({ hasText: 'Most Used Account by frequency' }).first()).toBeVisible();
-    await expect(page.locator('#top')).toContainText('Most Used Account by frequency');
-    await expect(page.locator('#top')).toContainText(/^0Transactions since December 31, 1969$/);
+    await expect(page.locator('div').filter({ hasText: 'Most Used Account by frequency' }).first()).toBeVisible();
+    await expect(page.locator('div').filter({ hasText: /^Most Used Account by frequency$/ }).first()).toBeVisible();
+    await expect(page.locator('[id="Most\\ Used\\ Account\\ by\\ frequency"]').getByText(`0Transactions since ${formattedEpochDate}`)).toBeVisible();
   });
 
   test('page has "Highest Growth Account by monthly balance" card', async ({ page }) => {
@@ -62,8 +67,8 @@ test.describe('Dashboard page has 4 summary cards', () => {
   
     // Expects page to have a card with the name of Highest Growth Account by monthly balance.
     await expect(page.locator('div').filter({ hasText: 'Highest Growth Account by monthly balance' }).first()).toBeVisible();
-    await expect(page.locator('#top')).toContainText('Highest Growth Account by monthly balance');
-    await expect(page.locator('#top')).toContainText(/^0.00NaN% change since December 31, 1969$/);
+    await expect(page.locator('div').filter({ hasText: /^Highest Growth Account by monthly balance$/ }).first()).toBeVisible();
+    await expect(page.locator('[id="Highest\\ Growth\\ Account\\ by\\ monthly\\ balance"]').getByText(`0.00NaN% change since ${formattedEpochDate}`)).toBeVisible();
   });
 
   test('page has "Lowest Growth Account by monthly balance" card', async ({ page }) => {
@@ -71,8 +76,8 @@ test.describe('Dashboard page has 4 summary cards', () => {
   
     // Expects page to have a card with the name of Lowest Growth Account by monthly balance.
     await expect(page.locator('div').filter({ hasText: 'Lowest Growth Account by monthly balance' }).first()).toBeVisible();
-    await expect(page.locator('#top')).toContainText('Lowest Growth Account by monthly balance');
-    await expect(page.locator('#top')).toContainText(/^0.00NaN% change since December 31, 1969$/);
+    await expect(page.locator('div').filter({ hasText: /^Lowest Growth Account by monthly balance$/ }).first()).toBeVisible();
+    await expect(page.locator('[id="Lowest\\ Growth\\ Account\\ by\\ monthly\\ balance"]').getByText(`0.00NaN% change since ${formattedEpochDate}`)).toBeVisible();
   });
 });
 
