@@ -200,6 +200,8 @@ test.describe('data section', () => {
     await page.goto('http://localhost:3000/overview/');
 
     await page.getByRole('button', { name: 'Create a new Account' }).click();
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await page.getByRole('textbox', { name: 'Name' }).fill('test1');
     await page.getByRole('spinbutton', { name: 'Balance' }).click();
     await page.getByRole('spinbutton', { name: 'Balance' }).fill('200');

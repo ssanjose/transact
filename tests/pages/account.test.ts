@@ -54,6 +54,9 @@ test.describe('transaction actions', () => {
   test('user can create a transaction', async ({ page }) => {
     await page.goto('http://localhost:3000/account');
     await page.getByRole('button', { name: 'Create a new Account' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await page.getByRole('textbox', { name: 'Name' }).fill('Chequing');
     await page.getByRole('textbox', { name: 'Name' }).press('Tab');
     await page.getByRole('spinbutton', { name: 'Balance' }).fill('200');
@@ -84,6 +87,9 @@ test.describe('transaction actions', () => {
   test('user can read a transaction', async ({ page }) => {
     await page.goto('http://localhost:3000/account');
     await page.getByRole('button', { name: 'Create a new Account' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await page.getByRole('textbox', { name: 'Name' }).fill('Chequing');
     await page.getByRole('textbox', { name: 'Name' }).press('Tab');
     await page.getByRole('spinbutton', { name: 'Balance' }).fill('200');
@@ -119,6 +125,9 @@ test.describe('transaction actions', () => {
   test('user can edit a transaction', async ({ page }) => {
     await page.goto('http://localhost:3000/account');
     await page.getByRole('button', { name: 'Create a new Account' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await page.getByRole('textbox', { name: 'Name' }).fill('Chequing');
     await page.getByRole('textbox', { name: 'Name' }).press('Tab');
     await page.getByRole('spinbutton', { name: 'Balance' }).fill('200');
@@ -145,10 +154,21 @@ test.describe('transaction actions', () => {
 
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
 
+    await page.getByRole('button', { name: 'Open menu' }).focus();
+    await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
+
+    const browser = page.context().browser();
+    if (browser && (browser.browserType().name() === 'firefox' || browser.browserType().name() === 'webkit')) {
+      if (browser.browserType().name() === 'webkit')
+        await page.getByRole('button', { name: 'Open menu' }).focus();
+      await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
+    }
+
     await page.getByRole('menuitem', { name: 'Edit Transaction' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
     await page.getByRole('textbox', { name: 'Name' }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill('Test2');
     await expect(page.getByRole('heading')).toContainText('Edit a Transaction');
@@ -161,11 +181,16 @@ test.describe('transaction actions', () => {
 
   test('user can delete a transaction', async ({ page }) => {
     await page.goto('http://localhost:3000/account');
+
     await page.getByRole('button', { name: 'Create a new Account' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
     await page.getByRole('textbox', { name: 'Name' }).fill('Chequing');
     await page.getByRole('textbox', { name: 'Name' }).press('Tab');
     await page.getByRole('spinbutton', { name: 'Balance' }).fill('200');
     await page.getByRole('button', { name: 'Create an Account' }).click();
+
     await expect(page.locator('h1')).toContainText('Chequing(1)');
 
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
@@ -188,9 +213,18 @@ test.describe('transaction actions', () => {
 
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
 
+    await page.getByRole('button', { name: 'Open menu' }).focus();
+    await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open menu' }).click({ delay: 100 });
+
+    const browser = page.context().browser();
+    if (browser && (browser.browserType().name() === 'firefox' || browser.browserType().name() === 'webkit')) {
+      if (browser.browserType().name() === 'webkit')
+        await page.getByRole('button', { name: 'Open menu' }).focus();
+      await page.getByRole('button', { name: 'Open menu' }).click({delay: 100});
+    }
+
     await page.getByRole('menuitem', { name: 'Delete Transaction' }).click();
 
     await expect(page.getByLabel('Are you sure you want to')).toContainText('Cancel');

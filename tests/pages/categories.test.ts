@@ -44,6 +44,9 @@ test('page has add category button', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Add Category' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Add Category' }).click();
+
+  await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
   await expect(page.getByRole('dialog', { name: 'Create a new Category' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Create a new Category' })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
@@ -60,7 +63,10 @@ test.describe('category actions', () => {
     await page.goto('http://localhost:3000/categories/');
 
     await page.getByRole('button', { name: 'Add Category' }).click();
-    await page.getByRole('textbox', { name: 'Name' }).click();
+    await page.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible' });
+
+    await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Name' }).focus();
     await page.getByRole('textbox', { name: 'Name' }).fill('Snacks');
     await page.getByRole('slider', { name: 'Color' }).click();
     await page.getByRole('slider', { name: 'Color' }).locator('div').first().click();
@@ -89,7 +95,14 @@ test.describe('category actions', () => {
     await page.getByRole('menuitem', { name: 'Edit Category' }).click();
     
     await expect(page.getByRole('textbox', { name: 'Name' })).toHaveValue('Groceries1');
-    await expect(page.getByRole('textbox', { name: '#' })).toHaveValue('#408058');
+
+    // webkit has a different color value when color picker is selected
+    const browser = page.context().browser();
+    if (browser && browser.browserType().name() === 'webkit') {
+      await expect(page.getByRole('textbox', { name: '#' })).toHaveValue('#408058');
+    } else {
+      await expect(page.getByRole('textbox', { name: '#' })).toHaveValue('#408057');
+    }
 
     await page.getByRole('button', { name: 'Cancel' }).click();
     await page.getByRole('region', { name: 'Notifications (F8)' }).getByRole('button').click();
