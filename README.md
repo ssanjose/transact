@@ -8,7 +8,7 @@
 
 <div>
   <p align="center">
-    Feature on Progress: Tests and CI
+    --
   </p>
   <p align="center">Features left before v0.2.0 release: TBD</p>
 </div>
@@ -96,6 +96,7 @@ transact/
 ## Getting Started
 > [!IMPORTANT]
 > If you want to contribute, please take a look at the [Requirements file](./docs/Requirements.todo) and afterward, make an issue detailing what feature do you want to develop. Help is always appreciated! :)
+> Also see, [CONTRIBUTING](https://github.com/ssanjose/transact/blob/master/CONTRIBUTING.md)
 
 This project is an offline-first based app which means you can easily run and use the application with a few commands:
 
@@ -132,7 +133,12 @@ To learn more about the tools used in the app, take a look at the following reso
 - [shadcn/ui Documentation](https://ui.shadcn.com/) - a collection of re-usable components that can be copy and pasted into your apps.
 - [Tailwind Documentation](https://tailwindcss.com/) - a utility-first CSS framework that can be use directly in your markup.
 
-## Deployment (Coming Soon)
-Soon to be deployed with Vercel.
+## Deployment
+Using Vercel for deployment.
+
+Deployed with [GitHub Workflows](https://github.com/ssanjose/transact/wiki/GitHub-Actions-(CI-&-CD))
+
+See our site at : [transact.kurtsanjose.dev](https://transact.kurtsanjose.dev)
 
 ## Acknowledgements
+(TBD)
