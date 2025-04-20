@@ -10,12 +10,10 @@ interface ImageFrameProps extends Omit<ImageProps, 'src'> {
   src: NextImageSrc;
   alt: string;
   containerClassName?: string;
-  width?: number;
-  height?: number;
   fill?: boolean;
 }
 
-const ImageFrame = ({ className, src, alt, containerClassName, ...rest }: ImageFrameProps) => {
+const ImageFrame = ({ className, src, alt, containerClassName, width, height, ...rest }: ImageFrameProps) => {
   return (
     <div className={cn("rounded-lg bg-card-overview p-4 mt-[5rem] mx-4 border-2", containerClassName)}>
       <Image

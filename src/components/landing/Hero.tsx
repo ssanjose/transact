@@ -45,8 +45,8 @@ const Hero = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
       </div>
       <ImageFrame
         src="/transact_hero.jpg"
-        width="1000"
-        height="800"
+        width={1000}
+        height={800}
         alt="Hero Image"
         className=""
         containerClassName="border-2 border-secondary"
