@@ -60,7 +60,7 @@
     "@types/serviceworker": "^0.0.126",
     "critters": "^0.0.25",
     "eslint": "^9",
-    "eslint-config-next": "15.2.4",
+    "eslint-config-next": "15.4.5",
     "postcss": "^8",
     "tailwindcss": "^4.0.14",
     "typescript": "^5",
