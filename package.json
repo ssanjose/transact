@@ -59,7 +59,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/serviceworker": "^0.0.197",
     "critters": "^0.0.25",
-    "eslint": "^9",
+    "eslint": "^10",
     "eslint-config-next": "^16.2.6",
     "postcss": "^8.5.14",
     "tailwindcss": "^4.0.14",
